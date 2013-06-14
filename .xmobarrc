@@ -1,0 +1,20 @@
+Config { font = "-misc-fixed-*-*-*-*-13-*-*-*-*-*-*-*"
+       , bgColor = "black"
+       , fgColor = "white"
+       , position = BottomW L 95
+       , commands = [ Run Network "br0" ["-L","0","-H","32","--normal","green","--high","red","-w","4"] 10
+                    , Run Network "wlp14s0" ["-L","0","-H","32","--normal","green","--high","red","-w","4"] 10
+                    , Run Cpu ["-t","C:<total>%","-L","15","-H","50","--normal","green","--high","red","-w","3"] 10
+		    , Run MultiCpu ["-t","<total0>%<total1>%","-L","30","-H","60","-h","#FFB6B0","-l","#CEFFAC","-n","#FFFFCC","-w","3"] 10
+                    , Run CoreTemp ["-t", "T: <core0>C:<core1>C","-L", "40", "-H", "60","-l", "lightblue", "-n", "gray90", "-h", "red"] 50
+                    , Run Memory ["-t","M: <used>/<buffer>/<cache>:<rest>"] 10
+                    , Run Swap ["-t","S<usedratio>%"] 10
+                    , Run Date "%a %Y-%m-%d %H:%M:%S" "date" 10
+		    , Run Battery ["-t","B: <acstatus><left>%","-L","10","-H","80","--","-O","<fc=green>On </fc>","-o","<fc=red>Off</fc>","-l","red","-m","yellow","-h","green","-p","blue","-f","/sys/class/power_supply/ACAD/online"] 10
+		    , Run CpuFreq ["-t","Freq:\<cpu0\>|\<cpu1\>GHz","-L","0","-H","2","-l","lightblue","-n","white","-h","red"] 10
+                    , Run StdinReader
+                    ]
+       , sepChar = "%"
+       , alignSep = "}{"
+       , template = "%StdinReader%}{|%date% |%battery% |%cpu%%multicpu% |%coretemp% |%memory% %swap% |%br0% |%wlp14s0%|"
+       }

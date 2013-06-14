@@ -1,0 +1,26 @@
+[user]
+	name		= Jakub Jindra
+	email		= jakub.jindra@socialbakers.com
+	editor		= vim
+
+[alias]
+	tree		= log --graph --decorate --abbrev-commit
+	ign		= ls-files -o -i --exclude-standard
+	st		= status
+	ci		= commit
+	br		= branch
+	co		= checkout
+	dt		= difftool
+	
+[core]
+	editor		= vim
+	pager		= vimpager
+
+[diff]
+	tool		= vimdiff
+
+[difftool]
+	prompt		= false
+
+[merge]
+	  tool		= vimdiff
