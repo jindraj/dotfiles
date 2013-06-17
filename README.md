@@ -14,4 +14,4 @@ My dotfiles repository for keeping config files
 * xinitrc
 * xmonad configuration
 * xmobar configuration
-
+* screen

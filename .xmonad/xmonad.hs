@@ -1,30 +1,18 @@
--- A template showing all available configuration hooks,
--- and how to override the defaults in your own xmonad.hs conf file.
---
--- Normally, you'd only override those defaults you care about.
---
-
 import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
--- import XMonad.Layout.Magnifier
-import Graphics.X11.ExtraTypes.XF86
+import XMonad.Layout.Circle
+import XMonad.Layout.ShowWName
 import System.IO
 import System.Exit
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
--- import some modules
 -- import XMonad.Util.Run(spawnPipe)
 -- import XMonad.Util.EZConfig(additionalKeys)
 
--- The preferred terminal program, which is used in a binding below and by
--- certain contrib modules.
---
 myTerminal      = "uxterm"
-
--- Width of the window border in pixels.
 --
 myBorderWidth   = 2
 
@@ -64,33 +52,38 @@ myFocusedBorderColor = "#ff208c"
 -- Key bindings. Add, modify or remove key bindings here.
 --
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
-    [ ((modMask .|. shiftMask  , xK_Return), spawn $ XMonad.terminal conf)			-- launch a terminal
-    , ((modMask .|. shiftMask  , xK_p     ), spawn "gmrun")					-- launch gmrun
-    , ((modMask                , xK_p     ), spawn "exe=`dmenu_run`  && eval \"exec $exe\"")	-- launch dmenu
-    , ((modMask .|. shiftMask  , xK_c     ), kill)						-- Close focused window 
-    , ((modMask                , xK_space ), sendMessage NextLayout)				-- Rotate through the available layout algorithms
-    , ((modMask .|. shiftMask  , xK_space ), setLayout $ XMonad.layoutHook conf)		-- Reset the layouts on the current workspace to default
-    , ((modMask                , xK_n     ), refresh)						-- Resize viewed windows to the correct size
-    , ((mod1Mask               , xK_Tab   ), windows W.focusDown)				-- Move focus to the next window
-    , ((modMask                , xK_j     ), windows W.focusDown)				-- Move focus to the next window
-    , ((modMask                , xK_k     ), windows W.focusUp)					-- Move focus to the previous window
-    , ((mod1Mask .|. shiftMask , xK_Tab   ), windows W.focusUp)					-- Move focus to the previous window
-    , ((modMask                , xK_m     ), windows W.focusMaster)				-- Move focus to the master window
-    , ((modMask                , xK_Return), windows W.swapMaster)				-- Swap the focused window and the master window
-    , ((modMask .|. shiftMask  , xK_j     ), windows W.swapDown)				-- Swap the focused window with the next window
-    , ((modMask .|. shiftMask  , xK_k     ), windows W.swapUp)					-- Swap the focused window with the previous window
-    , ((modMask                , xK_h     ), sendMessage Shrink)				-- Shrink the master area
-    , ((modMask                , xK_l     ), sendMessage Expand)				-- Expand the master area
-    , ((modMask                , xK_t     ), withFocused $ windows . W.sink)			-- Push window back into tiling
-    , ((modMask                , xK_comma ), sendMessage (IncMasterN 1))			-- Increment the number of windows in the master area
-    , ((modMask                , xK_period), sendMessage (IncMasterN (-1)))			-- Deincrement the number of windows in the master area
-    , ((modMask                , xK_q     ), restart "xmonad" True)				-- XMonad restart
-    , ((modMask .|. shiftMask  , xK_q     ), io (exitWith ExitSuccess))				-- XMonad quit
-    , ((modMask .|. shiftMask  , xK_b     ), spawn "killall -s SIGUSR1 xmobar &> /dev/null")	-- Switch xmobar to next screen
-    , ((modMask                , xK_x	  ), spawn "xscreensaver-command -lock")		-- lock session with xscreensaver
-    , ((modMask .|. shiftMask  , xK_x	  ), spawn "sudo hibernate-ram &> /dev/null")		-- hibernate computer
-    , ((modMask .|. shiftMask  , xK_v	  ), spawn "pavucontrol &> /dev/null")			-- run pavucontrol
-    , ((modMask .|. shiftMask  , xK_Print ), spawn "scrot screen_%Y-%m-%d.png -d 1")		-- Take screenshot
+    [ ((modMask .|. shiftMask  , xK_Return ), spawn $ XMonad.terminal conf)			  -- launch a terminal
+    , ((modMask .|. shiftMask  , xK_p      ), spawn "gmrun")					  -- launch gmrun
+    , ((modMask                , xK_p      ), spawn "exe=`dmenu_run`  && eval \"exec $exe\"")	  -- launch dmenu
+    , ((modMask .|. shiftMask  , xK_c      ), kill)						  -- Close focused window 
+    , ((modMask                , xK_space  ), sendMessage NextLayout)				  -- Rotate through the available layout algorithms
+    , ((modMask .|. shiftMask  , xK_space  ), setLayout $ XMonad.layoutHook conf)		  -- Reset the layouts on the current workspace to default
+    , ((modMask                , xK_n      ), refresh)						  -- Resize viewed windows to the correct size
+    , ((mod1Mask               , xK_Tab    ), windows W.focusDown)				  -- Move focus to the next window
+    , ((modMask                , xK_j      ), windows W.focusDown)				  -- Move focus to the next window
+    , ((modMask                , xK_k      ), windows W.focusUp)				  -- Move focus to the previous window
+    , ((mod1Mask .|. shiftMask , xK_Tab    ), windows W.focusUp)				  -- Move focus to the previous window
+    , ((modMask                , xK_m      ), windows W.focusMaster)				  -- Move focus to the master window
+    , ((modMask                , xK_Return ), windows W.swapMaster)				  -- Swap the focused window and the master window
+    , ((modMask .|. shiftMask  , xK_j      ), windows W.swapDown)				  -- Swap the focused window with the next window
+    , ((modMask .|. shiftMask  , xK_k      ), windows W.swapUp)					  -- Swap the focused window with the previous window
+    , ((modMask                , xK_h      ), sendMessage Shrink)				  -- Shrink the master area
+    , ((modMask                , xK_l      ), sendMessage Expand)				  -- Expand the master area
+    , ((modMask                , xK_t      ), withFocused $ windows . W.sink)			  -- Push window back into tiling
+    , ((modMask                , xK_comma  ), sendMessage (IncMasterN 1))			  -- Increment the number of windows in the master area
+    , ((modMask                , xK_period ), sendMessage (IncMasterN (-1)))			  -- Deincrement the number of windows in the master area
+    , ((modMask                , xK_q      ), restart "xmonad" True)                              -- XMonad restart
+    , ((modMask .|. shiftMask  , xK_q      ), io (exitWith ExitSuccess))                          -- XMonad quit
+    , ((modMask .|. shiftMask  , xK_b      ), spawn "killall -s SIGUSR1 xmobar &> /dev/null")     -- Switch xmobar to next screen
+    , ((modMask                , xK_x      ), spawn "xscreensaver-command -lock")                 -- lock session with xscreensaver
+    , ((0                      , 0x1008ff2f), spawn "sudo hibernate-ram &> /dev/null")            -- hibernate
+    , ((modMask                , xK_w      ), spawn "wpa_cli scan reassociate")                   -- scan for wi-fi networks and reassociate
+    , ((modMask .|. shiftMask  , xK_v      ), spawn "pavucontrol &> /dev/null")                   -- run pavucontrol
+    , ((0                      , xK_Print  ), spawn "scrot -q 100 /tmp/screen_%Y-%m-%d.png -d 1") -- Take screenshot
+    -- Audio control: lower,raise,mute
+    , ((0                      , 0x1008FF11), spawn "pacmd dump|awk --non-decimal-data '$1~/set-sink-volume/{system (\"pacmd \"$1\" \"$2\" \"$3-1000)}'")
+    , ((0                      , 0x1008FF13), spawn "pacmd dump|awk --non-decimal-data '$1~/set-sink-volume/{system (\"pacmd \"$1\" \"$2\" \"$3+1000)}'")
+    , ((0                      , 0x1008FF12), spawn "pacmd dump|awk --non-decimal-data '$1~/set-sink-mute/{system (\"pacmd \"$1\" \"$2\" \"($3==\"yes\"?\"no\":\"yes\"))}'")
     ]
     ++
 
@@ -122,14 +115,7 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 
 ------------------------------------------------------------------------
 -- Layouts:
--- You can specify and transform your layouts by modifying these values.
--- If you change layout bindings be sure to use 'mod-shift-space' after
--- restarting (with 'mod-q') to reset your layout state to the new
--- defaults, as xmonad preserves your old layout settings by default.
---
--- The available layouts.  Note that each layout is separated by |||,
--- which denotes layout choice.
-myLayout = tiled ||| Mirror tiled ||| Full -- ||| magnifier (Tall 1 (3/100) (1/2))
+myLayout = tiled ||| Mirror tiled ||| Full ||| Circle -- ||| magnifier (Tall 1 (3/100) (1/2))
   where
      tiled       = Tall nmaster delta ratio	-- default tiling algorithm partitions the screen into two panes
      nmaster     = 1				-- The default number of windows in the master pane
@@ -138,24 +124,15 @@ myLayout = tiled ||| Mirror tiled ||| Full -- ||| magnifier (Tall 1 (3/100) (1/2
 
 ------------------------------------------------------------------------
 -- Window rules:
-
--- Execute arbitrary actions and WindowSet manipulations when managing
--- a new window. You can use this to, for example, always float a
--- particular program, or have a client always appear on a particular
--- workspace.
---
--- To find the property name associated with a program, use
--- > xprop | grep WM_CLASS
--- and click on the client you're interested in.
---
--- To match on the WM_NAME, you can use 'title' in the same way that
--- 'className' and 'resource' are used below.
---
 myManageHook = composeAll
-    [ className =? "MPlayer"        --> doFloat
-    , className =? "Gimp"           --> doFloat
-    , resource  =? "desktop_window" --> doIgnore
-    , resource  =? "kdesktop"       --> doIgnore ]
+    [ className =? "MPlayer"			--> doFloat
+    , title     =? "Firefox Preferences"	--> doFloat	-- Firefox Preferences
+    , title     =? "Firefox Add-on Updates"	--> doFloat	-- Firefox Add-ons
+    , title     =? "Clear Private Data"		--> doFloat	-- Firefox Clear private data
+    , title     =? "Certificate Manager"	--> doFloat	-- Firefox Certificate manager
+    , className =? "Gimp"			--> doFloat
+    , resource  =? "desktop_window"		--> doIgnore
+    , resource  =? "kdesktop"			--> doIgnore ]
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -212,7 +189,7 @@ defaults = defaultConfig {
         keys               = myKeys,
         mouseBindings      = myMouseBindings,
       -- hooks, layouts
-        layoutHook         = myLayout,
+        layoutHook         = showWName myLayout,
         manageHook         = myManageHook,
         logHook            = myLogHook,
         startupHook        = myStartupHook
