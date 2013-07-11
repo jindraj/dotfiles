@@ -1,26 +1,23 @@
 import XMonad
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-import XMonad.Layout.Circle
-import XMonad.Layout.ShowWName
+import XMonad.Layout.NoBorders
+import XMonad.Layout.Circle	-- circle layout
+import XMonad.Layout.Tabbed	-- tabbed layout
+import XMonad.Layout.ShowWName	-- shows workspace name
+--import DBus.Client.Simple
+--mport System.Taffybar.XMonadLog (dbusLogWithPP, taffybarPP)
 import System.IO
 import System.Exit
+import System.Process
 
 import qualified XMonad.StackSet as W
 import qualified Data.Map        as M
 
--- import XMonad.Util.Run(spawnPipe)
--- import XMonad.Util.EZConfig(additionalKeys)
+import XMonad.Util.Run(spawnPipe)
 
 myTerminal      = "uxterm"
---
 myBorderWidth   = 2
-
--- modMask lets you specify which modkey you want to use. The default
--- is mod1Mask ("left alt").  You may also consider using mod3Mask
--- ("right alt"), which does not conflict with emacs keybindings. The
--- "windows key" is usually mod4Mask.
---
 myModMask       = mod4Mask
 
 -- The mask for the numlock key. Numlock status is "masked" from the
@@ -50,11 +47,10 @@ myFocusedBorderColor = "#ff208c"
 
 ------------------------------------------------------------------------
 -- Key bindings. Add, modify or remove key bindings here.
---
 myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     [ ((modMask .|. shiftMask  , xK_Return ), spawn $ XMonad.terminal conf)			  -- launch a terminal
-    , ((modMask .|. shiftMask  , xK_p      ), spawn "gmrun")					  -- launch gmrun
-    , ((modMask                , xK_p      ), spawn "exe=`dmenu_run`  && eval \"exec $exe\"")	  -- launch dmenu
+    , ((modMask                , xK_p      ), spawn "gmrun")					  -- launch gmrun
+    , ((modMask .|. shiftMask  , xK_p      ), spawn "exe=`dmenu_run`  && eval \"exec $exe\"")	  -- launch dmenu
     , ((modMask .|. shiftMask  , xK_c      ), kill)						  -- Close focused window 
     , ((modMask                , xK_space  ), sendMessage NextLayout)				  -- Rotate through the available layout algorithms
     , ((modMask .|. shiftMask  , xK_space  ), setLayout $ XMonad.layoutHook conf)		  -- Reset the layouts on the current workspace to default
@@ -77,7 +73,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
     , ((modMask .|. shiftMask  , xK_b      ), spawn "killall -s SIGUSR1 xmobar &> /dev/null")     -- Switch xmobar to next screen
     , ((modMask                , xK_x      ), spawn "xscreensaver-command -lock")                 -- lock session with xscreensaver
     , ((0                      , 0x1008ff2f), spawn "sudo hibernate-ram &> /dev/null")            -- hibernate
-    , ((modMask                , xK_w      ), spawn "wpa_cli scan reassociate")                   -- scan for wi-fi networks and reassociate
+--    , ((modMask                , xK_w      ), spawn "wpa_cli scan reassociate")                   -- scan for wi-fi networks and reassociate
     , ((modMask .|. shiftMask  , xK_v      ), spawn "pavucontrol &> /dev/null")                   -- run pavucontrol
     , ((0                      , xK_Print  ), spawn "scrot -q 100 /tmp/screen_%Y-%m-%d.png -d 1") -- Take screenshot
     -- Audio control: lower,raise,mute
@@ -104,33 +100,32 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 ------------------------------------------------------------------------
 -- Mouse bindings: default actions bound to mouse events
 myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
-
     
     [ ((modMask, button1), (\w -> focus w >> mouseMoveWindow w))	-- mod-button1, Set the window to floating mode and move by dragging
     , ((modMask, button2), (\w -> focus w >> windows W.swapMaster))	-- mod-button2, Raise the window to the top of the stack
     , ((modMask, button3), (\w -> focus w >> mouseResizeWindow w))	-- mod-button3, Set the window to floating mode and resize by dragging
---    , ((modMask, button4), (sendMessage MagnifyMore))
---    , ((modMask, button5), (sendMessage MagnifyLess))			-- switch to next workspace
     ]
 
 ------------------------------------------------------------------------
 -- Layouts:
-myLayout = tiled ||| Mirror tiled ||| Full ||| Circle -- ||| magnifier (Tall 1 (3/100) (1/2))
+myLayout = tiled ||| Mirror tiled ||| smartBorders Full ||| Circle ||| simpleTabbed
   where
-     tiled       = Tall nmaster delta ratio	-- default tiling algorithm partitions the screen into two panes
-     nmaster     = 1				-- The default number of windows in the master pane
-     ratio       = 3/4				-- Default proportion of screen occupied by master pane
-     delta       = 25/1000			-- Percent of screen to increment by when resizing panes
+     tiled	= Tall nmaster delta ratio	-- default tiling algorithm partitions the screen into two panes
+     nmaster	= 1				-- The default number of windows in the master pane
+     ratio	= 3/4				-- Default proportion of screen occupied by master pane
+     delta	= 25/1000			-- Percent of screen to increment by when resizing panes
 
 ------------------------------------------------------------------------
 -- Window rules:
 myManageHook = composeAll
-    [ className =? "MPlayer"			--> doFloat
+    [ className =? "MPlayer"			--> doFloat	-- Mplayer
     , title     =? "Firefox Preferences"	--> doFloat	-- Firefox Preferences
     , title     =? "Firefox Add-on Updates"	--> doFloat	-- Firefox Add-ons
     , title     =? "Clear Private Data"		--> doFloat	-- Firefox Clear private data
     , title     =? "Certificate Manager"	--> doFloat	-- Firefox Certificate manager
-    , className =? "Gimp"			--> doFloat
+    , className =? "Gimp"			--> doFloat	-- Gimp
+    , className =? "serverpropertiesdialog"	--> doFloat	-- Opera Site Preferences
+    , className =? "ApacheDirectoryStudio"	--> doFloat	-- Apache Directory Studio splash
     , resource  =? "desktop_window"		--> doIgnore
     , resource  =? "kdesktop"			--> doIgnore ]
 
@@ -138,37 +133,25 @@ myManageHook = composeAll
 myFocusFollowsMouse :: Bool
 myFocusFollowsMouse = True
 
-
 ------------------------------------------------------------------------
 -- Status bars and logging
-
--- Perform an arbitrary action on each internal state change or X event.
--- See the 'DynamicLog' extension for examples.
---
--- To emulate dwm's status bar
---
--- > logHook = dynamicLogDzen
---
--- myLogHook = return ()
-myLogHook            = dynamicLogWithPP $ xmobarPP { 
-				 ppTitle = xmobarColor "green" "" . shorten 70,
-                                 ppHiddenNoWindows = xmobarColor "grey" "" 
-                             }
+myLogHook = dynamicLogWithPP $ xmobarPP { 
+               ppTitle = xmobarColor "green" "" . shorten 70,
+               ppHiddenNoWindows = xmobarColor "grey" "" 
+             }
 ------------------------------------------------------------------------
 -- Startup hook
 
 -- Perform an arbitrary action each time xmonad starts or is restarted
 -- with mod-q.  Used by, e.g., XMonad.Layout.PerWorkspace to initialize
 -- per-workspace layout choices.
---
--- By default, do nothing.
+
 myStartupHook = return ()
 
 ------------------------------------------------------------------------
 -- Now run xmonad with all the defaults we set up.
 
 -- Run xmonad with the settings you specify. No need to modify this.
---
 -- main = xmonad defaults
 -- myBar = "xmobar"
 main = xmonad =<< xmobar defaults
@@ -177,7 +160,6 @@ main = xmonad =<< xmobar defaults
 -- fields in the default config. Any you don't override, will 
 -- use the defaults defined in xmonad/XMonad/Config.hs
 defaults = defaultConfig {
-      -- simple stuff
         terminal           = myTerminal,
         focusFollowsMouse  = myFocusFollowsMouse,
         borderWidth        = myBorderWidth,
@@ -185,10 +167,8 @@ defaults = defaultConfig {
         workspaces         = myWorkspaces,
         normalBorderColor  = myNormalBorderColor,
         focusedBorderColor = myFocusedBorderColor,
-      -- key bindings
         keys               = myKeys,
         mouseBindings      = myMouseBindings,
-      -- hooks, layouts
         layoutHook         = showWName myLayout,
         manageHook         = myManageHook,
         logHook            = myLogHook,

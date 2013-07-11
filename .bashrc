@@ -1,7 +1,6 @@
 shopt -s checkwinsize
 shopt -s cdspell
 
-[ -n "$XTERM_VERSION" ] && transset -a >/dev/null
 if [[ $- != *i* ]] ; then
 	# Shell is non-interactive.  Be done now!
 	return
@@ -171,4 +170,4 @@ refreshpass() {
 	ssh adm-1.gogrid.ccl 'sudo cat /root/.pass.new' | gpg --batch -e --recipient "Jakub Jindra" -o $GPG_ENCRYPTED_FILE
 }
 # Put your fun stuff here.
-export PATH=$PATH:~/bin
+export PATH=$PATH:$HOME/bin:$HOME/.cabal/bin
