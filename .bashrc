@@ -136,6 +136,11 @@ removedia() {
 	iconv -t ASCII//TRANSLIT
 }
 
+# ps grep
+function psg() {
+	ps auxww | grep --color=always $* | grep -v grep
+}
+
 # Password generator
 genpasswd() {
 	local l=$1
