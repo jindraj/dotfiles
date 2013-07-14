@@ -1,9 +1,8 @@
-autodetach	on
-defscrollback	10000
-hardstatus	alwayslastline
-hardstatus	on
-hardstatus	string "%{= kG}%-w%{.Gk}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y-%m-%d %C%A "
-startup_message	off
+startup_message	off			# I've read this so many times I could recite it during sleeping
+ignorecase	on			# Ignore case in searches
+vbell		off			# Turn off visaul bell because of epileptic fit
+defscrollback	10000			# I like history
+hardstatus	alwayslastline		# Status bar
+hardstatus	string "%{= kG}%-w%{.Gk}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y-%m-%d %C%A "	# Hardstatus magic string
 termcapinfo	xterm ti@:te@
 termcapinfo	xterm 'hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007'
-vbell		off
