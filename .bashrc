@@ -75,13 +75,13 @@ alias cd..='cd ..'
 alias egrep='egrep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias grep='grep --color=auto'
-alias ls='ls --color=auto'
+alias ls='ls -G'
 alias l='ls -alh'
 alias nocomment='grep -Ev '\''^(#|$)'\'''
 alias rsync='rsync -avzhPp --stats'
 alias r='sudo -E bash -l'
 alias s='ssh'
-alias se='sudoedit'
+alias se='sudo vim'
 alias vim='vim'
 alias vi='vim'
 alias lastfmplay='mplayer-lastfm-0.2.7.pl mplayer'
@@ -145,28 +145,28 @@ function psg() {
 genpasswd() {
 	local l=$1
 	[ "$l" == "" ] && l=20
-	tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+	LC_CTYPE=C tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
 }
 
 # WEP key generator
 wepgen() {
 	local l=$1
 	[ "$l" == "" ] && l=20
-	tr -dc ABCDEF0123456789 < /dev/urandom | head -c ${l} | xargs
+	LC_CTYPE=C tr -dc ABCDEF0123456789 < /dev/urandom | head -c ${l} | xargs
 }
 
 # Get MY passwords
 mygetpass() {
-	GPG_ENCRYPTED_FILE="$HOME/documents/.pass/my.gpg"
+	GPG_ENCRYPTED_FILE="$HOME/Documents/.pass/my.gpg"
 	GPG_USER_ID='Jakub Jindra'
-	gpg --batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep $1 -i | column -t
+	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
 }
 
 # Get SBKS passwords
 getpass() {
 	GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
 	GPG_USER_ID='Jakub Jindra'
-	gpg --batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep $1 -i | column -t
+	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
 }
 
 refreshpass() {

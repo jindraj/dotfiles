@@ -127,7 +127,8 @@ myManageHook = composeAll
     , className =? "serverpropertiesdialog"	--> doFloat	-- Opera Site Preferences
     , className =? "ApacheDirectoryStudio"	--> doFloat	-- Apache Directory Studio splash
     , resource  =? "desktop_window"		--> doIgnore
-    , resource  =? "kdesktop"			--> doIgnore ]
+    , resource  =? "kdesktop"			--> doIgnore 
+    , className =? "opera"			--> doShift "1" ] -- Start opera at 1st desktop
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
