@@ -1,5 +1,7 @@
 set nocompatible               " be iMproved
 filetype off                   " required!
+"let &t_SI = "\<Esc>]50;CursorShape=1\x7"  " change cursor in insertmode 
+"let &t_EI = "\<Esc>]50;CursorShape=0\x7"  " change cursor in insertmode
 
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -8,12 +10,16 @@ Bundle 'gmarik/vundle'
 Bundle 'tpope/vim-fugitive'
 Bundle 'Lokaltog/powerline'
 Bundle 'scrooloose/nerdtree'
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'vim-scripts/twilight256.vim'
 
 set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
 filetype plugin indent on     " required!
 " BASIC SETTINGS
 """""""""""""""""""
+let g:solarized_termcolors=256
+colorscheme twilight256		" Solarized colorscheme
 set background=dark		" Change colors to more usable on black background
 set enc=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
 set termencoding=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
@@ -64,3 +70,32 @@ map <leader>tp :tabprev
 map <leader>te :tabedit
 map <leader>tq :tabclose<cr>
 map <leader>tm :tabmove
+
+function! DoPrettyXML()
+  " save the filetype so we can restore it later
+  let l:origft = &ft
+  set ft=
+  " delete the xml header if it exists. This will
+  " permit us to surround the document with fake tags
+  " without creating invalid xml.
+  1s/<?xml .*?>//e
+  " insert fake tags around the entire document.
+  " This will permit us to pretty-format excerpts of
+  " XML that may contain multiple top-level elements.
+  0put ='<PrettyXML>'
+  $put ='</PrettyXML>'
+  silent %!xmllint --format -
+  " xmllint will insert an <?xml?> header. it's easy enough to delete
+  " if you don't want it.
+  " delete the fake tags
+  2d
+  $d
+  " restore the 'normal' indentation, which is one extra level
+  " too deep due to the extra tags we wrapped around the document.
+  silent %<
+  " back to home
+  1
+  " restore the filetype
+  exe "set ft=" . l:origft
+endfunction
+command! PrettyXML call DoPrettyXML()

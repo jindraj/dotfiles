@@ -1,80 +1,52 @@
+[[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
+[[ -s ~/.bash_functions ]] && source ~/.bash_functions
+
 shopt -s checkwinsize
 shopt -s cdspell
+shopt -s histappend
 
-if [[ $- != *i* ]] ; then
-	# Shell is non-interactive.  Be done now!
-	return
-fi
-
-#               
-# PS1 SETTINGS, Functions and variables
+PATH=$PATH:$HOME/bin:/usr/local/sbin
+HISTSIZE=5000
+HISTFILESIZE=10000
+HISTCONTROL=ignoreboth
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUPSTREAM="auto"
+#LS_COLORS="rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.pdf=00;32:*.ps=00;32:*.txt=00;32:*.patch=00;32:*.diff=00;32:*.log=00;32:*.tex=00;32:*.doc=00;32:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:a"
+export GREP_OPTIONS="--color=auto"
+#CDPATH=~/socialbakers/repos/git/puppet:$CDPATH
 PROMPT_DIRTRIM=2
-## git functions
-### Prints git branch name
-function parse_git_branch() {
-	if $(which git &> /dev/null)
-	then
-		git branch 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1 /"
-	fi
-}
-
-### Returns colored git branch name
-function parse_git_ci {
-	if git rev-parse --git-dir &> /dev/null
-	then
-		if [[ $(git status 2> /dev/null | tail -n1) = "nothing to commit, working directory clean" ]]
-		then
-			echo -ne "\e[0;36m$(parse_git_branch)\e[0m"
-		else
-			echo -ne "\e[1;31m$(parse_git_branch)\e[0m"
-		fi
-	fi
-}
-
-# Exitcode function
-## Echos exitcode if differs from 0 or 130
-function ec {
-	EC=$?
-	if [[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] 
-		then
-			echo -ne "\a$EC "
-		fi
-}
 
 # PS1
 case $TERM in
 	linux|xterm*|rxvt*|Eterm|aterm|vt100)
 		if [ "$UID" -eq 0 ]
 		then
-			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[$(parse_git_ci)\]\[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
+			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[0m\]]\[\e[1;34m\]\$\[\e[0m\] '
 		else
-			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\] \[$(parse_git_ci)\]\[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
+			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
 		fi
 	;;
 	screen|screen.rxvt)
 		if [ "$UID" -eq 0 ]
 		then
-			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;34m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\] \[$(parse_git_ci)\]\[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
+			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;34m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
 		else
-			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;34m\][\[\e[0m\] \[\e[1;33m\]\u@\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\] \[$(parse_git_ci)\]\[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
+			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;34m\][\[\e[0m\] \[\e[1;33m\]\u@\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
 		fi
 	;;
 	*)
 		PS1='[ \u@\h \w ]\$ '
 esac
+[ -n "$TMUX" ] && export TERM=screen-256color
+MYSQL_PS1="[ \U:\p/\d ]>\_"
+PROMPT1="%R[ %n@%M:%>/%/  ]%#"
 
-# History configuration
-shopt -s histappend
-HISTSIZE=5000
-HISTFILESIZE=10000
-HISTCONTROL=ignoreboth
 
 # ALIASES
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
-alias egrep='egrep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias grep='grep --color=auto'
+alias lstat="stat -lt '%Y-%m-%d %X'"
 alias ls='ls -G'
 alias l='ls -alh'
 alias nocomment='grep -Ev '\''^(#|$)'\'''
@@ -84,14 +56,9 @@ alias s='ssh'
 alias se='sudo vim'
 alias vim='vim'
 alias vi='vim'
-alias lastfmplay='mplayer-lastfm-0.2.7.pl mplayer'
 alias mtr='mtr --curs'
 alias aman='man -a'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
-alias winbox='WINEPREFIX="/home/jakub.jindra/.wine_prefixes/winbox" wine ~/bin/winbox.exe &'
-alias ads='sw/ApacheDirectoryStudio-linux-x86_64-2.0.0.v20120224/ApacheDirectoryStudio &'
-alias reshome='xrandr --output LVDS --mode 1920x1080 --output VGA-0 --mode 1440x900 --right-of LVDS'
-alias ressbks='xrandr --output LVDS --mode 1920x1080 --output HDMI-0 --mode 1920x1080 --right-of LVDS'
 
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'
@@ -103,17 +70,16 @@ then
 	alias g++='grc g++'
 	alias as='grc as'
 	alias ld='grc ld'
-	alias ldapsearch='grc ldapsearch'
+	alias ldapsearch='grc ldapsearch -x -o ldif-wrap=no -S "" -LLL' 
 fi
-
-# VARIABLES
-export EDITOR="vim"
-export SUDO_EDITOR=$EDITOR
+    
+EDITOR="vim"
+SUDO_EDITOR=$EDITOR
 if $(which vimpager &> /dev/null) 
 then 
 	export PAGER="vimpager"
 else
-	export PAGER="vimpager"
+	export PAGER="less"
 fi
 if $(which vimmanpager &> /dev/null) 
 then 
@@ -121,58 +87,3 @@ then
 else
 	export MANPAGER="less"
 fi
-
-
-# Set MySQL and PostgreSQL prompt
-export MYSQL_PS1="[ \U:\p/\d ]>\_"
-export PROMPT1="%R[ %n@%M:%>/%/  ]%#"
-
-# disable vsync on ATI Radeon HD4650
-export vblank_mode=0
-
-
-# Remove diacritics
-removedia() {
-	iconv -t ASCII//TRANSLIT
-}
-
-# ps grep
-function psg() {
-	ps auxww | grep --color=always $* | grep -v grep
-}
-
-# Password generator
-genpasswd() {
-	local l=$1
-	[ "$l" == "" ] && l=20
-	LC_CTYPE=C tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
-}
-
-# WEP key generator
-wepgen() {
-	local l=$1
-	[ "$l" == "" ] && l=20
-	LC_CTYPE=C tr -dc ABCDEF0123456789 < /dev/urandom | head -c ${l} | xargs
-}
-
-# Get MY passwords
-mygetpass() {
-	GPG_ENCRYPTED_FILE="$HOME/Documents/.pass/my.gpg"
-	GPG_USER_ID='Jakub Jindra'
-	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
-}
-
-# Get SBKS passwords
-getpass() {
-	GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
-	GPG_USER_ID='Jakub Jindra'
-	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
-}
-
-refreshpass() {
-	GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
-	rm $GPG_ENCRYPTED_FILE
-	ssh adm-1.gogrid.ccl 'sudo cat /root/.pass.new' | gpg --batch -e --recipient "Jakub Jindra" -o $GPG_ENCRYPTED_FILE
-}
-# Put your fun stuff here.
-export PATH=$PATH:$HOME/bin:$HOME/.cabal/bin
