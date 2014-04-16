@@ -1,22 +1,48 @@
+" AUTOINSTALL VUNDLE
+" Setting up Vundle - the vim plugin bundler
+    let iCanHazVundle=1
+    let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+    if !filereadable(vundle_readme)
+        echo "Installing Vundle.."
+        echo ""
+        silent !mkdir -p ~/.vim/bundle
+        silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+        let iCanHazVundle=0
+    endif
+    set rtp+=~/.vim/bundle/vundle/
+    call vundle#rc()
+    Bundle 'gmarik/vundle'
+    "Add your bundles here
+    Plugin 'tpope/vim-fugitive'
+    Plugin 'Lokaltog/powerline'
+    Plugin 'scrooloose/nerdtree'
+    Plugin 'vim-scripts/twilight256.vim'
+    Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
+    Plugin 'tpope/vim-vividchalk'
+    Plugin 'tex.vim'
+    Plugin 'gitvimdiff'
+    Plugin 'ldap_schema.vim'
+    Plugin 'muttrc.vim'
+    Plugin 'ldif.vim'
+    Plugin 'haproxy'
+
+    "...All your other bundles...
+    if iCanHazVundle == 0
+        echo "Installing Bundles, please ignore key map error messages"
+        echo ""
+        :BundleInstall
+    endif
+" Setting up Vundle - the vim plugin bundler end
+""""""""""""
+
 set nocompatible               " be iMproved
 filetype off                   " required!
 "let &t_SI = "\<Esc>]50;CursorShape=1\x7"  " change cursor in insertmode 
 "let &t_EI = "\<Esc>]50;CursorShape=0\x7"  " change cursor in insertmode
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+"set rtp+=~/.vim/bundle/vundle/
+"call vundle#rc()
 
-Plugin 'gmarik/vundle'
-Plugin 'tpope/vim-fugitive'
-Plugin 'Lokaltog/powerline'
-Plugin 'scrooloose/nerdtree'
-Plugin 'vim-scripts/twilight256.vim'
-Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
-Plugin 'muttrc.vim'
-Plugin 'ldif.vim'
-Plugin 'tex.vim'
-Plugin 'gitvimdiff'
-Plugin 'ldap_schema.vim'
 
 set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
@@ -24,7 +50,7 @@ filetype plugin indent on     " required!
 " BASIC SETTINGS
 """""""""""""""""""
 let g:solarized_termcolors=256
-colorscheme twilight256		" Solarized colorscheme
+colorscheme vividchalk		" Solarized colorscheme
 set background=dark		" Change colors to more usable on black background
 set enc=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
 set termencoding=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
