@@ -6,12 +6,17 @@ filetype off                   " required!
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
-Bundle 'gmarik/vundle'
-Bundle 'tpope/vim-fugitive'
-Bundle 'Lokaltog/powerline'
-Bundle 'scrooloose/nerdtree'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'vim-scripts/twilight256.vim'
+Plugin 'gmarik/vundle'
+Plugin 'tpope/vim-fugitive'
+Plugin 'Lokaltog/powerline'
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-scripts/twilight256.vim'
+Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
+Plugin 'muttrc.vim'
+Plugin 'ldif.vim'
+Plugin 'tex.vim'
+Plugin 'gitvimdiff'
+Plugin 'ldap_schema.vim'
 
 set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
