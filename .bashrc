@@ -47,7 +47,7 @@ EDITOR="vim"
 SUDO_EDITOR=$EDITOR
 if $(which vimpager &> /dev/null) 
 then 
-	export PAGER="vimpager"
+	export PAGER="vimpager -c 'ft=man nomod nolist'"
 else
 	export PAGER="less"
 fi
@@ -55,5 +55,5 @@ if $(which vimmanpager &> /dev/null)
 then 
 	export MANPAGER="vimmanpager"
 else
-	export MANPAGER="less"
+	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
 fi
