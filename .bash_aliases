@@ -15,6 +15,7 @@ alias mtr='mtr --curs'
 alias aman='man -a'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq)"
+alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
 
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'

@@ -6,6 +6,7 @@ shopt -s cdspell
 shopt -s histappend
 
 PATH=$PATH:$HOME/bin:/usr/local/sbin
+export KRB5_CONFIG=~/.krb5.conf
 HISTSIZE=5000
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth
@@ -25,7 +26,7 @@ case $TERM in
 	linux|xterm*|rxvt*|Eterm|aterm|vt100)
 		if [ "$UID" -eq 0 ]
 		then
-			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[0m\]]\[\e[1;34m\]\$\[\e[0m\] '
+			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[1;34m\]\$\[\e[0m\] '
 		else
 			PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
 		fi
