@@ -1,4 +1,6 @@
 new  -s omnius mutt				# creates the new session called -s and runs command
+switch -t omnius				# switch to sesstion omnius
+kill-session 0					# kill previous session
 neww -a irssi					# creates new window, switch to it and runs irssi
 splitw -h -p 20 -t 0 'cat .irssi/nicklistfifo'	# split window, right pane 20%, run nicklist
 selectw -t 1
