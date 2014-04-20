@@ -73,7 +73,7 @@ set undolevels=200		" Number of possible undo actions
 """""""""""""""""""
 set hlsearch			" Highlight every presence of search prhrase
 set incsearch			" Highlight search phrase on the fly
-set ignorecase			" Case insensitive search
+set smartcase			" Case insensitive search, but if used uppercase use case sensitive
 
 " LINE NUMBERS
 """""""""""""""""""
