@@ -2,8 +2,6 @@
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
 alias lstat="stat -lt '%Y-%m-%d %X'"
-alias ls='ls -G'
-alias l='ls -alh'
 alias nocomment='grep -Ev '\''^(#|$)'\'''
 alias rsync='rsync -avzhPp --stats'
 alias r='sudo -E bash -l'
@@ -17,6 +15,14 @@ alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq)"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
 alias tmux='tmux -2 attach-session || tmux -2'
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	alias ls='ls -G'
+	alias l='ls -alh'
+else
+	alias ls='ls --color=auto'
+	alias l='ls -alh'
+fi;
+
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'
 if $(which grc &> /dev/null)
