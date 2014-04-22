@@ -1,6 +1,6 @@
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
-[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix)/etc/bash_completion || function __git_ps1() { return; }
+[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix)/etc/bash_completion || ([[ $(type -t __git_ps1) -ne "function" ]] && function __git_ps1() { return; })
 
 shopt -s checkwinsize
 shopt -s cdspell
