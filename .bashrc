@@ -1,6 +1,6 @@
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
-[[ -s $(brew --prefix)/etc/bash_completion ]] && source $(brew --prefix)/etc/bash_completion 2> /dev/null
+[[ -s $(brew --prefix)/etc/bash_completion 2>/dev/null ]] && source $(brew --prefix)/etc/bash_completion
 
 shopt -s checkwinsize
 shopt -s cdspell

@@ -1,0 +1,3 @@
+set show-mode-in-prompt on
+set blink-matching-paren on
+set colored-stats on
