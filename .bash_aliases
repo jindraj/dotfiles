@@ -17,11 +17,10 @@ alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo
 alias tmux='tmux -2 attach-session || tmux -2'
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	alias ls='ls -G'
-	alias l='ls -alh'
 else
 	alias ls='ls --color=auto'
-	alias l='ls -alh'
 fi;
+alias l='ls -alh'
 
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'

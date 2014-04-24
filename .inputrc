@@ -1,3 +1,7 @@
-set show-mode-in-prompt on
 set blink-matching-paren on
 set colored-stats on
+set completion-prefix-display-length 10
+set echo-control-characters off
+set show-mode-in-prompt on
+set skip-completed-text on
+"\C-e\C-w": unix-filename-rubout

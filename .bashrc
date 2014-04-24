@@ -1,6 +1,9 @@
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
-[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix)/etc/bash_completion || ([[ $(type -t __git_ps1) -ne "function" ]] && function __git_ps1() { return; })
+#problem je, ze brew jako command neexistuje, ale zbytek (/etc/bash_completion ano, takze to spadne do prvni podminky
+[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion || \
+	([[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh || \
+	([[ $(type -t __git_ps1) -ne "function" ]] && function __git_ps1() { return; }))
 
 shopt -s checkwinsize
 shopt -s cdspell
@@ -14,7 +17,7 @@ HISTCONTROL=ignoreboth
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM="auto"
-export LSCOLORS=GxFxCxDxBxegedabagaced
+export LSCOLORS=ExGxFxdxCxegedhbagacec
 export GREP_OPTIONS="--color=auto"
 #CDPATH=~/socialbakers/repos/git/puppet:$CDPATH
 
@@ -30,7 +33,6 @@ case $TERM in
 			PS1=' \[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[1;34m\]\$\[\e[0m\] '
 		else
 			PS1=' \[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[1m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
-			#PS1='\[\e[1;31m\]$(ec)\[\e[0m\]\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
 		fi
 	;;
 	screen|screen-256color|screen.rxvt)

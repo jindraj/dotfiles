@@ -52,7 +52,7 @@ filetype plugin indent on     " required!
 colorscheme twilight256		" Solarized colorscheme
 set background=dark		" Change colors to more usable on black background
 set enc=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
-set termencoding=utf-8			" Set encoding to UTF-8. Needed by 'vim-powerline'
+set termencoding=utf-8		" Set encoding to UTF-8. Needed by 'vim-powerline'
 set laststatus=2		" To see powerline everytime (not only in split windows). Needed by 'vim-powerline'
 set nocompatible		" I want to use vim, not vi. Be iMproved. Needed by 'vim-powerline'
 set novisualbell		" Disable window blinking
@@ -72,8 +72,8 @@ set undolevels=200		" Number of possible undo actions
 " SEARCHING
 """""""""""""""""""
 set hlsearch			" Highlight every presence of search prhrase
+set ignorecase smartcase	" Case insensitive search, but if used uppercase use case sensitive
 set incsearch			" Highlight search phrase on the fly
-set smartcase			" Case insensitive search, but if used uppercase use case sensitive
 
 " LINE NUMBERS
 """""""""""""""""""
