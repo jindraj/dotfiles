@@ -1,9 +1,16 @@
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
-#problem je, ze brew jako command neexistuje, ale zbytek (/etc/bash_completion ano, takze to spadne do prvni podminky
-[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion || \
-	([[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh || \
-	([[ $(type -t __git_ps1) -ne "function" ]] && function __git_ps1() { return; }))
+if $(which brew &> /dev/null)
+then
+	[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion
+else
+	if which git &> /dev/null
+	then
+		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
+	else
+		function __git_ps1() { return; }
+	fi
+fi
 
 shopt -s checkwinsize
 shopt -s cdspell
@@ -19,7 +26,6 @@ GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM="auto"
 export LSCOLORS=ExGxFxdxCxegedhbagacec
 export GREP_OPTIONS="--color=auto"
-#CDPATH=~/socialbakers/repos/git/puppet:$CDPATH
 
 # PROMPTS CONFIG
 PROMPT_DIRTRIM=2
@@ -47,17 +53,23 @@ case $TERM in
 		PS1='[ \u@\h \w ]\$ '
 esac
 
+# EDITOR, PAGER, MANPAGER {{{
 EDITOR="vim"
 SUDO_EDITOR=$EDITOR
-if $(which vimpager &> /dev/null) 
+
+if which vimpager &> /dev/null
 then 
 	export PAGER="vimpager -c 'ft=man nomod nolist'"
 else
 	export PAGER="less"
 fi
-if $(which vimmanpager &> /dev/null) 
+
+if which vimmanpager &> /dev/null
 then 
 	export MANPAGER="vimmanpager"
 else
 	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
 fi
+# }}}
+
+# vim:foldmethod=marker:foldlevel=0

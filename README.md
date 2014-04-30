@@ -15,3 +15,12 @@ My dotfiles repository for keeping config files
 * xmonad configuration
 * xmobar configuration
 * screen
+* tmux
+* git
+* inputrc
+* bash
+ * aliases
+ * functions
+ * profile
+ * bashrc
+ * logout

@@ -14,7 +14,7 @@ alias aman='man -a'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq)"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
-alias tmux='tmux -2 attach-session || tmux -2'
+#alias tmux='tmux -2 attach-session || tmux -2'
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	alias ls='ls -G'
 else
