@@ -67,8 +67,11 @@ fi
 if which vimmanpager &> /dev/null
 then 
 	export MANPAGER="vimmanpager"
-else
+elif which vimpager &> /dev/null
+then
 	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
+else
+	export MANPAGER="less"
 fi
 # }}}
 
