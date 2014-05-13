@@ -16,6 +16,7 @@ shopt -s checkwinsize
 shopt -s cdspell
 shopt -s histappend
 
+[ -n "$TMUX" ] && export TERM=screen-256color
 PATH=$PATH:$HOME/bin:/usr/local/sbin
 export KRB5_CONFIG=~/.krb5.conf
 HISTSIZE=5000
@@ -29,9 +30,7 @@ export GREP_OPTIONS="--color=auto"
 
 # PROMPTS CONFIG
 PROMPT_DIRTRIM=2
-MYSQL_PS1="[ \U:\p/\d ]>\_"
-PROMPT1="%R[ %n@%M:%>/%/  ]%#"
-[ -n "$TMUX" ] && export TERM=screen-256color
+export MYSQL_PS1=$(echo -e "\e[1;30m[ \e[1;32m\u@\h:\p \e[1;34m\d \e[1;30m]\e[1;34m>\e[0m\_")
 case $TERM in
 	linux|xterm*|rxvt*|Eterm|aterm|vt100)
 		if [ "$UID" -eq 0 ]

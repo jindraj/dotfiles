@@ -1,37 +1,37 @@
 " Vundle configuration {{{
-    let iCanHazVundle=1
-    let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-    if !filereadable(vundle_readme)
-        echo "Installing Vundle.."
-        echo ""
-        silent !mkdir -p ~/.vim/bundle
-        silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
-        let iCanHazVundle=0
-    endif
-    set rtp+=~/.vim/bundle/vundle/
-    call vundle#rc()
-    Bundle 'gmarik/vundle'
-    "Add your bundles here
-    Plugin 'tpope/vim-fugitive'
-    "Plugin 'Lokaltog/powerline'
-    Plugin 'bling/vim-airline'
-    Plugin 'scrooloose/nerdtree'
-    Plugin 'vim-scripts/twilight256.vim'
-    Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
-    Plugin 'tpope/vim-vividchalk'
-    Plugin 'tex.vim'
-    Plugin 'gitvimdiff'
-    Plugin 'ldap_schema.vim'
-    Plugin 'muttrc.vim'
-    Plugin 'ldif.vim'
-    Plugin 'haproxy'
+let iCanHazVundle=1
+let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
+if !filereadable(vundle_readme)
+    echo "Installing Vundle.."
+    echo ""
+    silent !mkdir -p ~/.vim/bundle
+    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+    let iCanHazVundle=0
+endif
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+Bundle 'gmarik/vundle'
+"Add your bundles here
+Plugin 'tpope/vim-fugitive'
+"Plugin 'Lokaltog/powerline'
+Plugin 'bling/vim-airline'
+Plugin 'scrooloose/nerdtree'
+Plugin 'vim-scripts/twilight256.vim'
+Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
+Plugin 'tpope/vim-vividchalk'
+Plugin 'tex.vim'
+Plugin 'gitvimdiff'
+Plugin 'ldap_schema.vim'
+Plugin 'muttrc.vim'
+Plugin 'ldif.vim'
+Plugin 'haproxy'
 
-    "...All your other bundles...
-    if iCanHazVundle == 0
-        echo "Installing Bundles, please ignore key map error messages"
-        echo ""
-        :BundleInstall
-    endif
+"...All your other bundles...
+if iCanHazVundle == 0
+    echo "Installing Bundles, please ignore key map error messages"
+    echo ""
+    :BundleInstall
+endif
 " }}}
 " DoPrettyXML {{{
 function! DoPrettyXML()
@@ -103,9 +103,10 @@ set modeline        		" Last lines in document sets vim mode
 set modelines=3     		" Number lines checked for modelines
 set number			" Display line numbers on the left
 set numberwidth=5 		" Fix width for 5 digits number
+hi LineNr ctermfg=darkgrey cterm=bold ctermbg=0
 let mapleader=","		" mapleader
 set lazyredraw			" redraw only when we need to. This should lead to faster macros
-hi LineNr ctermfg=darkgrey cterm=bold ctermbg=0
+set whichwrap+=<,>,[,]		" don't stop at the EOL when using arrow keys to move
 
 " Searching {{{
 set hlsearch			" Highlight every presence of search prhrase

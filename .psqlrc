@@ -1,0 +1,12 @@
+-- Don't display the "helpful" message on startup.
+\set QUIET 1
+\pset null '[NULL]'
+\set PROMPT1 '%[%033[1;30m%][ %[%033[1;32m%]%n@%M %[%033[1;34m%]%/ %[%033[1m%]%R%[%033[1;30m%]]%[%033[1;34m%]%#%[%033[0m%] '
+\set PROMPT2 '%R%#    '
+\timing
+-- \x auto
+-- \set VERBOSITY verbose
+-- \set HISTFILE ~/.psql_history- :DBNAME
+\set HISTCONTROL ignoredups
+\set COMP_KEYWORD_CASE upper
+\unset quiet

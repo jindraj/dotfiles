@@ -23,7 +23,7 @@ removedia() {
 
 # ps grep
 function psg() {
-	ps auxww | grep --color=always $* | grep -v grep
+	ps auxww | grep -i $* | grep -v grep
 }
 
 # Password generator
