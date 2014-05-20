@@ -1,3 +1,4 @@
+[[ -s ~/.bash_local ]] && source ~/.bash_local
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
 if $(which brew &> /dev/null)
@@ -17,7 +18,9 @@ shopt -s cdspell
 shopt -s histappend
 
 [ -n "$TMUX" ] && export TERM=screen-256color
-PATH=$PATH:$HOME/bin:/usr/local/sbin
+PATH="$PATH:$HOME/bin"
+PATH="$PATH:/usr/local/sbin"
+PATH="$PATH:/usr/texbin"
 export KRB5_CONFIG=~/.krb5.conf
 HISTSIZE=5000
 HISTFILESIZE=10000

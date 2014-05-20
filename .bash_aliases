@@ -16,6 +16,7 @@ alias s='ssh'
 alias se='sudo vim'
 alias vim='vim'
 alias vi='vim'
+alias tssh='tmux-cssh'
 #alias tmux='tmux -2 attach-session || tmux -2'
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	alias ls='ls -G'
