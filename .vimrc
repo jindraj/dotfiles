@@ -1,3 +1,9 @@
+" settings basic {{{
+set nocompatible               " be iMproved, needed by a lot of plugins
+set shortmess=I			" Hide splash screen :)
+filetype off                   " required!
+" }}}
+
 " Vundle configuration {{{
 let iCanHazVundle=1
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
@@ -33,7 +39,8 @@ if iCanHazVundle == 0
     :BundleInstall
 endif
 " }}}
-" DoPrettyXML {{{
+
+" func DoPrettyXML {{{
 function! DoPrettyXML()
   " save the filetype so we can restore it later
   let l:origft = &ft
@@ -64,10 +71,36 @@ endfunction
 command! PrettyXML call DoPrettyXML()
 " }}}
 
-set nocompatible               " be iMproved, needed by a lot of plugins
-filetype off                   " required!
-"let &t_SI = "\<Esc>]50;CursorShape=1\x7"  " change cursor in insertmode 
-"let &t_EI = "\<Esc>]50;CursorShape=0\x7"  " change cursor in insertmode
+" func ListToggle {{{
+function! ListToggle()
+    if &list
+        set nolist
+    else
+        set list
+    endif
+endfunction
+" }}}
+
+" func NumberToggle {{{
+function! NumberToggle()
+    if &number
+        set nonu
+    else
+        set nu
+    endif
+endfunction
+" }}}
+
+" func PasteToggle {{{
+function! PasteToggle()
+    if &paste
+        set nopaste
+    else
+        set paste
+    endif
+endfunction
+" }}}
+
 
 " Powerline Airline {{{
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
@@ -78,39 +111,41 @@ let g:airline#extensions#tabline#enabled = 1
 
 " }}}
 
-filetype plugin indent on     " required!
-
-" BASIC SETTINGS
-"""""""""""""""""""
-colorscheme twilight256		" Solarized colorscheme
-set background=dark		" Change colors to more usable on black background
-set novisualbell		" Disable window blinking
-set t_Co=256			" Enable 256-color mode
-set enc=utf-8			" Set encoding to UTF-8. Needed by powerline/airline
-set termencoding=utf-8		" Set encoding to UTF-8. Needed by powerline/airline
-set laststatus=2		" To see powerline/airline everytime (not only in split windows).
-set ruler			" Shows ruler in the bottom (not needed if 'vim-powerline is on'
-set scrolloff=20		" Preserve 20 visible lines up/down when moving vertical
-set cursorline			
-set shortmess=I			" Hide splash screen :)
-set showmatch			" Show matching bracets whern text indicator is over them
-set sidescrolloff=10		" Preserve at least 10 columns on both sides of cursor?
-set wildignore=*.dll,*.o,*.obj,*.bak,*.exe,*.pyc,*.jpg,*.gif,*.png
-set wildmenu			" Set command completion
+" settings misc {{{
+filetype plugin indent on			" required!
+set background=dark				" Change colors to more usable on black background
+set t_Co=256					" Enable 256-color mode
+colorscheme twilight256				" Solarized colorscheme
+syntax enable					" enable syntax highliting
+hi CursorLine cterm=NONE ctermbg=233	" highlight cursorline with
+hi LineNr ctermfg=16 cterm=bold ctermbg=240
+set cursorline					" display line with cursor
+set enc=utf-8					" Set encoding to UTF-8. Needed by powerline/airline
+set termencoding=utf-8				" Set encoding to UTF-8. Needed by powerline/airline
+set novisualbell				" Disable window blinking
+set ruler					" Shows ruler in the bottom (not needed if 'vim-powerline is on'
+set number					" Display line numbers on the left
+set numberwidth=5 				" Fix width for 5 digits number
+set laststatus=2				" To see powerline/airline everytime (not only in split windows).
+set scrolloff=20				" Preserve 20 visible lines up/down when moving vertical
+set showmatch					" Show matching bracets whern text indicator is over them
+set sidescrolloff=20				" Preserve at least 10 columns on both sides of cursor?
+set undolevels=200				" Number of possible undo actions
+set wildignore=*.o,*.obj,*.exe,*.pyc,*.jpg,*.gif,*.png
+set wildmenu					" Set command completion
 set wildmode=list:longest
-set undolevels=200		" Number of possible undo actions
-set modeline        		" Last lines in document sets vim mode
-set modelines=3     		" Number lines checked for modelines
-set number			" Display line numbers on the left
-set numberwidth=5 		" Fix width for 5 digits number
-hi LineNr ctermfg=darkgrey cterm=bold ctermbg=0
-let mapleader=","		" mapleader
-set lazyredraw			" redraw only when we need to. This should lead to faster macros
-set whichwrap+=<,>,[,]		" don't stop at the EOL when using arrow keys to move
+set autowrite					" automatically save before :next and similar commands
+set clipboard=unnamed				" s
+let mapleader=","				" mapleader
+set lazyredraw					" redraw only when we need to. This should lead to faster macros
+set whichwrap+=<,>,[,]				" don't stop at the EOL when using arrow keys to move, preserved stop using 'h' and 'l'
+set modeline        				" Last lines in document sets vim mode
+set modelines=3     				" Number lines checked for modelines
+" }}}
 
 " Searching {{{
-set hlsearch			" Highlight every presence of search prhrase
 set ignorecase smartcase	" Case insensitive search, but if used uppercase use case sensitive
+set hlsearch			" Highlight every presence of search prhrase
 set incsearch			" Highlight search phrase on the fly
 
 nnoremap <leader><space> :nohlsearch<CR>	" turn off search highlight
@@ -119,19 +154,25 @@ nnoremap <leader><space> :nohlsearch<CR>	" turn off search highlight
 " TABS & IDNENTS
 """""""""""""""""""
 set noexpandtab			" Don't expand TABs into SPACEs
-
 set matchtime=5			" 
 
-syntax enable			" enable syntax highliting
 
-filetype plugin indent on	" enable filetype, plugin and language-dependent indenting 
-
-" Tab key shortcuts configuraion
+" leader shortcuts {{{
 map <leader>tc :tabnew! %<cr>
 map <leader>tn :tabnext
 map <leader>tp :tabprev
 map <leader>te :tabedit
 map <leader>tq :tabclose<cr>
 map <leader>tm :tabmove
+nmap <leader>p :cal PasteToggle()<cr>
+nmap <leader>l :cal ListToggle()<cr>
+nmap <leader>n :cal NumberToggle()<cr>
+vnoremap <leader>s :sort
+" }}}
+
+" maybe later {{{
+"let &t_SI = "\<Esc>]50;CursorShape=1\x7"  " change cursor in insertmode 
+"let &t_EI = "\<Esc>]50;CursorShape=0\x7"  " change cursor in insertmode
+" }}}
 
 " vim:foldmethod=marker:foldlevel=0
