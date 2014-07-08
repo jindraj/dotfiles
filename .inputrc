@@ -7,3 +7,6 @@ set skip-completed-text on
 "\C-e\C-w": unix-filename-rubout
 
 "\e,": menu-complete
+
+# Wrap current line in while with 60s delay
+"\C-x\C-w": "\C-awhile true; do \C-e;sleep 60s;done"
