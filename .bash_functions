@@ -12,7 +12,7 @@ complete -o default -F __jenkins jenkins c
 function ec {
 	EC=$?
 	if [[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]]; then
-			echo -ne "\a$EC "
+		echo -ne "\a$EC "
  	fi
 }
 
@@ -62,33 +62,38 @@ ipwan(){
 }
 
 proxy(){
-	local proxyport=8080
+	local proxyport=1080
 	local proxyhost=127.0.0.1
+	local sshhost=work-http-proxy
 
 	__proxy_unset(){
-		unset http_proxy https_proxy no_proxy
+		unset all_proxy no_proxy
 		sed -i "" '/_proxy=/d' ~/.bash_local
 	}
 	__proxy_export(){
-		(echo "export http_proxy=socks://$proxyhost:$proxyport/";
-		echo "export https_proxy=socks://$proxyhost:$proxyport/";
+		export all_proxy=socks://$proxyhost:$proxyport/
+		export no_proxy=localhost,127.0.0.1,::1
+		(echo "export all_proxy=socks://$proxyhost:$proxyport/";
 		echo "export no_proxy=localhost,127.0.0.1,::1") >> ~/.bash_local
 	}
 	__proxy_start(){
-		ssh home-http-proxy -o VisualHostKey=no -o PermitLocalCommand=no -D $proxyport -N -f -n && \
+		ssh $sshhost -o VisualHostKey=no -o PermitLocalCommand=no -D $proxyport -N -f -n && \
 		networksetup -setsocksfirewallproxy Wi-Fi $proxyhost $proxyport && \
 		echo -e '\e[1;32mProxy started\e[0m'
 	}
 	__proxy_stop(){
-		pkill -f 'ssh home-http-proxy' && \
+		pkill -f "ssh $sshhost" && \
 		networksetup -setsocksfirewallproxystate Wi-Fi off && \
-		sed -i "" '/https\?_proxy/d' ~/.bash_local && \
 		echo -e '\e[1;31mProxy stopped\e[0m'
 	}
 	__proxy_status(){
+		echo -e "\e[0;33mSystem SOCKS5 configuration:\e[0m"
 		networksetup -getsocksfirewallproxy Wi-Fi
-		echo
+		echo -e "\e[0;33mbash environment variables:\e[0m"
 		env | grep --colour=never "_proxy=" || true
+		echo -e "\e[0;33mssh dynamic tunnel:\e[0m"
+		(echo "PID CMD ARGS"
+		pgrep -l -f "ssh $sshhost") |column -t
 	}
 	__proxy_help(){
 		echo "proxy start | stop | status | clean"
@@ -110,9 +115,13 @@ proxy(){
 			;;"start")		
 				__proxy_start
 				__proxy_export
+				__proxy_status
 			;;"stop")
 				__proxy_stop
 				__proxy_unset
+				__proxy_status
+			;;*)
+				__proxy_help
 			;;
 		esac
 	else
