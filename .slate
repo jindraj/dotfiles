@@ -2,24 +2,15 @@ config defaultToCurrentScreen true
 config nudgePercentOf screenSize
 config resizePercentOf screenSize
 
-# Resize Bindings
-# bind right:alt       resize +10% +0	# conflicts with jump one word forward
-# bind left:alt        resize -10% +0	# conflicts with jump one word backward
-bind up:alt          resize +0   -10%
-bind down:alt        resize +0   +10%
-bind right:ctrl;alt  resize -10% +0 bottom-right
-bind left:ctrl;alt   resize +10% +0 bottom-right
-bind up:ctrl;alt     resize +0   +10% bottom-right
-bind down:ctrl;alt   resize +0   -10% bottom-right
-
-bind l:ctrl;cmd		push right bar-resize:screenSizeX/2
+# Resize and move to sector
 bind h:ctrl;cmd		push left  bar-resize:screenSizeX/2
-bind k:ctrl;cmd		push up    bar-resize:screenSizeY/2
 bind j:ctrl;cmd		push down  bar-resize:screenSizeY/2
+bind k:ctrl;cmd		push up    bar-resize:screenSizeY/2
+bind l:ctrl;cmd		push right bar-resize:screenSizeX/2
 bind y:ctrl;cmd		corner top-left     resize:screenSizeX/2;screenSizeY/2
 bind p:ctrl;cmd		corner top-right    resize:screenSizeX/2;screenSizeY/2
-bind .:ctrl;cmd		corner bottom-right resize:screenSizeX/2;screenSizeY/2
 bind b:ctrl;cmd		corner bottom-left  resize:screenSizeX/2;screenSizeY/2
+bind .:ctrl;cmd		corner bottom-right resize:screenSizeX/2;screenSizeY/2
 bind m:ctrl;cmd		move screenOriginX;screenOriginY screenSizeX;screenSizeY
 
 # Throw Bindings
@@ -27,13 +18,5 @@ bind right:ctrl;alt;cmd throw right resize
 bind left:ctrl;alt;cmd  throw left  resize
 bind up:ctrl;alt;cmd    throw up    resize
 bind down:ctrl;alt;cmd  throw down  resize
-
-# Focus Bindings
-#bind right:cmd    focus right		# conflicts with jump to EOL
-#bind left:cmd     focus left		# conflicts with jump to BOL
-bind up:cmd       focus up
-bind down:cmd     focus down
-bind up:cmd;alt   focus behind
-bind down:cmd;alt focus behind
 
 bind esc:cmd hint
