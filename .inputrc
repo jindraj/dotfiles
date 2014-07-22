@@ -5,6 +5,7 @@ set echo-control-characters off
 set show-mode-in-prompt on
 set skip-completed-text on
 "\C-e\C-w": unix-filename-rubout
+"\C-e\C-d": "\e\C-]|\C-f\C-k"
 
 "\e,": menu-complete
 
