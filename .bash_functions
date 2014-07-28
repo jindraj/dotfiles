@@ -60,6 +60,26 @@ ipwan(){
 		dig +short myip.opendns.com @resolver1.opendns.com
 	fi
 }
+if [[ "$OSTYPE" == "darwin"* ]]; then
+	growl(){
+		if [[ $# -ge 1 ]]; then
+			message=$@
+		else
+			while IFS= read; do
+				message+=$REPLY
+			done
+		fi	
+		echo -en "\e]9;$(tr '\n' ' ' <<<"$message"|cut -c -37)\a"
+	}
+fi
+
+rpbcopy(){
+	echo -ne "\033]50;CopyToClipboard=;\a"
+	while IFS= read -r; do
+		echo $REPLY
+	done
+	echo -ne "\033]50;EndCopy\a"
+}
 
 proxy(){
 	local proxyport=1080
