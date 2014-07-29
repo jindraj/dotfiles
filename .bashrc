@@ -19,7 +19,8 @@ shopt -s histappend
 
 [ -n "$TMUX" ] && export TERM=screen-256color
 PATH="$PATH:$HOME/bin"
-PATH="$PATH:/usr/local/sbin"
+PATH="/usr/local/sbin:$PATH"
+PATH="/usr/local/bin:$PATH"
 PATH="$PATH:/usr/texbin"
 export KRB5_CONFIG=~/.krb5.conf
 HISTSIZE=5000
