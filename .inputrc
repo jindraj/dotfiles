@@ -2,12 +2,13 @@ set blink-matching-paren on
 set colored-stats on
 set completion-prefix-display-length 10
 set echo-control-characters off
-set show-mode-in-prompt on
 set skip-completed-text on
-"\C-e\C-w": unix-filename-rubout
-"\C-e\C-d": "\e\C-]|\C-f\C-k"
-
+Space: magic-space
 "\e,": menu-complete
+"\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
+"\C-x\C-p": dabbrev-expand					# complete word (used before)
+"\e\C-b": "\e\C-]/"						# jump backward to /
+"\e\C-f": "\C-]/"						# jump forward to /
+"\C-e\C-d": "\e\C-]|\C-f\C-k"					# delete to last pipe
+"\C-x\C-w": "\C-awhile true; do \C-e\C-e;sleep 60s;done"	# Wrap current line in while with 60s delay
 
-# Wrap current line in while with 60s delay
-"\C-x\C-w": "\C-awhile true; do \C-e;sleep 60s;done"
