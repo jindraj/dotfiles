@@ -8,22 +8,22 @@ export LC_NUMERIC='en_US.UTF-8'
 export LC_TIME='C'
 
 case $(hostname -f) in
-	"*.aws.ccl")
+	*.aws.ccl)
 		DC="aws"
 		TABRED="255"
 		TABGREEN="20"
 		TABBLUE="147";;
-	"*.nag.ccl")
+	*.nag.ccl)
 		DC="nag"
 		TABRED="30"
 		TABGREEN="144"
 		TABBLUE="255";;
-	"*.pils.ccl")
+	*.pils.ccl)
 		DC="pils"
 		TABRED="173"
 		TABGREEN="255"
 		TABBLUE="47";;
-	"*.prg.ccl")
+	*.prg.ccl)
 		DC="prg"
 		TABRED="173"
 		TABGREEN="255"
