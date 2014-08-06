@@ -29,9 +29,9 @@ case $(hostname -f) in
 		TABGREEN="255"
 		TABBLUE="47";;
 	*)
-		TABRED="140"
-		TABGREEN="140"
-		TABBLUE="140";; # change 140 to default for bg color
+		TABRED="255"
+		TABGREEN="255"
+		TABBLUE="255";;
 esac
 
 export PROMPT_COMMAND='
@@ -54,5 +54,6 @@ else
 		echo "Couldn't locate curl or wget binary to fetch iTerm2 shell integration script"
 	fi
 	unset iterm2_shell_integration_url
+	perl -p -i -e 's/PROMPT_COMMAND="preexec_invoke_cmd";/PROMPT_COMMAND="\${PROMPT_COMMAND}preexec_invoke_cmd";/g' ~/.iterm2_shell_integration.bash
 	source ~/.iterm2_shell_integration.bash
 fi
