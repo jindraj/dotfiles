@@ -3,20 +3,21 @@ alias aman='man -a'
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
 alias curl='curl -g -s'
+alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq)"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
-alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias l='ls -alh'
+alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias lstat="stat -lt '%Y-%m-%d %X'"
 alias mtr='mtr --curs'
-alias nocomment='grep -Ev '\''^(#|$)'\'''
-alias rsync='rsync -avzhPp --stats'
+alias nocomment="grep -Ev '^($|\s*#)'"
 alias r='sudo -E bash -l'
+alias rsync='rsync -avzhPp --stats'
 alias se='sudo vim'
 alias vim='vim'
 alias vi='vim'
-alias tssh='tmux-cssh'
-#alias tmux='tmux -2 attach-session || tmux -2'
+alias tssh='tmux-cssh -sa -oVisualHostKey=no'
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	alias ls='ls -G'
 else

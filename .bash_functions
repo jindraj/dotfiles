@@ -6,7 +6,6 @@ function __jenkins() {
 }
 complete -o default -F __jenkins jenkins c
 
-
 # Exitcode function
 ## Echos exitcode if differs from 0 or 130
 function ec {
