@@ -135,7 +135,7 @@ set wildignore=*.o,*.obj,*.exe,*.pyc,*.jpg,*.gif,*.png
 set wildmenu					" Set command completion
 set wildmode=list:longest
 set autowrite					" automatically save before :next and similar commands
-set clipboard=unnamed				" s
+"set clipboard=unnamed				" s
 let mapleader=","				" mapleader
 set lazyredraw					" redraw only when we need to. This should lead to faster macros
 set whichwrap+=<,>,[,]				" don't stop at the EOL when using arrow keys to move, preserved stop using 'h' and 'l'
