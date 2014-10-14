@@ -15,6 +15,10 @@ function ec {
  	fi
 }
 
+function sshmux() {
+	ssh -t $1 'tmux attach 2> /dev/null || tmux /dev/null'
+}
+
 # Remove diacritics - dosn't work correctly on osx
 removedia() {
 	iconv -f utf8 -t ASCII//TRANSLIT
