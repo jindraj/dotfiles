@@ -6,27 +6,38 @@ function __jenkins() {
 }
 complete -o default -F __jenkins jenkins c
 
-# Exitcode function
-## Echos exitcode if differs from 0 or 130
+# Functions used in PS1.
+## Prepend PS1 with exitcode if not OK
 function ec {
 	EC=$?
-	if [[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]]; then
-		echo -ne "\a$EC "
- 	fi
+	[[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\e[1;30m[\e[0m\e[1;31m$EC\e[0m\e[1;30m]\e[0m"
+}
+## Prepend PS1 with number of tmux+screen sessions
+function nr_sessions {
+	TMUX_SESSIONS=$(tmux list-sessions 2> /dev/null|wc -l)
+	SCREEN_SESSIONS=$(screen -list |grep "\t" 2> /dev/null|wc -l)
+	[[ $(($SCREEN_SESSIONS+$TMUX_SESSIONS)) -gt 0 ]] && \
+	echo -en "\e[1;30m[\e[0m$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\e[1;30m]\e[0m"
 }
 
 function sshmux() {
-	ssh -t $1 'tmux attach 2> /dev/null || tmux /dev/null'
+	ssh -vt ${1:-omnius.jakubjindra.eu} 'tmux attach || tmux'
 }
 
 # Remove diacritics - dosn't work correctly on osx
 removedia() {
-	iconv -f utf8 -t ASCII//TRANSLIT
+	[[ "$OSTYPE" == "darwin"* ]] && \
+		echo -e "ERR: This works only on linux… fix me\a" 1>&2 && exit 1 || \
+		iconv -f utf8 -t ASCII//TRANSLIT
 }
 
 # ps grep
 function psg() {
 	ps auxww | grep -i $* | grep -v grep
+}
+
+function odjebat() {
+	ssh-keygen -R $1 && ssh -o 'StrictHostKeyChecking=no' $1
 }
 
 # Password generator
@@ -63,6 +74,7 @@ ipwan(){
 		dig +short myip.opendns.com @resolver1.opendns.com
 	fi
 }
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	growl(){
 		if [[ $# -ge 1 ]]; then
