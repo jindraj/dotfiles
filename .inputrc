@@ -3,7 +3,9 @@ set colored-stats on
 set completion-prefix-display-length 10
 set echo-control-characters off
 set skip-completed-text on
-Space: magic-space
+$if Bash
+  Space: magic-space
+$endif
 "\e,": menu-complete
 "\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
 "\C-x\C-p": dabbrev-expand					# complete word (used before)
