@@ -15,7 +15,7 @@ function ec {
 ## Prepend PS1 with number of tmux+screen sessions
 function nr_sessions {
 	TMUX_SESSIONS=$(tmux list-sessions 2> /dev/null|wc -l)
-	SCREEN_SESSIONS=$(screen -list |grep "\t" 2> /dev/null|wc -l)
+	SCREEN_SESSIONS=$(screen -list 2> /dev/null |grep $'\t'|wc -l)
 	[[ $(($SCREEN_SESSIONS+$TMUX_SESSIONS)) -gt 0 ]] && \
 	echo -en "\e[1;30m[\e[0m$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\e[1;30m]\e[0m"
 }
