@@ -2,6 +2,7 @@
 alias aman='man -a'
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
+alias gitcd='cd $(git rev-parse --show-toplevel)'
 alias curl='curl -g -s'
 alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo discoveryutil mdnsflushcache" 
