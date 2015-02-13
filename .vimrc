@@ -11,7 +11,7 @@ if !filereadable(vundle_readme)
     echo "Installing Vundle.."
     echo ""
     silent !mkdir -p ~/.vim/bundle
-    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle
+    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle 2>/dev/null
     let iCanHazVundle=0
 endif
 set rtp+=~/.vim/bundle/vundle/
@@ -31,6 +31,8 @@ Plugin 'ldap_schema.vim'
 Plugin 'muttrc.vim'
 Plugin 'ldif.vim'
 Plugin 'haproxy'
+Plugin 'vim-scripts/applescript.vim'
+Plugin 'airblade/vim-gitgutter'
 
 "...All your other bundles...
 if iCanHazVundle == 0
