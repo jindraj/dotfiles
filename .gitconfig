@@ -42,7 +42,7 @@
 	tool		= vimdiff
 
 [difftool]
-	tool		=vimdiff
+	tool		= vimdiff
 	prompt		= false
 
 [merge]
