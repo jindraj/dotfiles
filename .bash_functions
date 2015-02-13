@@ -10,18 +10,19 @@ complete -o default -F __jenkins jenkins c
 ## Prepend PS1 with exitcode if not OK
 function ec {
 	EC=$?
-	[[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\e[1;30m[\e[0m\e[1;31m$EC\e[0m\e[1;30m]\e[0m"
+	[[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\e[1;30m[\e[0m\e[1;31m${EC}\e[0m\e[1;30m]\e[0m"
 }
 ## Prepend PS1 with number of tmux+screen sessions
 function nr_sessions {
 	TMUX_SESSIONS=$(tmux list-sessions 2> /dev/null|wc -l)
 	SCREEN_SESSIONS=$(screen -list 2> /dev/null |grep $'\t'|wc -l)
+	[[ $TERM == screen* ]] && SCREEN_SESSIONS=$(($SCREEN_SESSIONS - 1))
 	[[ $(($SCREEN_SESSIONS+$TMUX_SESSIONS)) -gt 0 ]] && \
 	echo -en "\e[1;30m[\e[0m$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\e[1;30m]\e[0m"
 }
 
 function sshmux() {
-	ssh -vt ${1:-omnius.jakubjindra.eu} 'tmux attach || tmux'
+	ssh -v4t ${1:-omnius.jakubjindra.eu} 'tmux attach || tmux'
 }
 
 # Remove diacritics - dosn't work correctly on osx
@@ -42,9 +43,7 @@ function odjebat() {
 
 # Password generator
 genpasswd() {
-	local l=$1
-	[ "$l" == "" ] && l=20
-	LC_CTYPE=C tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${l} | xargs
+	LC_CTYPE=C tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${1:-20} | xargs
 }
 
 # Get MY passwords
@@ -68,11 +67,9 @@ refreshpass() {
 }
 
 ipwan(){
-	if [ "$1" == "-n" ];then
-		dig +short myip.opendns.com @resolver1.opendns.com|tr -d '\n'
-	else
-		dig +short myip.opendns.com @resolver1.opendns.com
-	fi
+	[ "$1" == "-n" ] \
+		&& dig +short myip.opendns.com @resolver1.opendns.com|tr -d '\n' \
+		|| dig +short myip.opendns.com @resolver1.opendns.com
 }
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -165,5 +162,3 @@ proxy(){
 		return 1	 
 	fi
 }
-		
-			
