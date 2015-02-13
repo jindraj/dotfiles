@@ -1,6 +1,8 @@
+[[ $- == *i* ]] && true || return
 [[ -s ~/.bash_local ]] && source ~/.bash_local
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
+
 if $(which brew &> /dev/null)
 then
 	[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion
@@ -9,7 +11,7 @@ else
 	then
 		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
 	else
-		function __git_ps1() { return; }
+		_git_ps1() { return; }
 	fi
 fi
 
@@ -24,7 +26,6 @@ PATH="$PATH:$HOME/bin"
 PATH="/usr/local/sbin:$PATH"
 PATH="/usr/local/bin:$PATH"
 PATH="$PATH:/usr/texbin"
-export KRB5_CONFIG=~/.krb5.conf
 HISTSIZE=5000
 HISTFILESIZE=10000
 HISTCONTROL=ignoreboth
@@ -33,6 +34,7 @@ GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM="auto"
 export LSCOLORS=ExGxFxdxCxegedhbagacec
 export GREP_OPTIONS="--color=auto"
+export KRB5_CONFIG=~/.krb5.conf
 
 # PROMPTS CONFIG
 PROMPT_DIRTRIM=2
