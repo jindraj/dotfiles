@@ -19,6 +19,7 @@ call vundle#rc()
 Bundle 'gmarik/vundle'
 "Add your bundles here
 Plugin 'tpope/vim-fugitive'
+Plugin 'airblade/vim-gitgutter'
 "Plugin 'Lokaltog/powerline'
 Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
@@ -32,7 +33,6 @@ Plugin 'muttrc.vim'
 Plugin 'ldif.vim'
 Plugin 'haproxy'
 Plugin 'vim-scripts/applescript.vim'
-Plugin 'airblade/vim-gitgutter'
 
 "...All your other bundles...
 if iCanHazVundle == 0
@@ -87,8 +87,20 @@ endfunction
 function! NumberToggle()
     if &number
         set nonu
+	GitGutterDisable
     else
         set nu
+	GitGutterEnable
+    endif
+endfunction
+" }}}
+
+" func LineWrapToggle {{{
+function! PasteToggle()
+    if &wrap
+        set nowrap
+    else
+        set wrap
     endif
 endfunction
 " }}}
@@ -102,7 +114,6 @@ function! PasteToggle()
     endif
 endfunction
 " }}}
-
 
 " Powerline Airline {{{
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
@@ -169,6 +180,7 @@ map <leader>tm :tabmove
 nmap <leader>p :cal PasteToggle()<cr>
 nmap <leader>l :cal ListToggle()<cr>
 nmap <leader>n :cal NumberToggle()<cr>
+nmap <leader>w :cal LineWrapToggle()<cr>
 vnoremap <leader>s :sort
 " }}}
 
