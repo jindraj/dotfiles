@@ -26,10 +26,22 @@ function sshmux() {
 }
 
 # Remove diacritics - dosn't work correctly on osx
-removedia() {
+function removedia() {
 	[[ "$OSTYPE" == "darwin"* ]] && \
 		echo -e "ERR: This works only on linux… fix me\a" 1>&2 && exit 1 || \
 		iconv -f utf8 -t ASCII//TRANSLIT
+}
+
+# create histogram from output of `uniq -c`
+function histo(){
+  export RATIO=${1:-1}
+  awk '{print $1" "$2}' | perl -e '
+    use POSIX;
+    while(<>){
+      chomp;
+      my @a=split(/ /);
+      print $a[1] . " " . "+" x (ceil($a[0]/$ENV{'RATIO'})) . "\n";
+    }'
 }
 
 # ps grep
@@ -43,7 +55,7 @@ function odjebat() {
 
 # Password generator
 genpasswd() {
-	LC_CTYPE=C tr -dc A-Za-z0-9_ < /dev/urandom | head -c ${1:-20} | xargs
+	LC_CTYPE=C tr -dc A-Za-z0-9_-.:%@ < /dev/urandom | head -c ${1:-20} | xargs
 }
 
 # Get MY passwords
