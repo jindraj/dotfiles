@@ -6,25 +6,30 @@ set skip-completed-text on
 "\e,": menu-complete
 "\C-x\C-p": dabbrev-expand					# complete word (used before)
 "\C-x\C-i": dynamic-complete-history
+
 $if bash
-  Space: magic-space
+  Space: magic-space						# expand short
   "\C-e\C-d": "\e\C-]|\C-f\C-k"					# delete to last pipe
   "\C-x\C-w": "\C-awhile :;do \C-e\C-e;sleep 60;done"		# Wrap current line in while with 60s delay
   "\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
   "\e\C-b": "\e\C-]/"						# jump backward to /
   "\e\C-f": "\C-]/"						# jump forward to /
 $endif
+
 $if mysql
-  "\C-e\C-p": "SHOW PROCESSLIST;\C-j"				# processlist
-  "\C-e\C-f": "SHOW FULL PROCESSLIST;\C-j"			# full processlist
-  "\C-e\C-n": "SHOW SLAVE STATUS\\\G\C-j"			# slave status
-  "\C-e\C-m": "SHOW MASTER STATUS;\C-j"				# master status
-  "\C-e\C-h": "SHOW SLAVE HOSTS;\C-j"				# slave hosts
-  "\C-e\C-v": "SHOW VARIABLES;\C-j"				# variables
+  "\C-e\C-p": "SHOW PROCESSLIST;\C-j"
+  "\C-e\C-f": "SHOW FULL PROCESSLIST;\C-j"
+  "\C-e\C-m": "SHOW MASTER STATUS;\C-j"
+  "\C-e\C-n": "SHOW SLAVE STATUS\\\G\C-j"
+  "\C-e\C-h": "SHOW SLAVE HOSTS;\C-j"
+  "\C-e\C-v": "SHOW VARIABLES;\C-j"
+  "\C-e\C-d": "SHOW DATABASES;\C-j"
+  "\C-e\C-t": "SHOW TABLES;\C-j"
 $endif
+
 $if psql
-  "\C-e\C-p": "SELECT * FROM pg_stat_activity;\C-j"				# processlist
-  "\C-e\C-m": "SELECT * FROM pg_stat_replication;\C-j"				# pg_stat_replication
-  "\C-e\C-d": "SELECT NOW() - pg_last_xact_replay_timestamp() AS replag;\C-j"	# replag
-  "\C-e\C-v": "SELECT ALL;\C-j"							# variables/config
+  "\C-e\C-p": "SELECT * FROM pg_stat_activity;\C-j"
+  "\C-e\C-m": "SELECT * FROM pg_stat_replication;\C-j"
+  "\C-e\C-d": "SELECT NOW() - pg_last_xact_replay_timestamp() AS replag;\C-j"
+  "\C-e\C-v": "SHOW ALL;\C-j"
 $endif
