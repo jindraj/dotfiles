@@ -6,6 +6,7 @@ set skip-completed-text on
 "\e,": menu-complete
 "\C-x\C-p": dabbrev-expand					# complete word (used before)
 "\C-x\C-i": dynamic-complete-history
+"\C-x\C-m": print-last-kbd-macro				# print macro definition
 
 $if bash
   Space: magic-space						# expand short
