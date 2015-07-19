@@ -3,18 +3,25 @@ set colored-stats on
 set completion-prefix-display-length 10
 set echo-control-characters off
 set skip-completed-text on
+
 "\e,": menu-complete
 "\C-x\C-p": dabbrev-expand					# complete word (used before)
 "\C-x\C-i": dynamic-complete-history
 "\C-x\C-m": print-last-kbd-macro				# print macro definition
+"\C-x\C-f": dump-macros
+"\e\C-l": redraw-current-line
 
+# Applications
 $if bash
   Space: magic-space						# expand short
+  "\e\C-d": forward-backward-delete-char
+  "\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
   "\C-e\C-d": "\e\C-]|\C-f\C-k"					# delete to last pipe
   "\C-x\C-w": "\C-awhile :;do \C-e\C-e;sleep 60;done"		# Wrap current line in while with 60s delay
-  "\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
+  "\C-x\C-q": "\eb\"\ef\""
   "\e\C-b": "\e\C-]/"						# jump backward to /
   "\e\C-f": "\C-]/"						# jump forward to /
+  "\C-xq": "\eb\"\ef\""
 $endif
 
 $if mysql
@@ -34,3 +41,16 @@ $if psql
   "\C-e\C-d": "SELECT NOW() - pg_last_xact_replay_timestamp() AS replag;\C-j"
   "\C-e\C-v": "SHOW ALL;\C-j"
 $endif
+
+## Modes
+#set show-mode-in-prompt on
+#set keymap emacs
+#  "\C-e\C-m": vi-editing-mode
+#
+#set keymap vi-command
+#  "\C-e\C-m": emacs-editing-mode
+#  "k": history-search-backward
+#  "j": history-search-forward
+#
+#set keymap vi-insert
+#  "\C-e\C-m": emacs-editing-mode
