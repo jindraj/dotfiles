@@ -30,7 +30,7 @@ fi;
 
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'
-if which -s grc
+if which grc &> /dev/null
 then
 	alias ping='grc ping'
 	alias ping6='grc ping6'

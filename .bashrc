@@ -4,7 +4,7 @@
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
 [[ -x /usr/local/bin/aws ]] && complete -C aws_completer aws
 
-if which -s brew
+if which brew &> /dev/null
 then
 	[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion
 	[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
@@ -67,17 +67,17 @@ case $TERM in
 esac
 
 # PAGER, MANPAGER {{{
-if which -s vimpager
+if which vimpager &> /dev/null
 then 
 	export PAGER="vimpager -c 'ft=man nomod nolist'"
 else
 	export PAGER="less"
 fi
 
-if which -s vimmanpager
+if which vimmanpager &> /dev/null
 then 
 	export MANPAGER="vimmanpager"
-elif which -s vimpager
+elif which vimpager &> /dev/null
 then
 	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
 else
