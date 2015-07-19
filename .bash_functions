@@ -1,3 +1,4 @@
+#!/bin/bash
 function __jenkins() {
 	local cur tasks
 	cur="${COMP_WORDS[COMP_CWORD]}"
@@ -10,7 +11,7 @@ complete -o default -F __jenkins jenkins c
 ## Prepend PS1 with exitcode if not OK
 function ec {
 	EC=$?
-	[[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\e[1;30m[\e[0m\e[1;31m${EC}\e[0m\e[1;30m]\e[0m"
+	[[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02\x01\e[1;31m\x02${EC}\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
 ## Prepend PS1 with number of tmux+screen sessions
 function nr_sessions {
@@ -18,11 +19,22 @@ function nr_sessions {
 	SCREEN_SESSIONS=$(screen -list 2> /dev/null |grep $'\t'|wc -l)
 	[[ $TERM == screen* ]] && SCREEN_SESSIONS=$(($SCREEN_SESSIONS - 1))
 	[[ $(($SCREEN_SESSIONS+$TMUX_SESSIONS)) -gt 0 ]] && \
-	echo -en "\e[1;30m[\e[0m$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\e[1;30m]\e[0m"
+	echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
 
+function ldapaudit() {
+  [[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\a" && return
+  [[ "$#" -eq 1 ]] && filter="reqStart>=$1"
+  [[ "$#" -eq 2 ]] && filter="(&(reqstart>=$1)(reqStart<=$2))"
+  [[ "$#" -ge 3 ]] && filter="(&(reqstart>=$1)(reqStart<=$2)$3)"
+  ldapsearch -W -S reqStart -bcn=accesslog "$filter" reqStart reqMod reqDn reqType 
+}
 function sshmux() {
 	ssh -v4t ${1:-omnius.jakubjindra.eu} 'tmux attach || tmux'
+}
+
+function ns() {
+	netstat -W $@ | column -t 
 }
 
 # Remove diacritics - dosn't work correctly on osx
