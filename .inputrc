@@ -18,10 +18,9 @@ $if bash
   "\C-e\C-w": unix-filename-rubout				# kill backward, stop by / and space
   "\C-e\C-d": "\e\C-]|\C-f\C-k"					# delete to last pipe
   "\C-x\C-w": "\C-awhile :;do \C-e\C-e;sleep 60;done"		# Wrap current line in while with 60s delay
-  "\C-x\C-q": "\eb\"\ef\""
   "\e\C-b": "\e\C-]/"						# jump backward to /
   "\e\C-f": "\C-]/"						# jump forward to /
-  "\C-xq": "\eb\"\ef\""
+  "\C-xq": "\eb\"\ef\""						# wrap current word in "
 $endif
 
 $if mysql
