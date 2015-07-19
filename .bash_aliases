@@ -6,7 +6,7 @@ alias counts='sort|uniq -c|sort -g'
 alias gitcd='cd $(git rev-parse --show-toplevel)'
 alias curl='curl -g -s'
 alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
-alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo discoveryutil mdnsflushcache" 
+alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo killall -HUP mDNSResponder; sudo dscacheutil -flushcache"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
 alias l='ls -alh'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
@@ -30,7 +30,7 @@ fi;
 
 # GRC aliases
 #alias grc='grc -c ~/.grc/main.conf --colour=auto'
-if $(which grc &> /dev/null)
+if which -s grc
 then
 	alias ping='grc ping'
 	alias ping6='grc ping6'
