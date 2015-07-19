@@ -23,8 +23,10 @@ Plugin 'airblade/vim-gitgutter'
 "Plugin 'Lokaltog/powerline'
 Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
+Plugin 'scrooloose/syntastic'
 Plugin 'vim-scripts/twilight256.vim'
-Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
+Plugin 'rodjek/vim-puppet'
+"Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
 Plugin 'tpope/vim-vividchalk'
 Plugin 'tex.vim'
 Plugin 'gitvimdiff'
@@ -75,11 +77,7 @@ command! PrettyXML call DoPrettyXML()
 
 " func ListToggle {{{
 function! ListToggle()
-    if &list
-        set nolist
-    else
-        set list
-    endif
+	set list!
 endfunction
 " }}}
 
@@ -96,22 +94,14 @@ endfunction
 " }}}
 
 " func LineWrapToggle {{{
-function! PasteToggle()
-    if &wrap
-        set nowrap
-    else
-        set wrap
-    endif
+function! LineWrapToggle()
+	set wrap!
 endfunction
 " }}}
 
 " func PasteToggle {{{
 function! PasteToggle()
-    if &paste
-        set nopaste
-    else
-        set paste
-    endif
+	set paste!
 endfunction
 " }}}
 
@@ -171,6 +161,8 @@ set matchtime=5			"
 
 
 " leader shortcuts {{{
+map <leader>n :next
+map <leader>p :prev
 map <leader>tc :tabnew! %<cr>
 map <leader>tn :tabnext
 map <leader>tp :tabprev
