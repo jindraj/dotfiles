@@ -2,10 +2,12 @@
 [[ -s ~/.bash_local ]] && source ~/.bash_local
 [[ -s ~/.bash_aliases ]] && source ~/.bash_aliases
 [[ -s ~/.bash_functions ]] && source ~/.bash_functions
+[[ -x /usr/local/bin/aws ]] && complete -C aws_completer aws
 
-if $(which brew &> /dev/null)
+if which -s brew
 then
 	[[ -s $(brew --prefix 2> /dev/null)/etc/bash_completion ]] && source $(brew --prefix 2> /dev/null)/etc/bash_completion
+	[[ -s $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 else
 	if which git &> /dev/null
 	then
@@ -18,8 +20,9 @@ fi
 shopt -s checkwinsize
 shopt -s cdspell
 shopt -s histappend
+shopt -s autocd
 
-complete -F _ssh sshmux tssh curl odjebat
+complete -F _ssh sshmux tssh curl odjebat nc
 
 [ -n "$TMUX" ] && export TERM=screen-256color
 PATH="$PATH:$HOME/bin"
@@ -35,17 +38,20 @@ GIT_PS1_SHOWUPSTREAM="auto"
 export LSCOLORS=ExGxFxdxCxegedhbagacec
 export GREP_OPTIONS="--color=auto"
 export KRB5_CONFIG=~/.krb5.conf
+EDITOR="vim"
+SUDO_EDITOR=$EDITOR
 
 # PROMPTS CONFIG
 PROMPT_DIRTRIM=2
-export MYSQL_PS1=$(echo -e "\e[1;30m[ \e[1;32m\u@\h:\p \e[1;34m\d \e[1;30m]\e[1;34m>\e[0m\_")
+export MYSQL_PS1=$(echo -e "[ \u@\h:\p \d ]>\_")
+#export MYSQL_PS1=$(echo -e "\e[1;30m[\e[0m \e[1;32m\u@\h:\p\e[0m \e[1;34m\d\e[0m \e[1;30m]\e[0m\e[1;34m>\e[0m\_")
 case $TERM in
 	linux|xterm*|rxvt*|Eterm|aterm|vt100)
 		if [ "$UID" -eq 0 ]
 		then
-			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[1;34m\]\$\[\e[0m\] '
+			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
 		else
-			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[1m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
+			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
 		fi
 	;;
 	screen|screen-256color|screen.rxvt)
@@ -60,21 +66,18 @@ case $TERM in
 		PS1='[ \u@\h \w ]\$ '
 esac
 
-# EDITOR, PAGER, MANPAGER {{{
-EDITOR="vim"
-SUDO_EDITOR=$EDITOR
-
-if which vimpager &> /dev/null
+# PAGER, MANPAGER {{{
+if which -s vimpager
 then 
 	export PAGER="vimpager -c 'ft=man nomod nolist'"
 else
 	export PAGER="less"
 fi
 
-if which vimmanpager &> /dev/null
+if which -s vimmanpager
 then 
 	export MANPAGER="vimmanpager"
-elif which vimpager &> /dev/null
+elif which -s vimpager
 then
 	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
 else
