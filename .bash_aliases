@@ -8,6 +8,12 @@ alias curl='curl -g -s'
 alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo killall -HUP mDNSResponder; sudo dscacheutil -flushcache"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
+alias grep='grep --color=auto'
+alias egrep='grep --color=auto'
+alias fgrep='grep --color=auto'
+alias zgrep='grep --color=auto'
+alias zegrep='grep --color=auto'
+alias zfgrep='grep --color=auto'
 alias l='ls -alh'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias lstat="stat -lt '%Y-%m-%d %X'"

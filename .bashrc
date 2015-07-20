@@ -13,7 +13,7 @@ else
 	then
 		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
 	else
-		_git_ps1() { return; }
+		__git_ps1() { return; }
 	fi
 fi
 
@@ -36,7 +36,6 @@ GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM="auto"
 export LSCOLORS=ExGxFxdxCxegedhbagacec
-export GREP_OPTIONS="--color=auto"
 export KRB5_CONFIG=~/.krb5.conf
 EDITOR="vim"
 SUDO_EDITOR=$EDITOR
