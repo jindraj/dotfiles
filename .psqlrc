@@ -2,7 +2,7 @@
 \set QUIET 1
 \pset null '[NULL]'
 \set PROMPT1 '\x01\e[1;30m\x02[\x01\e[0m\x02 \x01\e[1;32m\x02%n@%M\x01\e[0m\x02 \x01\e[1;34m\x02%/\x01\e[0m\x02 \x01\e[1m\x02%R\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02\x01\e[1;34m\x02%#\x01\e[0m\x02 '
-\set PROMPT2 '\x01\033[1;91m\033[5m\x02%R%#\x01\033[0m\x02	'
+\set PROMPT2 '\x01\033[1;31m\033[5m\x02%R%#\x01\033[0m\x02	'
 \timing
 -- \x auto
 -- \set VERBOSITY verbose
