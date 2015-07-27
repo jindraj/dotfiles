@@ -42,8 +42,7 @@ SUDO_EDITOR=$EDITOR
 
 # PROMPTS CONFIG
 PROMPT_DIRTRIM=2
-export MYSQL_PS1=$(echo -e "[ \u@\h:\p \d ]>\_")
-#export MYSQL_PS1=$(echo -e "\e[1;30m[\e[0m \e[1;32m\u@\h:\p\e[0m \e[1;34m\d\e[0m \e[1;30m]\e[0m\e[1;34m>\e[0m\_")
+export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[ \x01\e[1;32m\x02\u@\h:\p \x01\e[1;34m\x02\d \x01\e[1;30m\x02]\x01\e[1;34m\x02>\x01\e[0m\x02\_")
 case $TERM in
 	linux|xterm*|rxvt*|Eterm|aterm|vt100)
 		if [ "$UID" -eq 0 ]
