@@ -23,7 +23,7 @@ function nr_sessions {
 }
 
 function ldapaudit() {
-  [[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\a" && return
+[[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen] [filter]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\nFilter is &ed with the timeranges filter (&(timeRangeHigherThen)(timeRangeLowerThen)(filter))\a" && return
   [[ "$#" -eq 1 ]] && filter="reqStart>=$1"
   [[ "$#" -eq 2 ]] && filter="(&(reqstart>=$1)(reqStart<=$2))"
   [[ "$#" -ge 3 ]] && filter="(&(reqstart>=$1)(reqStart<=$2)$3)"
@@ -58,7 +58,7 @@ function histo(){
 
 # ps grep
 function psg() {
-	ps auxww | grep -i $* | grep -v grep
+	ps auxww | grep -i "$*" | grep -v grep
 }
 
 function odjebat() {

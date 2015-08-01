@@ -14,6 +14,7 @@ alias fgrep='grep --color=auto'
 alias zgrep='grep --color=auto'
 alias zegrep='grep --color=auto'
 alias zfgrep='grep --color=auto'
+alias json='python -mjson.tool'
 alias l='ls -alh'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias lstat="stat -lt '%Y-%m-%d %X'"
@@ -22,8 +23,7 @@ alias nocomment="grep -Ev '^($|\s*#)'"
 alias nocolor="perl -pe 's/\e\[[\d;]*m//g;'"
 alias r='sudo -E bash -l'
 alias rsync='rsync -avzhPp --stats'
-alias se='sudo vim'
-alias vim='vim'
+alias se='sudo $EDITOR'
 alias vi='vim'
 alias vpnwho='dig +short -x '
 alias tssh='tmux-cssh -sa -oVisualHostKey=no'
