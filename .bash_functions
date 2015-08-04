@@ -22,18 +22,8 @@ function nr_sessions {
 	echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
 
-prefix(){
-	case $1 in
-		"ts")   prefix=$(date +%s) ;;
-		"date") prefix=$(date) ;;
-		*)    prefix="$1"  ;;
-	esac
-	[[ "$2" = "-n" ]]   || prefix=$(echo -en "\x01\e[1;37m\x02${prefix}\x01\e[0m\x02")
-	sed "s/^/$prefix:	/" || cat
-}
-
 function ldapaudit() {
-[[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen] [filter]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\nFilter is &ed with the timeranges filter (&(timeRangeHigherThen)(timeRangeLowerThen)(filter))\a" && return
+  [[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen] [filter]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\nFilter is &ed with the timeranges filter (&(timeRangeHigherThen)(timeRangeLowerThen)(filter))\a" && return
   [[ "$#" -eq 1 ]] && filter="reqStart>=$1"
   [[ "$#" -eq 2 ]] && filter="(&(reqstart>=$1)(reqStart<=$2))"
   [[ "$#" -ge 3 ]] && filter="(&(reqstart>=$1)(reqStart<=$2)$3)"
@@ -122,9 +112,31 @@ fi
 rpbcopy(){
 	echo -ne "\033]50;CopyToClipboard=;\a"
 	while IFS= read -r; do
-		echo $REPLY
+		echo "$REPLY"
 	done
 	echo -ne "\033]50;EndCopy\a"
+}
+
+prefix(){
+	__prefix_helper(){
+		case $1 in
+			"ts")   prefix=$(date +%s) ;;
+			"date") prefix=$(date +%Y-%m-%dT%H:%M:%S) ;;
+			"time") prefix=$(date +%H:%M:%S) ;;
+			*)    prefix="$1"  ;;
+		esac
+		[[ "$2" = "-n" ]]   || prefix="\x01\e[1;37m\x02${prefix}\x01\e[0m\x02"
+		echo -en "$prefix"
+	}
+
+	IFS='
+	'
+	while IFS=' ' read -r
+	do 
+		#echo -e "$REPLY"
+		prefix=$(__prefix_helper $@)
+		echo -e "$REPLY" | sed "s/^/$prefix:	/" # || cat
+	done
 }
 
 proxy(){
