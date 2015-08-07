@@ -2,12 +2,13 @@
 alias aman='man -a'
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
+alias chromekill="ps ux | grep '[C]hrome Helper --type=renderer' | grep -v extension-process | awk '{print $2}'|xargs kill"
 alias counts='sort|uniq -c|sort -g'
-alias gitcd='cd $(git rev-parse --show-toplevel)'
 alias curl='curl -g -s'
 alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
 alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo killall -HUP mDNSResponder; sudo dscacheutil -flushcache"
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
+alias gitcd='cd $(git rev-parse --show-toplevel)'
 alias grep='grep --color=auto'
 alias egrep='grep --color=auto'
 alias fgrep='grep --color=auto'
@@ -24,9 +25,10 @@ alias nocolor="perl -pe 's/\e\[[\d;]*m//g;'"
 alias r='sudo -E bash -l'
 alias rsync='rsync -avzhPp --stats'
 alias se='sudo $EDITOR'
+alias tssh='tmux-cssh -sa -oVisualHostKey=no'
 alias vi='vim'
 alias vpnwho='dig +short -x '
-alias tssh='tmux-cssh -sa -oVisualHostKey=no'
+alias urlencode='python -c "import sys,urllib; print urllib.quote_plus(sys.stdin.read());"'
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	alias ls='ls -G'
