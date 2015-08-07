@@ -103,7 +103,7 @@ ipwan(){
 }
 
 jsoncurl(){
-	curl "$@" | json | grcat ~/.grc/conf.curl
+	curl "$@" | json
 }
 ccurl() {
 	curl "$@" | grcat ~/.grc/conf.curl
