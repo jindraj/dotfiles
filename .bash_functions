@@ -22,6 +22,11 @@ function nr_sessions {
 	echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
 
+function cpcmd(){
+	[[ "$OSTYPE" == "darwin"* ]] && pbcopy <<<"${@}"
+	[[ "$OSTYPE" == "linux"* ]] && rpbcopy <<<"${@}"
+}
+
 function ldapaudit() {
   [[ "$#" -eq 0 ]] && echo -e "usage: $0 timeRangeHigherThen [timeRangeLowerThen] [filter]\ntimeRanges are in YYYYMMDDHHMMSS.uuuuuuZ\nFilter is &ed with the timeranges filter (&(timeRangeHigherThen)(timeRangeLowerThen)(filter))\a" && return
   [[ "$#" -eq 1 ]] && filter="reqStart>=$1"
@@ -29,6 +34,7 @@ function ldapaudit() {
   [[ "$#" -ge 3 ]] && filter="(&(reqstart>=$1)(reqStart<=$2)$3)"
   ldapsearch -W -S reqStart -bcn=accesslog "$filter" reqStart reqMod reqDn reqType 
 }
+
 function sshmux() {
 	ssh -v4t ${1:-omnius.jakubjindra.eu} 'tmux attach || tmux'
 }
@@ -45,7 +51,7 @@ function removedia() {
 }
 
 # create histogram from output of `uniq -c`
-function histo(){
+function hst(){
   export RATIO=${1:-1}
   awk '{print $1" "$2}' | perl -e '
     use POSIX;
@@ -96,6 +102,13 @@ ipwan(){
 		|| dig +short myip.opendns.com @resolver1.opendns.com
 }
 
+jsoncurl(){
+	curl "$@" | json | grcat ~/.grc/conf.curl
+}
+ccurl() {
+	curl "$@" | grcat ~/.grc/conf.curl
+}
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
 	growl(){
 		if [[ $# -ge 1 ]]; then
@@ -131,11 +144,10 @@ prefix(){
 
 	IFS='
 	'
-	while IFS=' ' read -r
+	while IFS= read -r
 	do 
-		#echo -e "$REPLY"
 		prefix=$(__prefix_helper $@)
-		echo -e "$REPLY" | sed "s/^/$prefix:	/" # || cat
+		echo -e "$REPLY" | sed "s/^/$prefix:	/"
 	done
 }
 
