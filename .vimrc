@@ -1,18 +1,18 @@
 " settings basic {{{
-set nocompatible               " be iMproved, needed by a lot of plugins
-set shortmess=I			" Hide splash screen :)
-filetype off                   " required!
+set nocompatible		" be iMproved, needed by a lot of plugins
+set shortmess=I			" Hide splash screen
+filetype off			" required!
 " }}}
 
 " Vundle configuration {{{
 let iCanHazVundle=1
 let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
 if !filereadable(vundle_readme)
-    echo "Installing Vundle.."
-    echo ""
-    silent !mkdir -p ~/.vim/bundle
-    silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle 2>/dev/null
-    let iCanHazVundle=0
+	echo "Installing Vundle.."
+	echo ""
+	silent !mkdir -p ~/.vim/bundle
+	silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle 2>/dev/null
+	let iCanHazVundle=0
 endif
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
@@ -38,39 +38,40 @@ Plugin 'vim-scripts/applescript.vim'
 
 "...All your other bundles...
 if iCanHazVundle == 0
-    echo "Installing Bundles, please ignore key map error messages"
-    echo ""
-    :BundleInstall
+	echo "Installing Bundles, please ignore key map error messages"
+	echo ""
+	:BundleInstall
 endif
 " }}}
 
+" {{{ functions
 " func DoPrettyXML {{{
 function! DoPrettyXML()
-  " save the filetype so we can restore it later
-  let l:origft = &ft
-  set ft=
-  " delete the xml header if it exists. This will
-  " permit us to surround the document with fake tags
-  " without creating invalid xml.
-  1s/<?xml .*?>//e
-  " insert fake tags around the entire document.
-  " This will permit us to pretty-format excerpts of
-  " XML that may contain multiple top-level elements.
-  0put ='<PrettyXML>'
-  $put ='</PrettyXML>'
-  silent %!xmllint --format -
-  " xmllint will insert an <?xml?> header. it's easy enough to delete
-  " if you don't want it.
-  " delete the fake tags
-  2d
-  $d
-  " restore the 'normal' indentation, which is one extra level
-  " too deep due to the extra tags we wrapped around the document.
-  silent %<
-  " back to home
-  1
-  " restore the filetype
-  exe "set ft=" . l:origft
+	" save the filetype so we can restore it later
+	let l:origft = &ft
+	set ft=
+	" delete the xml header if it exists. This will
+	" permit us to surround the document with fake tags
+	" without creating invalid xml.
+	1s/<?xml .*?>//e
+	" insert fake tags around the entire document.
+	" This will permit us to pretty-format excerpts of
+	" XML that may contain multiple top-level elements.
+	0put ='<PrettyXML>'
+	$put ='</PrettyXML>'
+	silent %!xmllint --format -
+	" xmllint will insert an <?xml?> header. it's easy enough to delete
+	" if you don't want it.
+	" delete the fake tags
+	2d
+	$d
+	" restore the 'normal' indentation, which is one extra level
+	" too deep due to the extra tags we wrapped around the document.
+	silent %<
+	" back to home
+	1
+	" restore the filetype
+	exe "set ft=" . l:origft
 endfunction
 command! PrettyXML call DoPrettyXML()
 " }}}
@@ -83,13 +84,13 @@ endfunction
 
 " func NumberToggle {{{
 function! NumberToggle()
-    if &number
-        set nonu
-	GitGutterDisable
-    else
-        set nu
-	GitGutterEnable
-    endif
+	if &number
+		set nonu
+		GitGutterDisable
+	else
+		set nu
+		GitGutterEnable
+	endif
 endfunction
 " }}}
 
@@ -105,6 +106,16 @@ function! PasteToggle()
 endfunction
 " }}}
 
+" func MouseToggle {{{
+function! MouseToggle()
+	if &mouse == 'a'
+		set mouse=
+	else
+		set mouse=a
+	endif
+endfunction
+" }}}
+" }}}
 " Powerline Airline {{{
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
@@ -126,6 +137,7 @@ set cursorline					" display line with cursor
 set enc=utf-8					" Set encoding to UTF-8. Needed by powerline/airline
 set termencoding=utf-8				" Set encoding to UTF-8. Needed by powerline/airline
 set novisualbell				" Disable window blinking
+set title					" show filename in terminal title
 set ruler					" Shows ruler in the bottom (not needed if 'vim-powerline is on'
 set number					" Display line numbers on the left
 set numberwidth=5 				" Fix width for 5 digits number
@@ -154,6 +166,9 @@ set incsearch			" Highlight search phrase on the fly
 nnoremap <leader><space> :nohlsearch<CR>	" turn off search highlight
 " }}}
 
+set lcs=tab:▸\ ,trail:·,eol:¬,nbsp:_
+set ttyfast
+
 " TABS & IDNENTS
 """""""""""""""""""
 set noexpandtab			" Don't expand TABs into SPACEs
@@ -161,18 +176,20 @@ set matchtime=5			"
 
 
 " leader shortcuts {{{
-map <leader>n :next
-map <leader>p :prev
-map <leader>tc :tabnew! %<cr>
-map <leader>tn :tabnext
-map <leader>tp :tabprev
-map <leader>te :tabedit
-map <leader>tq :tabclose<cr>
-map <leader>tm :tabmove
-nmap <leader>p :cal PasteToggle()<cr>
-nmap <leader>l :cal ListToggle()<cr>
-nmap <leader>n :cal NumberToggle()<cr>
-nmap <leader>w :cal LineWrapToggle()<cr>
+map <leader>n :next					" next window
+map <leader>p :prev					" prev window
+map <leader>tc :tabnew! %<cr>				" new tab
+map <leader>tn :tabnext					" next tab
+map <leader>tp :tabprev					" prev tab
+map <leader>te :tabedit					" open tab and edit file
+map <leader>tq :tabclose<cr>				" close tab
+map <leader>tm :tabmove					" move tab
+nmap <leader>p :cal PasteToggle()<cr>			" toggle paste
+nmap <leader>l :cal ListToggle()<cr>			" toggle list
+nmap <leader>n :cal NumberToggle()<cr>			" toggle number
+nmap <leader>w :cal LineWrapToggle()<cr>		" toggle line
+nmap <leader>m :cal MouseToggle()<cr>			" toggle mouse
+noremap <leader>W :w !sudo tee % > /dev/null<CR>	" save file as root
 vnoremap <leader>s :sort
 " }}}
 
