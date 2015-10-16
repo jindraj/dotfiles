@@ -35,10 +35,10 @@ case $(hostname -f) in
 esac
 
 export PROMPT_COMMAND='
-echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"
-echo -ne "\033]6;1;bg;red;brightness;$TABRED\a"
-echo -ne "\033]6;1;bg;green;brightness;$TABGREEN\a"
-echo -ne "\033]6;1;bg;blue;brightness;$TABBLUE\a"
+echo -ne "\e]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"
+echo -ne "\e]6;1;bg;red;brightness;$TABRED\a"
+echo -ne "\e]6;1;bg;green;brightness;$TABGREEN\a"
+echo -ne "\e]6;1;bg;blue;brightness;$TABBLUE\a"
 '
 
 [[ -s ~/.bashrc ]] && source ~/.bashrc
