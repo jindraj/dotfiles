@@ -23,7 +23,8 @@ function nr_sessions {
 }
 
 function cpcmd(){
-	[[ "$OSTYPE" == "darwin"* ]] && pbcopy <<<"${@}"
+	#[[ "$OSTYPE" == "darwin"* ]] && pbcopy <<<"${@}"
+	[[ "$OSTYPE" == "darwin"* ]] && sed -e 's/\([;|&]\)/\\\1/g' <<<"${@}" | pbcopy
 	[[ "$OSTYPE" == "linux"* ]] && rpbcopy <<<"${@}"
 }
 
@@ -63,8 +64,11 @@ function hst(){
 }
 
 # ps grep
+function psgg() {
+	ps auxww | grep -i "$*"
+}
 function psg() {
-	ps auxww | grep -i "$*" | grep -v grep
+	ps auxww | grep -v grep | grep -i "$*"
 }
 
 function odjebat() {
@@ -167,13 +171,16 @@ proxy(){
 		echo "export no_proxy=localhost,127.0.0.1,::1") >> ~/.bash_local
 	}
 	__proxy_start(){
-		ssh $sshhost -o VisualHostKey=no -o PermitLocalCommand=no -D $proxyport -N -f -n && \
+		ssh $sshhost -o VisualHostKey=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PermitLocalCommand=no -Nfnaxqv -M -S /tmp/ssh_proxy_sock -D $proxyport 2>/tmp/ssh_proxy_stats && \
 		networksetup -setsocksfirewallproxy Wi-Fi $proxyhost $proxyport && \
 		echo -e '\e[1;32mProxy started\e[0m'
 	}
 	__proxy_stop(){
-		pkill -f "ssh $sshhost" && \
+		ssh $sshhost -o VisualHostKey=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PermitLocalCommand=no -q -S /tmp/ssh_proxy_sock -O exit > /dev/null && \
 		networksetup -setsocksfirewallproxystate Wi-Fi off && \
+		echo -e "\e[0;33mProxy statistics:\e[0m"
+		tail /tmp/ssh_proxy_stats | grep -e second -e compress --color=no
+		rm /tmp/ssh_proxy_stats
 		echo -e '\e[1;31mProxy stopped\e[0m'
 	}
 	__proxy_status(){
@@ -182,8 +189,7 @@ proxy(){
 		echo -e "\e[0;33mbash environment variables:\e[0m"
 		env | grep --colour=never "_proxy=" || true
 		echo -e "\e[0;33mssh dynamic tunnel:\e[0m"
-		(echo "PID CMD ARGS"
-		pgrep -l -f "ssh $sshhost") |column -t
+		ssh $sshhost -o VisualHostKey=no -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o PermitLocalCommand=no -q -S /tmp/ssh_proxy_sock -O check || true
 	}
 	__proxy_help(){
 		echo "proxy start | stop | status | clean"
