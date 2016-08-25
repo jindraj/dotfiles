@@ -1,8 +1,8 @@
 -- Don't display the "helpful" message on startup.
 \set QUIET 1
 \pset null '[NULL]'
-\set PROMPT1 '\x01\e[1;30m\x02[\x01\e[0m\x02 \x01\e[1;32m\x02%n@%M\x01\e[0m\x02 \x01\e[1;34m\x02%/\x01\e[0m\x02 \x01\e[1m\x02%R\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02\x01\e[1;34m\x02%#\x01\e[0m\x02 '
-\set PROMPT2 '\x01\033[1;31m\033[5m\x02%R%#\x01\033[0m\x02	'
+\set PROMPT1 '%[%033[1;30m%][%[%033[0m%] %[%033[1;32m%]%n@%M%[%033[0m%]%[%033[1;30m%]:%[%033[0m%]%[%033[1;97m%]%>%[%033[0m%] %[%033[1;34m%]%/%[%033[0m%] %[%033[1;97m%]%R%[%033[0m%]%[%033[1;30m%]]%[%033[0m%]%[%033[1;34m%]%#%[%033[0m%]  '
+\set PROMPT2 '    '
 \timing
 -- \x auto
 -- \set VERBOSITY verbose
