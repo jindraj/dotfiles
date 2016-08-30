@@ -16,7 +16,7 @@ if !filereadable(vundle_readme)
 endif
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
-Bundle 'gmarik/vundle'
+Plugin 'gmarik/vundle'
 "Add your bundles here
 Plugin 'tpope/vim-fugitive'
 Plugin 'airblade/vim-gitgutter'
@@ -28,7 +28,6 @@ Plugin 'vim-scripts/twilight256.vim'
 Plugin 'rodjek/vim-puppet'
 "Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
 Plugin 'tpope/vim-vividchalk'
-Plugin 'tex.vim'
 Plugin 'gitvimdiff'
 Plugin 'ldap_schema.vim'
 Plugin 'muttrc.vim'
@@ -40,7 +39,7 @@ Plugin 'vim-scripts/applescript.vim'
 if iCanHazVundle == 0
 	echo "Installing Bundles, please ignore key map error messages"
 	echo ""
-	:BundleInstall
+	:PluginInstall
 endif
 " }}}
 
@@ -86,9 +85,11 @@ endfunction
 function! NumberToggle()
 	if &number
 		set nonu
+		set nornu
 		GitGutterDisable
 	else
 		set nu
+		set rnu
 		GitGutterEnable
 	endif
 endfunction
@@ -193,9 +194,13 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>	" save file as root
 vnoremap <leader>s :sort
 " }}}
 
-" maybe later {{{
-"let &t_SI = "\<Esc>]50;CursorShape=1\x7"  " change cursor in insertmode 
-"let &t_EI = "\<Esc>]50;CursorShape=0\x7"  " change cursor in insertmode
-" }}}
-
+let vimpager_passthrough=0
+vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g<CR>_j
+"
+"{{{ vimpager only settings and overwrites
+set rnu " relative numbers
+if exists("vimpager")
+    set nornu
+endif
+"}}}
 " vim:foldmethod=marker:foldlevel=0
