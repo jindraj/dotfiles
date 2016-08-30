@@ -53,7 +53,7 @@ function removedia() {
 
 # create histogram from output of `uniq -c`
 function hst(){
-  export RATIO=${1:-1}
+  export local RATIO=${1:-1}
   awk '{print $1" "$2}' | perl -e '
     use POSIX;
     while(<>){
@@ -76,40 +76,41 @@ function odjebat() {
 }
 
 # Password generator
-genpasswd() {
+function genpasswd() {
 	LC_CTYPE=C tr -dc A-Za-z0-9_-.:%@ < /dev/urandom | head -c ${1:-20} | xargs
 }
 
 # Get MY passwords
-mygetpass() {
-	GPG_ENCRYPTED_FILE="$HOME/Documents/.pass/my.gpg"
-	GPG_USER_ID='Jakub Jindra'
+function mygetpass() {
+	local GPG_ENCRYPTED_FILE="$HOME/Documents/.pass/my.gpg"
+	local GPG_USER_ID='Jakub Jindra'
 	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
 }
 
 # Get SBKS passwords
-getpass() {
-	GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
-	GPG_USER_ID='Jakub Jindra'
+function getpass() {
+	local GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
+	local GPG_USER_ID='Jakub Jindra'
 	gpg --no-batch -d -r '${GPG_USER_ID}' ${GPG_ENCRYPTED_FILE} 2> /dev/null | grep -i $1 | column -t
 }
 
-refreshpass() {
-	GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
-	rm $GPG_ENCRYPTED_FILE
+function refreshpass() {
+	local GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
+	rm -f $GPG_ENCRYPTED_FILE
 	ssh -q adm1.svc.nag.ccl 'sudo cat /root/.pass.new' | gpg --no-batch -e --recipient "Jakub Jindra" -o $GPG_ENCRYPTED_FILE
 }
 
-ipwan(){
+function ipwan(){
 	[ "$1" == "-n" ] \
 		&& dig +short myip.opendns.com @resolver1.opendns.com|tr -d '\n' \
 		|| dig +short myip.opendns.com @resolver1.opendns.com
 }
 
-jsoncurl(){
+function jsoncurl(){
 	curl "$@" | json
 }
-ccurl() {
+
+function ccurl() {
 	curl "$@" | grcat ~/.grc/conf.curl
 }
 
@@ -126,15 +127,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	}
 fi
 
-rpbcopy(){
-	echo -ne "\033]50;CopyToClipboard=;\a"
-	while IFS= read -r; do
+function rpbcopy(){
+	echo -ne "\033]1337;CopyToClipboard=;\a"
+	while IFS=$'\n' read -r; do
 		echo "$REPLY"
 	done
-	echo -ne "\033]50;EndCopy\a"
+	echo -ne "\033]1337;EndCopy\a"
 }
 
-prefix(){
+function prefix(){
 	__prefix_helper(){
 		case $1 in
 			"ts")   prefix=$(date +%s) ;;
@@ -155,10 +156,17 @@ prefix(){
 	done
 }
 
-proxy(){
+
+function keychain_get_internet_password(){
+	[[ $# -ne 2 ]] && \
+		echo "usage: $FUNCNAME server user" || \
+		security find-internet-password -gs "$1" -a "$2" -w | tr -d '\n'
+}
+
+function proxy(){
 	local proxyport=1080
 	local proxyhost=127.0.0.1
-	local sshhost=work-http-proxy
+	local sshhost=home-http-proxy
 
 	__proxy_unset(){
 		unset all_proxy no_proxy
