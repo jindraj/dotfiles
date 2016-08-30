@@ -96,8 +96,7 @@ function getpass() {
 
 function refreshpass() {
 	local GPG_ENCRYPTED_FILE="$HOME/socialbakers/passwords.gpg"
-	rm -f $GPG_ENCRYPTED_FILE
-	ssh -q adm1.svc.nag.ccl 'sudo cat /root/.pass.new' | gpg --no-batch -e --recipient "Jakub Jindra" -o $GPG_ENCRYPTED_FILE
+	ssh -q adm1.svc.nag.ccl 'sudo cat /root/.pass.new' | gpg --yes --no-batch -e --recipient "Jakub Jindra" -o $GPG_ENCRYPTED_FILE
 }
 
 function ipwan(){
