@@ -1,8 +1,7 @@
 # ALIASES
 alias devconf="curl https://147.229.254.98/login.php -H 'Host: wifigw.cis.vutbr.cz' -H 'Origin: https://wifigw.cis.vutbr.cz' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Referer: https://wifigw.cis.vutbr.cz/login.php' --data 'user=devconfcz&auth=any&password=atfit16' --compressed -D - -o /tmp/devconf.html -k"
 alias mcd="curl 'http://172.30.105.1/login' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Referer: http://172.30.105.1/login?dst=http%3A%2F%2Fzcu.cz%2F' -H 'Cookie: lastLogin=1453227537838' --data 'username=user&password=4158c3c81510a5e1a369eb359e937cb6&dst=http%3A%2F%2Fzcu.cz%2F&popup=false'"
-alias cd_pendolino="curl -H 'Host: www.ombord.info' 'https://10.0.1.254/hotspot/hotspot.cgi?method=login&username=lab&password=CAEN&realm=lab' -kIL"
-alias cd_rj79="curl -H 'Host: www.ombord.info' 'https://10.0.0.1/hotspot/hotspot.cgi?connect=Connect&method=login&username=lab&password=CAEN&realm=lab'-kIL"
+alias cd_wifi="curl -H 'Host: www.ombord.info' \"https://$(netstat -rn | awk '$1 ~ /^default$/ {print $2}')/hotspot/hotspot.cgi?method=login&username=lab&password=CAEN&realm=lab\" -kIL"
 alias aman='man -a'
 alias bell='echo -en "\a"'
 alias cd..='cd ..'
