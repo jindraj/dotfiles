@@ -7,38 +7,8 @@ export LC_MONETARY='en_US.UTF-8'
 export LC_NUMERIC='en_US.UTF-8'
 export LC_TIME='C'
 
-case $(hostname -f) in
-	*.cn-n1-wb.aws.ccl)
-		TABRED="255"
-		TABGREEN="0"
-		TABBLUE="0";;
-	*.us-w2.aws.ccl)
-		TABRED="144"
-		TABGREEN="46"
-		TABBLUE="109";;
-	*.nag.ccl)
-		TABRED="30"
-		TABGREEN="144"
-		TABBLUE="255";;
-	*.pils.ccl)
-		TABRED="173"
-		TABGREEN="255"
-		TABBLUE="47";;
-	*.prg.ccl)
-		TABRED="173"
-		TABGREEN="255"
-		TABBLUE="47";;
-	*)
-		TABRED="255"
-		TABGREEN="255"
-		TABBLUE="255";;
-esac
-
 export PROMPT_COMMAND='
-echo -ne "\e]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"
-echo -ne "\e]6;1;bg;red;brightness;$TABRED\a"
-echo -ne "\e]6;1;bg;green;brightness;$TABGREEN\a"
-echo -ne "\e]6;1;bg;blue;brightness;$TABBLUE\a"
+echo -ne "\e]0;${USER}@${HOSTNAME%%.*}: ${PWD/$HOME/\~}\a"
 '
 
 [[ -s ~/.bashrc ]] && source ~/.bashrc
