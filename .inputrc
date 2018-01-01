@@ -1,8 +1,10 @@
 set blink-matching-paren on
+#set colored-completion-prefix on				# doesn't work???
 set colored-stats on
 set completion-prefix-display-length 10
 set echo-control-characters off
 set skip-completed-text on
+#set operate-and-get-next on					# repeat set of commands from history using ^C-o
 
 "\e,": menu-complete
 "\C-x\C-p": dabbrev-expand					# complete word (used before)
@@ -10,6 +12,8 @@ set skip-completed-text on
 "\C-x\C-m": print-last-kbd-macro				# print macro definition
 "\C-x\C-f": dump-macros
 "\e\C-l": redraw-current-line
+"\e[5~": history-search-backward				# type part of command, page-up to search in history backward
+"\e[6~": history-search-forward					# type part of command, page-up to search in history forward
 
 # Applications
 $if bash
