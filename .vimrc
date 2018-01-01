@@ -4,50 +4,44 @@ set shortmess=I			" Hide splash screen
 filetype off			" required!
 " }}}
 
-" Vundle configuration {{{
-let iCanHazVundle=1
-let vundle_readme=expand('~/.vim/bundle/vundle/README.md')
-if !filereadable(vundle_readme)
-	echo "Installing Vundle.."
+" Plug configuration {{{
+let plug_installed=expand('~/.vim/autoload/plug.vim')
+if !filereadable(plug_installed)
+	echo "Installing plug.."
 	echo ""
-	silent !mkdir -p ~/.vim/bundle
-	silent !git clone https://github.com/gmarik/vundle ~/.vim/bundle/vundle 2>/dev/null
-	let iCanHazVundle=0
+	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
-Plugin 'gmarik/vundle'
-"Add your bundles here
-Plugin 'tpope/vim-fugitive'
-Plugin 'airblade/vim-gitgutter'
-"Plugin 'Lokaltog/powerline'
-Plugin 'bling/vim-airline'
-Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'vim-scripts/twilight256.vim'
-Plugin 'rodjek/vim-puppet'
+call plug#begin()
+Plug 'gmarik/vundle'
+Plug 'tpope/vim-fugitive'
+Plug 'w0rp/ale'
+Plug 'airblade/vim-gitgutter'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'luochen1990/rainbow'
+Plug 'neomutt/neomutt.vim'
+let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
+Plug 'wincent/command-t'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-scripts/twilight256.vim'
+Plug 'rodjek/vim-puppet'
+Plug 'tpope/vim-vividchalk'
+Plug 'vim-scripts/gitvimdiff'
+Plug 'vim-scripts/ldap_schema.vim'
+Plug 'vim-scripts/muttrc.vim'
+Plug 'vim-scripts/ldif.vim'
+Plug 'vim-scripts/haproxy'
+Plug 'vim-scripts/applescript.vim'
 "Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
-Plugin 'tpope/vim-vividchalk'
-Plugin 'gitvimdiff'
-Plugin 'ldap_schema.vim'
-Plugin 'muttrc.vim'
-Plugin 'ldif.vim'
-Plugin 'haproxy'
-Plugin 'vim-scripts/applescript.vim'
-
-"...All your other bundles...
-if iCanHazVundle == 0
-	echo "Installing Bundles, please ignore key map error messages"
-	echo ""
-	:PluginInstall
-endif
+"Plugin 'scrooloose/syntastic'
+call plug#end()
 " }}}
 
 " {{{ functions
 " func DoPrettyXML {{{
 function! DoPrettyXML()
-	" save the filetype so we can restore it later
-	let l:origft = &ft
+	let l:origft = &ft " save the filetype so we can restore it later
 	set ft=
 	" delete the xml header if it exists. This will
 	" permit us to surround the document with fake tags
@@ -107,6 +101,18 @@ function! PasteToggle()
 endfunction
 " }}}
 
+" func CopyToSystemClipboardToggle {{{
+function! CopyToSystemClipboardToggle()
+	if &clipboard == 'unnamed'
+		set clipboard=
+		echo "system clipboard unset"
+	else
+		set clipboard=unnamed
+		echo "system clipboard set"
+	endif
+endfunction
+" }}}
+
 " func MouseToggle {{{
 function! MouseToggle()
 	if &mouse == 'a'
@@ -117,6 +123,7 @@ function! MouseToggle()
 endfunction
 " }}}
 " }}}
+"
 " Powerline Airline {{{
 "set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
@@ -154,7 +161,7 @@ set autowrite					" automatically save before :next and similar commands
 "set clipboard=unnamed				" s
 let mapleader=","				" mapleader
 set lazyredraw					" redraw only when we need to. This should lead to faster macros
-set whichwrap+=<,>,[,]				" don't stop at the EOL when using arrow keys to move, preserved stop using 'h' and 'l'
+set whichwrap+=<,>,[,]				" don't stop at the EOL when using arrow keys, preserved stop using 'h' and 'l'
 set modeline        				" Last lines in document sets vim mode
 set modelines=3     				" Number lines checked for modelines
 " }}}
@@ -173,8 +180,7 @@ set ttyfast
 " TABS & IDNENTS
 """""""""""""""""""
 set noexpandtab			" Don't expand TABs into SPACEs
-set matchtime=5			" 
-
+set matchtime=5			" blink matching paren for 500ms
 
 " leader shortcuts {{{
 map <leader>n :next					" next window
@@ -185,6 +191,7 @@ map <leader>tp :tabprev					" prev tab
 map <leader>te :tabedit					" open tab and edit file
 map <leader>tq :tabclose<cr>				" close tab
 map <leader>tm :tabmove					" move tab
+nmap <leader>c :cal CopyToSystemClipboardToggle()<cr>	" toggle system clipboard
 nmap <leader>p :cal PasteToggle()<cr>			" toggle paste
 nmap <leader>l :cal ListToggle()<cr>			" toggle list
 nmap <leader>n :cal NumberToggle()<cr>			" toggle number
@@ -194,13 +201,26 @@ noremap <leader>W :w !sudo tee % > /dev/null<CR>	" save file as root
 vnoremap <leader>s :sort
 " }}}
 
-let vimpager_passthrough=0
 vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g<CR>_j
-"
+
 "{{{ vimpager only settings and overwrites
+let vimpager_passthrough=0
 set rnu " relative numbers
 if exists("vimpager")
     set nornu
 endif
 "}}}
+
+set t_BE= 
+
+let g:rainbow_conf={
+	\ 'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+	\ 'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
+	\ 'operators': '_,_',
+	\ 'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+	\ 'separately': {
+	\   '*': {},
+	\ }
+\}
+
 " vim:foldmethod=marker:foldlevel=0
