@@ -11,8 +11,6 @@ if !filereadable(plug_installed)
 	echo ""
 	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
-set rtp+=~/.vim/bundle/vundle/
-"set rtp^=/usr/share/vimpager
 call plug#begin()
   Plug 'airblade/vim-gitgutter'
   Plug 'gmarik/vundle'
@@ -30,13 +28,9 @@ call plug#begin()
   Plug 'vim-scripts/haproxy'
   Plug 'vim-scripts/ldap_schema.vim'
   Plug 'vim-scripts/ldif.vim'
-  Plug 'vim-scripts/muttrc.vim'
   Plug 'vim-scripts/twilight256.vim'
   Plug 'w0rp/ale'
   Plug 'wincent/command-t'
-  let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
-  "Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
-  "Plugin 'scrooloose/syntastic'
 call plug#end()
 " }}}
 
@@ -125,7 +119,6 @@ endfunction
 " }}}
 "
 " Powerline Airline {{{
-"set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim
 let g:Powerline_symbols = 'fancy'
 let g:airline_theme='badwolf'
 let g:airline_powerline_fonts = 1
@@ -205,15 +198,17 @@ vnoremap <leader>s :sort
 vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g<CR>_j
 
 "{{{ vimpager only settings and overwrites
-let vimpager_passthrough=0
-let g:less = { 'enabled': 0 } " doesn't show airline when not set
-if exists("vimpager")
-    set nornu
+if exists('g:vimpager.enabled')
+  let vimpager_passthrough=0
+  let g:less = { 'enabled': 1 } " less compatibility mode
+  set nornu
+  set nu
 endif
 "}}}
 
 set t_BE= 
 
+let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 let g:rainbow_conf={
 	\ 'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
 	\ 'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],
