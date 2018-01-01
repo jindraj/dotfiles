@@ -1,2 +1,5 @@
 .vim/bundle
 .vim/.netrwhist
+.mutt/cache
+.mutt/signature-*
+.mutt/muttrc.profile-*
