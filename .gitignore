@@ -1,4 +1,6 @@
 .vim/bundle
+.vim/plugged
+.vim/autoload
 .vim/.netrwhist
 .mutt/cache
 .mutt/signature-*
