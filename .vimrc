@@ -12,29 +12,31 @@ if !filereadable(plug_installed)
 	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 set rtp+=~/.vim/bundle/vundle/
+"set rtp^=/usr/share/vimpager
 call plug#begin()
-Plug 'gmarik/vundle'
-Plug 'tpope/vim-fugitive'
-Plug 'w0rp/ale'
-Plug 'airblade/vim-gitgutter'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'luochen1990/rainbow'
-Plug 'neomutt/neomutt.vim'
-let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
-Plug 'wincent/command-t'
-Plug 'scrooloose/nerdtree'
-Plug 'vim-scripts/twilight256.vim'
-Plug 'rodjek/vim-puppet'
-Plug 'tpope/vim-vividchalk'
-Plug 'vim-scripts/gitvimdiff'
-Plug 'vim-scripts/ldap_schema.vim'
-Plug 'vim-scripts/muttrc.vim'
-Plug 'vim-scripts/ldif.vim'
-Plug 'vim-scripts/haproxy'
-Plug 'vim-scripts/applescript.vim'
-"Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
-"Plugin 'scrooloose/syntastic'
+  Plug 'airblade/vim-gitgutter'
+  Plug 'gmarik/vundle'
+  Plug 'luochen1990/rainbow'
+  Plug 'neomutt/neomutt.vim'
+  Plug 'rodjek/vim-puppet'
+  Plug 'scrooloose/nerdtree'
+  Plug 'tpope/vim-fugitive'
+  Plug 'tpope/vim-vividchalk'
+  Plug 'rkitover/vimpager'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
+  Plug 'vim-scripts/applescript.vim'
+  Plug 'vim-scripts/gitvimdiff'
+  Plug 'vim-scripts/haproxy'
+  Plug 'vim-scripts/ldap_schema.vim'
+  Plug 'vim-scripts/ldif.vim'
+  Plug 'vim-scripts/muttrc.vim'
+  Plug 'vim-scripts/twilight256.vim'
+  Plug 'w0rp/ale'
+  Plug 'wincent/command-t'
+  let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
+  "Plugin 'vim-scripts/Puppet-Syntax-Highlighting'
+  "Plugin 'scrooloose/syntastic'
 call plug#end()
 " }}}
 
@@ -77,13 +79,11 @@ endfunction
 
 " func NumberToggle {{{
 function! NumberToggle()
+	set nonu!
+	set nornu!
 	if &number
-		set nonu
-		set nornu
 		GitGutterDisable
 	else
-		set nu
-		set rnu
 		GitGutterEnable
 	endif
 endfunction
@@ -105,10 +105,10 @@ endfunction
 function! CopyToSystemClipboardToggle()
 	if &clipboard == 'unnamed'
 		set clipboard=
-		echo "system clipboard unset"
+		echo "System clipboard unset"
 	else
 		set clipboard=unnamed
-		echo "system clipboard set"
+		echo "System clipboard set"
 	endif
 endfunction
 " }}}
@@ -137,9 +137,9 @@ let g:airline#extensions#tabline#enabled = 1
 filetype plugin indent on			" required!
 set background=dark				" Change colors to more usable on black background
 set t_Co=256					" Enable 256-color mode
-colorscheme twilight256				" Solarized colorscheme
+colorscheme twilight256				" Twilight256 colorscheme
 syntax enable					" enable syntax highliting
-hi CursorLine cterm=NONE ctermbg=233	" highlight cursorline with
+hi CursorLine cterm=NONE ctermbg=233		" highlight cursorline with
 hi LineNr ctermfg=16 cterm=bold ctermbg=240
 set cursorline					" display line with cursor
 set enc=utf-8					" Set encoding to UTF-8. Needed by powerline/airline
@@ -148,6 +148,7 @@ set novisualbell				" Disable window blinking
 set title					" show filename in terminal title
 set ruler					" Shows ruler in the bottom (not needed if 'vim-powerline is on'
 set number					" Display line numbers on the left
+set rnu						" relative numbers
 set numberwidth=5 				" Fix width for 5 digits number
 set laststatus=2				" To see powerline/airline everytime (not only in split windows).
 set scrolloff=20				" Preserve 20 visible lines up/down when moving vertical
@@ -205,7 +206,7 @@ vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g
 
 "{{{ vimpager only settings and overwrites
 let vimpager_passthrough=0
-set rnu " relative numbers
+let g:less = { 'enabled': 0 } " doesn't show airline when not set
 if exists("vimpager")
     set nornu
 endif

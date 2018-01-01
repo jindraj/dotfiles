@@ -20,6 +20,7 @@ else
 		__git_ps1() { return; }
 	fi
 fi
+# }}}
 
 shopt -s checkwinsize
 shopt -s cdspell
@@ -86,20 +87,13 @@ esac
 # }}}
 
 # PAGER, MANPAGER {{{
-if which vimpager &> /dev/null
+#if which vimpager &> /dev/null
+if [[ -f ~/.vim/plugged/vimpager/vimpager ]]
 then 
-	export PAGER="vimpager"
+	export PAGER=~/.vim/plugged/vimpager/vimpager
+	export MANPAGER="col -b | $PAGER -c 'set ft=man nomod nolist'"
 else
-	export PAGER="less"
-fi
-
-if which vimmanpager &> /dev/null
-then 
-	export MANPAGER="vimmanpager"
-elif which vimpager &> /dev/null
-then
-	export MANPAGER="col -b | vimpager -c 'set ft=man nomod nolist'"
-else
+	export PAGER=less
 	export MANPAGER="less"
 fi
 # }}}
