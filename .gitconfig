@@ -1,7 +1,6 @@
 [user]
 	name		= Jakub Jindra
 	email		= jakub.jindra@socialbakers.com
-	editor		= vim
 
 [alias]
 	tree		= log --graph --decorate --abbrev-commit
@@ -34,10 +33,6 @@
 	added		= yellow
 	changed		= green
 	
-[core]
-	editor		= vim
-	pager		= vimpager
-
 [diff]
 	tool		= vimdiff
 
