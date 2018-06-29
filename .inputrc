@@ -28,6 +28,7 @@ $if bash
 $endif
 
 $if mysql
+  set completion-ignore-case on
   "\C-e\C-p": "SHOW PROCESSLIST;\C-j"
   "\C-e\C-f": "SHOW FULL PROCESSLIST;\C-j"
   "\C-e\C-m": "SHOW MASTER STATUS;\C-j"
@@ -36,6 +37,16 @@ $if mysql
   "\C-e\C-v": "SHOW VARIABLES;\C-j"
   "\C-e\C-d": "SHOW DATABASES;\C-j"
   "\C-e\C-t": "SHOW TABLES;\C-j"
+  "\C-e1": "source /tmp/1.sql;\C-j"
+  "\C-e2": "source /tmp/2.sql;\C-j"
+  "\C-e3": "source /tmp/3.sql;\C-j"
+  "\C-e4": "source /tmp/4.sql;\C-j"
+  "\C-e5": "source /tmp/5.sql;\C-j"
+  "\C-e6": "source /tmp/6.sql;\C-j"
+  "\C-e7": "source /tmp/7.sql;\C-j"
+  "\C-e8": "source /tmp/8.sql;\C-j"
+  "\C-e9": "source /tmp/9.sql;\C-j"
+  "\C-e0": "source /tmp/0.sql;\C-j"
 $endif
 
 $if psql
@@ -43,6 +54,16 @@ $if psql
   "\C-e\C-m": "SELECT * FROM pg_stat_replication;\C-j"
   "\C-e\C-d": "SELECT NOW() - pg_last_xact_replay_timestamp() AS replag;\C-j"
   "\C-e\C-v": "SHOW ALL;\C-j"
+  "\C-e1": "\\i /tmp/1.sql;\C-j"
+  "\C-e2": "\\i /tmp/2.sql;\C-j"
+  "\C-e3": "\\i /tmp/3.sql;\C-j"
+  "\C-e4": "\\i /tmp/4.sql;\C-j"
+  "\C-e5": "\\i /tmp/5.sql;\C-j"
+  "\C-e6": "\\i /tmp/6.sql;\C-j"
+  "\C-e7": "\\i /tmp/7.sql;\C-j"
+  "\C-e8": "\\i /tmp/8.sql;\C-j"
+  "\C-e9": "\\i /tmp/9.sql;\C-j"
+  "\C-e0": "\\i /tmp/0.sql;\C-j"
 $endif
 
 ## Modes
