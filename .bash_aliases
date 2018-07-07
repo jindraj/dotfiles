@@ -9,7 +9,7 @@ alias counts='sort | uniq -c | sort -g'
 alias curl='curl -g -s'
 alias curlins='curl -L -u $JENKINS_API_USER:$JENKINS_API_TOKEN'
 alias devconf="curl https://147.229.254.98/login.php -H 'Host: wifigw.cis.vutbr.cz' -H 'Origin: https://wifigw.cis.vutbr.cz' -H 'Upgrade-Insecure-Requests: 1' -H 'Content-Type: application/x-www-form-urlencoded' -H 'Referer: https://wifigw.cis.vutbr.cz/login.php' --data 'user=devconfcz&auth=any&password=pinkhatbrno' --compressed -D - -o /tmp/devconf.html -k"
-alias dnscc="sudo kill -HUP $(pgrep dnsmasq); sudo killall -HUP mDNSResponder; sudo dscacheutil -flushcache"
+alias dnscc='sudo kill -HUP $(pgrep dnsmasq); sudo killall -HUP mDNSResponder; sudo dscacheutil -flushcache'
 alias ec2whoami='curl http://169.254.169.254/latest/meta-data/instance-type;echo'
 alias gitcd='cd $(git rev-parse --show-toplevel)'
 alias focus='echo -ne "\033]50;StealFocus\a"'
@@ -25,15 +25,15 @@ alias mcd="curl 'http://172.30.105.1/login' -H 'Upgrade-Insecure-Requests: 1' -H
 alias mtr='mtr --curs'
 alias nocomment="grep -Ev '^($|\s*#)'"
 alias nocolor="perl -pe 's/\e\[[\d;]*m//g;'"
+alias p='/usr/local/bin/pass'
 alias puppet-lint='puppet-lint --no-documentation-check'
 alias r='sudo -E bash -l'
 alias rsync='rsync -avzhPp --stats'
 alias s='ssh'
 alias se='sudo $EDITOR'
-alias scat='slackcli --token $SLACK_API_TOKEN -u "Jakub Jindra" -i https://en.gravatar.com/userimage/35972117/b0d611d9e0bdca05ff4950adb892c154.jpg?size=200'
 alias tssh='tmux-cssh -sa -oVisualHostKey=no'
+alias vim=nvim
 alias vi='vim'
-alias vpnwho='dig +short -x '
 alias urlencode='python -c "import sys,urllib; print urllib.quote_plus(sys.stdin.read());"'
 alias urldecode='python -c "import sys,urllib; print urllib.unquote_plus(sys.stdin.read());"'
 
@@ -53,8 +53,7 @@ else
 fi;
 
 # GRC aliases
-#alias grc='grc -c ~/.grc/main.conf --colour=auto'
-if which grc &> /dev/null
+if command -v grc &> /dev/null
 then
 	alias ping='grc ping'
 	alias ping6='grc ping6'

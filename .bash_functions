@@ -1,5 +1,5 @@
-#!/bin/bash
-# Functions used in PS1.
+#!/usr/bin/env  bash
+# {{{ Functions used in PS1.
 function ec(){ # get exitcode
   EC=$?
   [[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02\x01\e[1;31m\x02${EC}\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02"
@@ -12,6 +12,7 @@ function nr_sessions(){ # get number of tmux+screen sessions
   [[ $(($SCREEN_SESSIONS+$TMUX_SESSIONS)) -gt 0 ]] && \
   echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02$(($SCREEN_SESSIONS+$TMUX_SESSIONS))\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
+# }}}
 
 function dockertop(){
   DOCKER_HOST=tcp://${1}:4243 ctop
@@ -26,11 +27,11 @@ function ldapaudit(){
 }
 
 function sshmux(){
-  ssh -v4t "${1:-home-http-proxy}" 'tmux attach || tmux'
+  ssh -vt "${1:-hopnode}" 'tmux attach || tmux'
 }
 
-function ns(){
-  netstat -W "$@" | column -t
+function moshmux(){
+  mosh "${1:-hopnode}" tmux attach
 }
 
 function removedia(){ # Remove diacritics - dosn't work correctly on osx
@@ -60,14 +61,12 @@ function odjebat(){
 }
 
 function genpasswd(){ # password generator
-  LC_CTYPE=C tr -dc A-Za-z0-9_-.:%@ < /dev/urandom | head -c ${1:-20} | xargs
+  LC_CTYPE=C tr -dc A-Za-z0-9_-.:+ < /dev/urandom | head -c ${1:-20} | xargs
 }
 
-
 function ipwan(){
-  [ "$1" == "-n" ] \
-    && dig +short myip.opendns.com @resolver1.opendns.com|tr -d '\n' \
-    || dig +short myip.opendns.com @resolver1.opendns.com
+  [ "$1" == "-n" ] && local CMD="tr -d '\n'" || local CMD=xargs
+    dig +short myip.opendns.com @resolver1.opendns.com | $CMD
 }
 
 function jsoncurl(){
@@ -78,45 +77,28 @@ function ccurl(){
   curl "$@" | grcat ~/.grc/conf.curl
 }
 
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  growl(){
-    if [[ $# -ge 1 ]]; then
-      message=$@
-    else
-      while IFS= read; do
-        message+=$REPLY
-      done
-    fi
-    echo -en "\e]9;$(tr '\n' ' ' <<<"$message"|cut -c -37)\a"
-  }
-fi
-
 function rpbcopy(){ # copy to system clipboard from remote hosts
   echo -ne "\033]1337;CopyToClipboard=;\a"
-  while IFS=$'\n' read -r; do
-    echo "$REPLY"
-  done
+  cat -
   echo -ne "\033]1337;EndCopy\a"
 }
 
 function prefix(){ # prefix stdout with date,time or whatever you want
+  local prefix=
   __prefix_helper(){
     case $1 in
       "ts")   prefix=$(date +%s) ;;
       "date") prefix=$(date +%Y-%m-%dT%H:%M:%S) ;;
       "time") prefix=$(date +%H:%M:%S) ;;
-      *)    prefix="$1"  ;;
+      *)      prefix="$1"  ;;
     esac
-    [[ "$2" = "-n" ]]   || prefix="\x01\e[1;37m\x02${prefix}\x01\e[0m\x02"
-    echo -en "$prefix"
+    [[ "$2" = "-n" ]] || prefix="\\x01\\e[1;37m\\x02${prefix}\\x01\\e[0m\\x02:\t"
   }
 
-  IFS='
-  '
-  while IFS= read -r
+  while read -r
   do
-    prefix=$(__prefix_helper $@)
-    echo -e "$REPLY" | sed "s/^/$prefix:	/"
+    __prefix_helper $@
+    echo -e "${prefix}$REPLY"
   done
 }
 
@@ -198,3 +180,4 @@ function proxy(){
       return 1
   fi
 }
+# vim:foldmethod=marker:foldlevel=0
