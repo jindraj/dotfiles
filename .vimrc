@@ -9,14 +9,17 @@ let plug_installed=expand('~/.vim/autoload/plug.vim')
 if !filereadable(plug_installed)
 	echo "Installing plug.."
 	echo ""
-	silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	silent !curl -NsfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 call plug#begin()
   Plug 'airblade/vim-gitgutter'
   Plug 'gmarik/vundle'
   Plug 'luochen1990/rainbow'
+  Plug 'jacoborus/tender.vim'
   Plug 'neomutt/neomutt.vim'
   Plug 'rodjek/vim-puppet'
+  Plug 'junegunn/fzf'
+  Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
   Plug 'tpope/vim-fugitive'
   Plug 'tpope/vim-vividchalk'
@@ -29,6 +32,7 @@ call plug#begin()
   Plug 'vim-scripts/ldap_schema.vim'
   Plug 'vim-scripts/ldif.vim'
   Plug 'vim-scripts/twilight256.vim'
+  Plug 'KeitaNakamura/neodark.vim'
   Plug 'w0rp/ale'
   Plug 'wincent/command-t'
 call plug#end()
@@ -118,19 +122,32 @@ endfunction
 " }}}
 " }}}
 "
+
+
+let g:airline = {}
+let g:airline.colorscheme = 'neodark'
 " Powerline Airline {{{
 let g:Powerline_symbols = 'fancy'
-let g:airline_theme='badwolf'
+let g:airline_theme='neodark'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 " }}}
 
 " settings misc {{{
 filetype plugin indent on			" required!
+"set t_Co=256					" Enable 256-color mode
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 set background=dark				" Change colors to more usable on black background
-set t_Co=256					" Enable 256-color mode
-colorscheme twilight256				" Twilight256 colorscheme
+colorscheme neodark				" Twilight256 colorscheme
+let g:neodark#terminal_transparent = 1 " default: 0
+let g:neodark#solid_vertsplit = 1
+let g:neodark#background = '#000000'
 syntax enable					" enable syntax highliting
 hi CursorLine cterm=NONE ctermbg=233		" highlight cursorline with
 hi LineNr ctermfg=16 cterm=bold ctermbg=240
@@ -177,6 +194,7 @@ set noexpandtab			" Don't expand TABs into SPACEs
 set matchtime=5			" blink matching paren for 500ms
 
 " leader shortcuts {{{
+map <leader>t :CommandT					" commandt
 map <leader>n :next					" next window
 map <leader>p :prev					" prev window
 map <leader>tc :tabnew! %<cr>				" new tab
@@ -201,6 +219,7 @@ vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g
 if exists('g:vimpager.enabled')
   let vimpager_passthrough=0
   let g:less = { 'enabled': 1 } " less compatibility mode
+  autocmd BufRead * AnsiEsc
   set nornu
   set nu
 endif
