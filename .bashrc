@@ -5,15 +5,14 @@
 [[ -x /usr/local/bin/aws ]] && complete -C aws_completer aws
 
 # {{{ BREW 
-if which brew &> /dev/null
+if command -v brew &> /dev/null
 then
-	export HOMEBREW_CASK_OPTS="--caskroom=/usr/local/Caskroom"
 	BREW_PREFIX=$(brew --prefix 2>/dev/null)
 	[[ -s $BREW_PREFIX/share/bash-completion/bash_completion ]] && source $BREW_PREFIX/share/bash-completion/bash_completion #bash-completion@2
 	#[[ -s $BREW_PREFIX/etc/bash_completion ]] && source $BREW_PREFIX/etc/bash_completion #bash-completion
 	[[ -s $BREW_PREFIX/etc/profile.d/autojump.sh ]] && . $BREW_PREFIX/etc/profile.d/autojump.sh
 else
-	if which git &> /dev/null
+	if command -v git #&> /dev/null
 	then
 		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
 	else
@@ -30,40 +29,30 @@ complete -F _ssh sshmux tssh s curl odjebat nc
 
 export LSCOLORS=ExGxFxdxCxegedhbagacec
 
-[ -n "$TMUX" ] && export TERM=screen-256color
-
 # {{{ PATH
 PATH="$PATH:$HOME/bin"
 PATH="/usr/local/sbin:$PATH"
 PATH="/usr/local/bin:$PATH"
-PATH="$PATH:/usr/texbin"
-PATH="/usr/local/opt/postgresql@9.6/bin:$PATH"
 # }}}
 
 # {{{ History
-# unlimited size of history and history file
-# one history file per day
+# unlimited size of history and history file one history file per day
 HISTSIZE=5000
 HISTFILESIZE=10000
 shopt -s histappend
-#HISTSIZE=
-#HISTFILESIZE=
 HISTCONTROL=ignoreboth
 HISTFILE="${HOME}/.bash_history_files/$(date -u +%Y-%m-%d)"
-mkdir -m 700 $(dirname $HISTFILE) 2> /dev/null
+mkdir -p -m 700 $(dirname $HISTFILE)
 ln -sf $HISTFILE ~/.bash_history
 # }}}
 
-EDITOR="vim"
-SUDO_EDITOR=$EDITOR
-export HOMEBREW_EDITOR=$EDITOR
-
 # {{{ PROMPT CONFIGS
+export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[ \x01\e[1;97m\x02mysql\x01\e[1;30m\x02://\x01\e[1;32m\x02\u@\h\x01\e[1;30m\x02:\x01\e[1;97m\x02\p\x01\e[1;30m\x02/\x01\e[1;34m\x02\d\x01\e[1;30m\x02 ]\n\x01\e[1;34m\x02>\x01\e[0m\x02\x01\e[0m\x02\_")
 PROMPT_DIRTRIM=2
-export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[\x01\e[0m\x02 \x01\e[1;97m\x02mysql\x01\e[0m\x02\x01\e[1;30m\x02://\x01\e[0m\x02\x01\e[1;32m\x02\u@\h\x01\e[0m\x02\x01\e[1;30m\x02:\x01\e[0m\x02\x01\e[1;97m\x02\p\x01\e[0m\x02 \x01\e[1;34m\x02\d\x01\e[0m\x02 \x01\e[1;30m\x02]\x01\e[0m\x02\n\x01\e[1;34m\x02>\x01\e[0m\x02\_")
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWSTASHSTATE=true
 GIT_PS1_SHOWUPSTREAM="auto"
+
 case $TERM in
 	xterm*|rxvt*|Eterm|aterm)
 		if [ "$UID" -eq 0 ]
@@ -86,15 +75,24 @@ case $TERM in
 esac
 # }}}
 
-# PAGER, MANPAGER {{{
-#if which vimpager &> /dev/null
-if [[ -f ~/.vim/plugged/vimpager/vimpager ]]
+# EDITOR, PAGER, MANPAGER {{{
+if command -v nvim > /dev/null
+then
+	EDITOR=nvim
+else
+	EDITOR=vim
+fi
+SUDO_EDITOR=$EDITOR
+export HOMEBREW_EDITOR=$EDITOR
+
+if [[ -f ~/.config/nvim/plugged/vimpager/vimpager ]]
 then 
-	export PAGER=~/.vim/plugged/vimpager/vimpager
-	export MANPAGER="col -b | $PAGER -c 'set ft=man nomod nolist'"
+	alias vimpager=~/.config/nvim/plugged/vimpager/vimpager
+	export PAGER=~/.config/nvim/plugged/vimpager/vimpager
+	export MANPAGER="/bin/bash -c \"col -b | $(echo $PAGER) -c 'set ft=man nomod nolist'\""
 else
 	export PAGER=less
-	export MANPAGER="less"
+	export MANPAGER=$PAGER
 fi
 # }}}
 
