@@ -28,7 +28,6 @@ $if bash
 $endif
 
 $if mysql
-  set completion-ignore-case on
   "\C-e\C-p": "SHOW PROCESSLIST;\C-j"
   "\C-e\C-f": "SHOW FULL PROCESSLIST;\C-j"
   "\C-e\C-m": "SHOW MASTER STATUS;\C-j"
