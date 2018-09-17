@@ -1,16 +1,36 @@
--- Don't display the "helpful" message on startup.
-\set QUIET 1
-\pset null '[NULL]'
-\set PROMPT1 '%[%033[1;30m%][ %[%033[1;97m%]postgres%[%033[1;30m%]://%[%033[1;32m%]%n@%M%[%033[1;30m%]:%[%033[1;97m%]%>%[%033[1;30m%]/%[%033[1;34m%]%/ %[%033[1;97m%]%R%[%033[1;30m%]]%[%033[0m%]\n%[%033[1;34m%]%#%[%033[0m%] '
-\set PROMPT2 '    '
-\timing
--- \x auto
--- \set VERBOSITY verbose
--- \set HISTFILE ~/.psql_history- :DBNAME
-\set HISTCONTROL ignoredups
+\set QUIET
+
+set application_name='psql [jindraj]'
+\set HISTCONTROL ignoreboth
 \set COMP_KEYWORD_CASE upper
-\unset quiet
--- pspg
+\pset null '[NULL]'
+\timing on
+
+-- PAGER {{{
 \setenv PAGER pspg
 \pset border 2
 \pset linestyle unicode
+-- }}}
+
+-- PROMPT {{{
+\set PROMPT1 '%[%033[1;30m%][ %[%033[1;97m%]postgres%[%033[1;30m%]://%[%033[1;32m%]%n@%M%[%033[1;30m%]:%[%033[1;97m%]%>%[%033[1;30m%]/%[%033[1;34m%]%/ %[%033[1;97m%]%R%[%033[1;30m%]]%[%033[0m%]\n%[%033[1;34m%]%#%[%033[0m%] '
+\set PROMPT2 '    '
+-- }}}
+
+-- QUERIES {{{
+\! echo "Type \033[1;36m:help\033[0m to list predefined queries"
+\set replag 'SELECT NOW() - pg_last_xact_replay_timestamp() AS replag;'
+\set replication 'SELECT * FROM pg_stat_replication\\x\\g\\x'
+\set tbloat 'SELECT current_database(),schemaname,tablename,ROUND((CASE WHEN otta=0 THEN 0.0 ELSE sml.relpages::FLOAT/otta END)::NUMERIC,1) AS tbloat, CASE WHEN relpages<otta THEN 0 ELSE bs*(sml.relpages-otta)::BIGINT END AS wastedbytes, iname, ROUND((CASE WHEN iotta=0 OR ipages=0 THEN 0.0 ELSE ipages::FLOAT/iotta END)::NUMERIC,1) AS ibloat, CASE WHEN ipages<iotta THEN 0 ELSE bs*(ipages-iotta) END AS wastedibytes FROM (SELECT schemaname,tablename,cc.reltuples,cc.relpages,bs,CEIL((cc.reltuples*((datahdr+ma-(CASE WHEN datahdr%ma=0 THEN ma ELSE datahdr%ma END))+nullhdr2+4))/(bs-20::FLOAT)) AS otta,COALESCE(c2.relname,\'?\') AS iname,COALESCE(c2.reltuples,0) AS ituples,COALESCE(c2.relpages,0) AS ipages,COALESCE(CEIL((c2.reltuples*(datahdr-12))/(bs-20::FLOAT)),0) AS iotta FROM (SELECT ma,bs,schemaname,tablename,(datawidth+(hdr+ma-(CASE WHEN hdr%ma=0 THEN ma ELSE hdr%ma END)))::NUMERIC AS datahdr,(maxfracsum*(nullhdr+ma-(CASE WHEN nullhdr%ma=0 THEN ma ELSE nullhdr%ma END))) AS nullhdr2 FROM (SELECT schemaname,tablename,hdr,ma,bs,SUM((1-null_frac)*avg_width) AS datawidth,MAX(null_frac) AS maxfracsum,hdr+(SELECT 1+COUNT(*)/8 FROM pg_stats s2 WHERE null_frac<>0 AND s2.schemaname=s.schemaname AND s2.tablename=s.tablename) AS nullhdr FROM pg_stats s,(SELECT (SELECT current_setting(\'block_size\')::NUMERIC) AS bs, CASE WHEN SUBSTRING(v,12,3) IN (\'8.0\',\'8.1\',\'8.2\') THEN 27 ELSE 23 END AS hdr,CASE WHEN v~\'mingw32\' THEN 8 ELSE 4 END AS ma FROM (SELECT version() AS v) AS foo) AS constants GROUP BY 1,2,3,4,5) AS foo) AS rs JOIN pg_class cc ON cc.relname=rs.tablename JOIN pg_namespace nn ON cc.relnamespace=nn.oid AND nn.nspname=rs.schemaname AND nn.nspname<>\'information_schema\' LEFT JOIN pg_index i ON indrelid = cc.oid LEFT JOIN pg_class c2 ON c2.oid=i.indexrelid) AS sml ORDER BY wastedbytes DESC;'
+\set ibloat 'SELECT current_database(),schemaname,tablename,ROUND((CASE WHEN otta=0 THEN 0.0 ELSE sml.relpages::FLOAT/otta END)::NUMERIC,1) AS tbloat, CASE WHEN relpages<otta THEN 0 ELSE bs*(sml.relpages-otta)::BIGINT END AS wastedbytes, iname, ROUND((CASE WHEN iotta=0 OR ipages=0 THEN 0.0 ELSE ipages::FLOAT/iotta END)::NUMERIC,1) AS ibloat, CASE WHEN ipages<iotta THEN 0 ELSE bs*(ipages-iotta) END AS wastedibytes FROM (SELECT schemaname,tablename,cc.reltuples,cc.relpages,bs,CEIL((cc.reltuples*((datahdr+ma-(CASE WHEN datahdr%ma=0 THEN ma ELSE datahdr%ma END))+nullhdr2+4))/(bs-20::FLOAT)) AS otta,COALESCE(c2.relname,\'?\') AS iname,COALESCE(c2.reltuples,0) AS ituples,COALESCE(c2.relpages,0) AS ipages,COALESCE(CEIL((c2.reltuples*(datahdr-12))/(bs-20::FLOAT)),0) AS iotta FROM (SELECT ma,bs,schemaname,tablename,(datawidth+(hdr+ma-(CASE WHEN hdr%ma=0 THEN ma ELSE hdr%ma END)))::NUMERIC AS datahdr,(maxfracsum*(nullhdr+ma-(CASE WHEN nullhdr%ma=0 THEN ma ELSE nullhdr%ma END))) AS nullhdr2 FROM (SELECT schemaname,tablename,hdr,ma,bs,SUM((1-null_frac)*avg_width) AS datawidth,MAX(null_frac) AS maxfracsum,hdr+(SELECT 1+COUNT(*)/8 FROM pg_stats s2 WHERE null_frac<>0 AND s2.schemaname=s.schemaname AND s2.tablename=s.tablename) AS nullhdr FROM pg_stats s,(SELECT (SELECT current_setting(\'block_size\')::NUMERIC) AS bs, CASE WHEN SUBSTRING(v,12,3) IN (\'8.0\',\'8.1\',\'8.2\') THEN 27 ELSE 23 END AS hdr,CASE WHEN v~\'mingw32\' THEN 8 ELSE 4 END AS ma FROM (SELECT version() AS v) AS foo) AS constants GROUP BY 1,2,3,4,5) AS foo) AS rs JOIN pg_class cc ON cc.relname=rs.tablename JOIN pg_namespace nn ON cc.relnamespace=nn.oid AND nn.nspname=rs.schemaname AND nn.nspname<>\'information_schema\' LEFT JOIN pg_index i ON indrelid = cc.oid LEFT JOIN pg_class c2 ON c2.oid=i.indexrelid) AS sml ORDER BY wastedibytes DESC;'
+\set nr_tuples 'SELECT schemaname,relname,n_tup_ins,n_tup_upd,n_tup_del,n_tup_hot_upd FROM pg_stat_user_tables ORDER BY n_tup_ins desc,n_tup_upd desc,n_tup_del desc,n_tup_hot_upd DESC;'
+\set show_grants 'SELECT * FROM (SELECT use.usename AS usename,nsp.nspname AS namespace,c.relname AS relname,c.relkind AS relkind,use2.usename AS owner,c.relacl,(use2.usename!=use.usename AND c.relacl::text!~(\'({|,)\'||use.usename||\'=\')) AS public FROM pg_user use CROSS JOIN pg_class c LEFT JOIN pg_namespace nsp ON (c.relnamespace=nsp.oid) LEFT JOIN pg_user use2 ON (c.relowner=use2.usesysid) WHERE c.relowner=use.usesysid or c.relacl::text~(\'({|,)(|\'||use.usename||\')=\') ORDER BY usename, namespace, relname) AS p WHERE p.namespace!=\'information_schema\' AND p.namespace!=\'pg_catalog\';'
+\set show_permissions 'SELECT * FROM (SELECT use.usename AS subject, nsp.nspname AS namespace, c.relname AS item, c.relkind AS type, use2.usename AS owner, c.relacl, (use2.usename!=use.usename AND c.relacl::text!~(\'({|,)\'||use.usename||\'=\')) AS public FROM pg_user use CROSS JOIN pg_class c LEFT JOIN pg_namespace nsp ON (c.relnamespace=nsp.oid) LEFT JOIN pg_user use2 ON (c.relowner=use2.usesysid) WHERE c.relowner=use.usesysid OR c.relacl::text~(\'({|,)(|\'||use.usename||\')=\') ORDER BY subject, namespace, item) AS perms WHERE perms.namespace!=\'information_schema\' AND perms.namespace!=\'pg_catalog\';'
+\set show_create_table1 '\\echo Schema: \\gset \\prompt schema \\echo Table:\\gset \\prompt table\\g'
+\set show_create_table 'SELECT \'CREATE TABLE \' || :\'table\' || \' (\' || E\'\n\' || \'\' || string_agg(column_list.column_expr, \', \' || E\'\n\' || \'\') || \'\' || E\'\n\' || \');\' FROM ( SELECT \'    \' || column_name || \' \' || data_type || COALESCE(\'(\' || character_maximum_length || \')\', \'\') || CASE WHEN is_nullable = \'YES\' THEN \'\' ELSE \' NOT NULL\' END AS column_expr FROM information_schema.columns WHERE table_schema = :\'schema\' AND table_name = :\'table\' ORDER BY ordinal_position) column_list\\g'
+\set uptime 'select now() - pg_postmaster_start_time() AS uptime;'
+\set help '\\! echo ":tbloat\t\t\t -- Bloat oredered by wasted table bytes\n:ibloat\t\t\t -- Bloat ordered by wasted index bytes\n:nr_tuples\t\t -- Display tuples stats for tables\n:replag\t\t\t -- Show replication lag\n:replication\t\t -- Show replication info\n:show_create_table1\t -- Set schema and table for show_create_table\n:show_create_table\t -- Display CREATE TABLE statement\n:show_grants\t\t -- Show grants for objects\n:show_permissions\t -- Show permissions for objects\n:uptime\t\t\t -- Display cluster uptime"'
+-- }}}
+
+\unset QUIET
+-- vim:nowrap:foldmethod=marker:foldlevel=0
