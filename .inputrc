@@ -25,6 +25,7 @@ $if bash
   "\e\C-b": "\e\C-]/"						# jump backward to /
   "\e\C-f": "\C-]/"						# jump forward to /
   "\C-xq": "\eb\"\ef\""						# wrap current word in "
+  "\e\C-m": "\C-a \C-m"						# execute, no bash history - ESC-Enter
 $endif
 
 $if mysql
