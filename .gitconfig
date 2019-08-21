@@ -1,6 +1,7 @@
 [user]
 	name		= Jakub Jindra
 	email		= jakub.jindra@socialbakers.com
+	signingkey	= 390A9AE3
 
 [alias]
 	tree		= log --graph --decorate --abbrev-commit
@@ -48,3 +49,5 @@
 
 [push]
 	default		= current
+[diff "gpg"]
+	textconv = gpg --no-tty --decrypt
