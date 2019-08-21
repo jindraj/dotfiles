@@ -12,7 +12,7 @@ then
 	#[[ -s $BREW_PREFIX/etc/bash_completion ]] && source $BREW_PREFIX/etc/bash_completion #bash-completion
 	[[ -s $BREW_PREFIX/etc/profile.d/autojump.sh ]] && . $BREW_PREFIX/etc/profile.d/autojump.sh
 else
-	if command -v git #&> /dev/null
+	if command -v git &> /dev/null
 	then
 		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
 	else
@@ -25,7 +25,9 @@ shopt -s checkwinsize
 shopt -s cdspell
 shopt -s autocd
 
-complete -F _ssh sshmux tssh s curl odjebat nc
+complete -F _known_hosts sshmux s curl odjebat nc
+
+#complete -F _ssh sshmux tssh s curl odjebat nc
 
 export LSCOLORS=ExGxFxdxCxegedhbagacec
 
@@ -47,7 +49,7 @@ ln -sf $HISTFILE ~/.bash_history
 # }}}
 
 # {{{ PROMPT CONFIGS
-export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[ \x01\e[1;97m\x02mysql\x01\e[1;30m\x02://\x01\e[1;32m\x02\u@\h\x01\e[1;30m\x02:\x01\e[1;97m\x02\p\x01\e[1;30m\x02/\x01\e[1;34m\x02\d\x01\e[1;30m\x02 ]\n\x01\e[1;34m\x02>\x01\e[0m\x02\x01\e[0m\x02\_")
+#export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[ \x01\e[1;97m\x02mysql\x01\e[1;30m\x02://\x01\e[1;32m\x02\u@\h\x01\e[1;30m\x02:\x01\e[1;97m\x02\p\x01\e[1;30m\x02/\x01\e[1;34m\x02\d\x01\e[1;30m\x02 ]\n\x01\e[1;34m\x02>\x01\e[0m\x02\x01\e[0m\x02\_")
 PROMPT_DIRTRIM=2
 GIT_PS1_SHOWDIRTYSTATE=true
 GIT_PS1_SHOWSTASHSTATE=true
@@ -78,17 +80,18 @@ esac
 # EDITOR, PAGER, MANPAGER {{{
 if command -v nvim > /dev/null
 then
-	EDITOR=nvim
+	alias vim=nvim
+	export EDITOR=nvim
 else
-	EDITOR=vim
+	export EDITOR=vim
 fi
 SUDO_EDITOR=$EDITOR
 export HOMEBREW_EDITOR=$EDITOR
 
-if [[ -f ~/.config/nvim/plugged/vimpager/vimpager ]]
+if [[ -f ~/.vim/plugged/vimpager/vimpager ]]
 then 
-	alias vimpager=~/.config/nvim/plugged/vimpager/vimpager
 	export PAGER=~/.config/nvim/plugged/vimpager/vimpager
+	alias vimpager=$PAGER
 	export MANPAGER="/bin/bash -c \"col -b | $(echo $PAGER) -c 'set ft=man nomod nolist'\""
 else
 	export PAGER=less
@@ -96,4 +99,6 @@ else
 fi
 # }}}
 
+complete -C /Users/jindraj/bin/terraform terraform
+complete -C /usr/local/Cellar/terraform/0.11.11/bin/terraform terraform
 # vim:foldmethod=marker:foldlevel=0
