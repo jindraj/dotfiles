@@ -5,6 +5,24 @@ function ec(){ # get exitcode
   [[ "$EC" -ne 0 ]] && [[ "$EC" -ne 130 ]] && echo -en "\x01\e[1;30m\x02[\x01\e[0m\x02\x01\e[1;31m\x02${EC}\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02"
 }
 
+function hf(){
+	local -a cmds
+	local cmd
+	local -x FZF_DEFAULT_OPTS
+	FZF_DEFAULT_OPTS+='--preview "/bin/echo {} | fold -w $COLUMNS" '
+	FZF_DEFAULT_OPTS+='--preview-window=down:33% '
+	FZF_DEFAULT_OPTS+='--multi '
+	FZF_DEFAULT_OPTS+='--print0 '
+	FZF_DEFAULT_OPTS+='--tac '
+	FZF_DEFAULT_OPTS+='--bind="esc:execute(pbcopy <<<{})" '
+	FZF_DEFAULT_OPTS+='--header="When multiple commands selected with [TAB] they'\''re executed in the same oreder as selected"'
+	readarray -d '' -t cmds < <(cat ~/.bash_history_files/* | fzf)
+	for cmd in "${cmds[@]}"
+	do
+		$cmd
+	done
+}
+
 function nr_sessions(){ # get number of tmux+screen sessions
   TMUX_SESSIONS=$(tmux list-sessions 2> /dev/null|wc -l)
   SCREEN_SESSIONS=$(screen -list 2> /dev/null |grep $'\t'|wc -l)
@@ -15,7 +33,7 @@ function nr_sessions(){ # get number of tmux+screen sessions
 # }}}
 
 function dockertop(){
-  DOCKER_HOST=tcp://${1}:4243 ctop
+  dry -H ${1}:4243
 }
 
 function ldapaudit(){
