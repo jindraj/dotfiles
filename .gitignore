@@ -5,3 +5,5 @@
 .mutt/cache
 .mutt/signature-*
 .mutt/muttrc.profile-*
+/.notmuch-config
+/.offlineimaprc
