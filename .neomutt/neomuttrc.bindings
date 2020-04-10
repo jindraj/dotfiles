@@ -1,0 +1,130 @@
+# -*-muttrc-*- 
+#macro compose ,m \
+#"<enter-command>set pipe_decode<enter>\
+#<pipe-message>pandoc -f gfm -t plain -o /tmp/msg.txt<enter>\
+#<pipe-message>pandoc -s -f gfm -t html5 -o /tmp/msg.html<enter>\
+#<enter-command>unset pipe_decode<enter>\
+#<attach-file>/tmp/msg.txt<enter>\
+#<attach-file>/tmp/msg.html<enter>\
+#<tag-entry>\
+#<previous-entry><tag-entry>\
+#<group-alternatives>" \
+#"Convert markdown gfm to HTML and MIME" #attach plain toggled inline,attach html, toggle inline,change MIME,delete original, merge both parts, delete description
+
+macro compose ,m \
+"<enter-command>set pipe_decode<enter>\
+<pipe-message>pandoc -f gfm -t plain -o /tmp/msg.txt<enter>\
+<pipe-message>pandoc -s -f gfm -t html5 -o /tmp/msg.html<enter>\
+<enter-command>unset pipe_decode<enter>a^U/tmp/msg.txt\n^Da^U/tmp/msg.html\n^D^T^Utext/html; charset=utf-8\n=DTT&d^U\n" \
+"Convert markdown gfm to HTML and MIME" #attach plain toggled inline,attach html, toggle inline,change MIME,delete original, merge both parts, delete description
+
+macro index,pager,attach,compose \cb "\
+<enter-command>set my_pipe_decode=\$pipe_decode pipe_decode<Enter>\
+<pipe-message>urlview<Enter>\
+<enter-command>set pipe_decode=\$my_pipe_decode; unset my_pipe_decode<Enter>" \
+"call urlview to extract URLs out of a message"
+
+macro index,pager,browser _ \
+"<shell-escape>read<enter>" \
+"Display normal screen"
+
+macro index,pager,browser ^ \
+"<shell-escape>$my_bindir/sync verbose<enter>" \
+"Sync mail"
+
+# Freshservice macros {{{
+macro index,pager ,A \
+"<enter-command>set pipe_decode<enter>\
+<pipe-message>$my_bindir/freshservice.sh assign<enter>\
+<enter-command>unset pipe_decode<enter>\
+<enter-command>echo \"Assigning freshservice ticket\"<enter>" \
+"Freshservice assign ticket referenced in the message to me"
+
+macro index,pager ,C \
+"<enter-command>set pipe_decode<enter>\
+<pipe-message>$my_bindir/freshservice.sh close<enter>\
+<enter-command>unset pipe_decode<enter>\
+<enter-command>echo \"Closing freshservice ticket\"<enter>" \
+"Freshservice close ticket referenced in the message"
+
+macro index,pager ,R \
+"<enter-command>set pipe_decode<enter>\
+<pipe-message>$my_bindir/freshservice.sh resolve<enter>\
+<enter-command>unset pipe_decode<enter>\
+<enter-command>echo \"Resolving freshservice ticket\"<enter>" \
+"Freshservice close ticket referenced in the message"
+
+macro index,pager ,O \
+"<enter-command>set pipe_decode<enter>\
+<pipe-message>$my_bindir/freshservice.sh open<enter>\
+<enter-command>unset pipe_decode<enter>" \
+"Freshservice open ticket referenced in the message in the browser"
+# }}}
+
+# Account switching {{{
+macro compose,index,pager <f1> \
+"<enter-command>source $my_cfgdir/neomuttrc.profile-personal<enter>\
+<enter-command>echo 'Switched to personal profile'<enter>" \
+"switch to personal profile"
+
+macro compose,index,pager <f2> \
+"<enter-command>source $my_cfgdir/neomuttrc.profile-work<enter>\
+<enter-command>echo 'Switched to work profile'<enter>" \
+"switch to work profile"
+# }}}
+
+# notmuch window search {{{
+macro  index       \' \
+"<enter-command>lua mutt.set('nm_query_window_duration',mutt.get('nm_query_window_duration') + 1)<enter>\
+<enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
+<change-folder>^<enter>\
+<enter-command>echo \"Incread query window\"<enter>" \
+"Increase window duration"
+
+macro  index       \" \
+"<enter-command>lua mutt.set('nm_query_window_duration',mutt.get('nm_query_window_duration') - 1)<enter>\
+<enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
+<change-folder>^<enter>\
+<enter-command>echo \"Decreased query window\"<enter>" \
+"Decrease window duration"
+
+macro  index       > \
+"<vfolder-window-forward>\
+<enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
+<enter-command>echo \"Shifted window forwards\"<enter>" \
+"shifts virtual folder time window backwards"
+
+macro  index       < \
+"<vfolder-window-backward>\
+<enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
+<enter-command>echo \"Shifted window backwards\"<enter>" \
+"shifts virtual folder time window forwards"
+# }}}
+
+bind  index,pager a       group-reply
+bind  index,pager g       noop
+bind  index       gg      first-entry
+bind  index       G       last-entry
+bind  index,pager j       next-entry
+bind  index,pager k       previous-entry
+bind  index,pager K       extract-keys
+bind  index       <space> collapse-thread
+bind  index,pager +       entire-thread
+
+bind  editor      <Tab>   complete-query
+
+bind  index,pager <f8>    vfolder-from-query
+bind  index,pager ,l      modify-tags
+macro index,pager ,a      "<modify-tags-then-hide>-unread -inbox\n<sync-mailbox><check-stats>"                "Archive message"
+macro index,pager ,d      "<modify-tags-then-hide>-unread -inbox -spam +trash\n<sync-mailbox><check-stats>"   "Delete message"
+macro index,pager ,s      "<modify-tags-then-hide>-unread -inbox -deleted +spam\n<sync-mailbox><check-stats>" "Mark message as spam"
+macro index,pager H       "<quasi-delete><sync-mailbox>"                                                      "Hide message"
+macro index,pager gi      "<change-vfolder>!<enter>"                                                          "Go to Inbox"
+macro index,pager gs      "<change-vfolder>GMail/flagged<enter>"                                              "Go to starred"
+macro index,pager gt      "<change-vfolder>GMail/sent<enter>"                                                 "Go to sent"
+macro index,pager gd      "<change-vfolder>$postponed<enter>"                                                 "Go to drafts"
+macro index,pager ga      "<change-vfolder>GMail/archives<enter>"                                             "Go to archives"
+
+macro index,pager go      "<pipe-message>\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" $(formail -x message-id -z | sed 's,^,https://mail.google.com/mail/u/0/#search/rfc822msgid%3A,')<enter>" "Open message in GMail"
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

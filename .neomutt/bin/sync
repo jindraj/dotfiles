@@ -1,0 +1,55 @@
+#!/usr/local/bin/bash
+PATH=/bin:$HOME/bin:/usr/bin:$HOME/.neomutt/bin:/usr/local/bin
+PATH=/usr/local/opt/python@3.8/bin:$PATH
+GMI_DIR=$HOME/.mail/gmail
+
+[[ "x$1" == "xverbose" ]] && outputfile=/dev/stdout || outputfile=/tmp/null
+
+function __msg(){
+	echo -ne "\e[033m$*\e[0m" &>> $outputfile
+}
+
+function __check_connectivity(){
+	__msg "Checking connectivity" &>> $outputfile
+	if ! /sbin/ping -W 1 -c 1 www.googleapis.com &>/dev/null
+	then
+		__msg " ❌\n" &>> $outputfile
+		exit 0
+	else
+		__msg " ✅\n" &>> $outputfile
+	fi
+}
+
+# sync archive + index notmuch (gmailieer) and sync drafts (offlineimap)
+function __sync_drafts(){
+	__msg "Syncing drafts (offlineimap)\n" &>> $outputfile
+	offlineimap -o &>> $outputfile
+}
+
+function __sync_archive(){
+	__msg "Syncing archive (gmailieer)\n" &>> $outputfile
+	cd $GMI_DIR
+	/usr/local/bin/python3 ~/Downloads/gmailieer/gmi sync &>> $outputfile
+	cd - &> /dev/null
+}
+
+# post sync actions run notifications + statictics and archive closed tickets
+function __post_sync(){	
+	__msg "Running post sync\n" &>> $outputfile
+	__msg "\tNotify new messages and graf data\n" &>> $outputfile
+	notmuch new --quiet 2>/tmp/nm-hook &
+	__msg "\tFreshservice tickets actions\n" &>> $outputfile
+	~/.neomutt/bin/sync_freshservice &>> $outputfile &
+}
+
+function main(){
+	__msg "$(date '+%Y-%m-%d %H:%M') running sync\n" &>> $outputfile
+	__check_connectivity
+	__sync_archive
+	__sync_drafts
+	__post_sync
+}
+
+main
+
+# vim:foldmethod=indent:foldlevel=0:tabstop=4:shiftwidth=4:softtabstop=0:noexpandtab

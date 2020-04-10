@@ -1,0 +1,7 @@
+set arrow_cursor	= yes
+color indicator alertdefault default
+
+macro index,browser,alias,generic,pager ,<space> \
+"<enter-command>source $my_cfgdir/toggle/neomuttrc.arrow_cursor_off<enter>\
+<enter-command>echo 'Arrow cursor off'<enter>" \
+"toggle arrow cursor"

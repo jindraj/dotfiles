@@ -1,0 +1,25 @@
+# -*-muttrc-*- 
+# sidebar settings
+set sidebar_visible			= yes
+set sidebar_short_path			= yes 
+set sidebar_folder_indent		= yes
+set sidebar_width			= 25
+set sidebar_format			= "%B%?F? [%F]?%* %?N?%N/?%S"
+set sidebar_divider_char		= "┃"
+set sidebar_delim_chars			= "/"
+set sidebar_non_empty_mailbox_only	= yes
+
+sidebar_whitelist GMail
+
+# sidebar bindings
+bind index,browser,generic,pager	,.	sidebar-toggle-visible
+bind index,pager			\CP	sidebar-prev
+bind index,pager			<up>	sidebar-prev
+bind index,pager			\CN	sidebar-next
+bind index,pager			<down>	sidebar-next
+bind index,pager			\CK	sidebar-open
+bind index,pager			<right>	sidebar-open
+bind index,browser,generic,pager	}	sidebar-page-down
+bind index,browser,generic,pager	{	sidebar-page-up
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

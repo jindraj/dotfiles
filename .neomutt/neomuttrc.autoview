@@ -1,0 +1,4 @@
+# -*-muttrc-*- 
+# to see some MIME types inline
+auto_view text/html
+auto_view text/csv

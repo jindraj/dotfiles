@@ -1,0 +1,38 @@
+              +-------------------IMAP-------------------+
+              |                                          |
+              v                                          v
+       +-------------+   +-------------+             +-------+
+       | offlineimap |   |    lieer    +<----API---->+ GMail |
+       +-------------+   +-------------+             +-------+
+              ^          ^             ^                 ^
+              |          |             |                 |
+              |          |             |                 |
+              |          |             |                 |
+              v          v             v                 |
+        +---------+  +---------+  +---------+            |
+        | Maildir |  | notmuch |  | Maildir |            |
+        +---------+  +---------+  +---------+            |
+              |           |            |                 |
+              |           +------------+                 |
+              |                  |                       |
+              |                  v                       |
+              |     +-------------------------+   SMTP   |
+              +---->|        NeoMutt          +----------+
+                    +-------------------------+
+
+
+
+
+--------------
+ Cron -> sync +-> lieer (archive) ------> post sync +-> [1]notmuch new to trigger nm post-new hook
+              |                                     |
+              +-> offlineimap (drafts)              +-> [2]freshservice
+--------------
+
+[1] query notmuch database, filter inbox ^ important v junk (trash,maillists,newletters,spam,linkedin)
+    use terminal-notifier to notify about those messages
+    graph new,new in inbox,notified
+[2] script for archiving and tagging ticketing messages
+    archives emails related to tickets which were resolved,closed,deleted,marked as spam
+    tags emails with usernames according to who are tickets assigned
+    tags emails with due/frdue whether related ticket is escalated or first-response escalated

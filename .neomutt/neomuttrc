@@ -1,0 +1,142 @@
+# -*-muttrc-*- 
+# variables
+set my_cfgdir		= "$HOME/.neomutt"
+set my_bindir		= "$my_cfgdir/bin"
+
+# terminal status line and icon
+set ts_enabled		= yes
+set ts_icon_format	= "%<n?📬&📭> M%<n?AIL&ail>%<n? %n/%m>"
+set ts_status_format	= "%<n?📬&📭> M%<n?AIL&ail>%<n? %n/%m>"
+
+# layout
+set status_on_top	= yes
+set help		= no
+
+# menu
+set menu_scroll		= yes	# scroll in menus
+set menu_move_off	= no	# keep last entries on the last line of menu
+set menu_context	= 10	# keep 10 lines above and below when scrolling in menus
+
+# index
+set auto_tag		= yes	# function in the index menu will be applied to all tagged messages
+set collapse_all	= yes
+set collapse_unread	= no
+set collapse_flagged	= no
+set sort		= threads
+set sort_aux		= reverse-last-date-received
+set strict_threads	= yes
+set date_format		= "%F %R"
+set index_format	= "%Z  %D%-25.25L %2E %-1.75s %> %g" # {status flags} {date} {from} {# msgs in thread} {subject} {tags}
+
+# pager
+set pager_index_lines	= 10  # number of index lines to show
+set pager_context	= 3   # number of context lines to show
+set pager_stop		= yes # don't go to next message automatically
+set tilde		= yes # fill empty lines from the end of message to bottom of the screen with tilde
+set markers		= no  # no plus sign at the beggining of wrapped lines
+
+# history
+set save_history	= 1000
+set history_remove_dups = yes
+
+# behaviour
+set quit		= ask-no
+set wait_key		= no	# stop asking for pressing key after some actions
+set read_inc		= 1000	# display progress by 1000 msgs when changing maildir
+
+# timers
+set mail_check_stats	= yes	# not really related to sidebar but it makes sense for me
+set mail_check		= 10	# How often look for new mail
+set timeout		= 60	# do not wait so long for menu refresh
+set sleep_time		= 0	# don't sleep between actions
+
+# commands and paths
+set editor		= "/usr/local/bin/vim -c 'set syntax=mail fileencoding=utf-8 ft=mail fo+=aw'"	# set editor for composing messages
+set ispell		= "/usr/local/bin/aspell --mode=email -e -c"
+set print_command	= "$my_bindir/print.sh"
+set mailcap_path	= "$my_cfgdir/mailcap"
+
+# composing, replying and forwarding
+set hostname		= "poritrin.jakubjindra.eu"		# set hostname
+set content_type	= "text/plain"				# default content-type for outgoing emails
+set forward_format	= "Fwd: %s"				# set subject of forwarded messages like shown
+set query_command	= "echo && notmuch address %s | fzf --height=10 --query=%s"
+set query_format	= "%3c %t %-50.50a %-25.25n %> %?e?(%e)?"
+set alias_format	= "%4n %2f %t %-30a   %r"
+set askcc		= yes					# ask to fill Cc before composing message
+set askbcc		= yes					# ask to fill Bcc before composing message
+set fast_reply		= yes					# don't ask for subject, etc when replying
+set edit_headers	= yes					# allow editing or setting custom headers when composing
+set include		= yes					# include original message in reply
+set user_agent		= yes
+set dsn_notify		= "failure,delay,success"		# request notification for failed and delayed messages
+set send_charset	= "utf-8"				# characterset for outgoing messages
+set assumed_charset	= "utf-8:windows-1250:iso-8859-2"	# characterset for incoming messages if no specified
+set attach_keyword	= "(attach|attached|attachments?|p[rř][ií]lo(h([yu]?|a(mi)?|ou|ách)|ze)?)" # regex for mentioned attachment in body
+set abort_noattach	= ask-yes				# ask to abort with default (yes) when attachment mentioned in body but no files attached
+set attach_save_dir	= /tmp/
+
+set simple_search	= "~f %s | ~C %s | ~s %s"		# make default search pattern to search in To, Cc and Subject
+set from_chars		= "TCB "
+set to_chars            = "😵👤👥🙋🏠📧"
+#set to_chars=""
+
+# Header blacklist / whitelist
+# take care only about these headers
+ignore *
+unignore \
+  From \
+  To \
+  Cc \
+  Bcc \
+  Date \
+  List-ID \
+  X-Github-Sender \
+  Organization \
+  List-Archive \
+  Tags \
+  X-Mailer \
+  User-Agent \
+  Subject
+# display headers in this order
+unhdr_order *
+hdr_order \
+  From: \
+  To: \
+  Cc: \
+  Bcc: \
+  Date: \
+  Subject: \
+  List-ID: \
+  List-Archive: \
+  X-Github-Sender: \
+  Organization: \
+  X-Mailer: \
+  User-Agent: \
+  Tags:
+
+# headercache
+ifdef hcache "set header_cache		= '~/.cache/neomutt'"
+ifdef hcache "set header_cache_backend	= 'lmdb'"
+ifdef hcache "ifdef zstd \"set my_test	= 'zstd'\""
+
+# Identity and contacts
+alternates "PLACEHOLDER_ALTERNATES"
+
+# Source other config files
+source $my_cfgdir/neomuttrc.myvars                 # source config my_vars
+source $my_cfgdir/neomuttrc.aliases                # source config aliases
+source $my_cfgdir/neomuttrc.autoview               # source config autoview
+source $my_cfgdir/neomuttrc.sidebar                # source config sidebar
+source $my_cfgdir/neomuttrc.mailboxes              # source config virtualmailboxes
+source $my_cfgdir/neomuttrc.bindings               # source config shortcuts
+source $my_cfgdir/neomuttrc.hooks                  # source config hooks
+source $my_cfgdir/neomuttrc.smtp                   # source config smtp
+source $my_cfgdir/neomuttrc.subscribe              # source config subscribed maillists
+source $my_cfgdir/neomuttrc.crypt                  # source config S/MIME and GPG
+source $my_cfgdir/neomuttrc.profile-work           # source config profile
+source $my_cfgdir/neomuttrc.colors                 # source config colors
+source $my_cfgdir/toggle/neomuttrc.arrow_cursor_on # source default toggle
+source $my_cfgdir/neomuttrc.tmp                    # source config temporary config
+
+# vim:foldmethod=marker:foldlevel=0

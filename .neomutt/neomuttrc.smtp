@@ -1,0 +1,9 @@
+# -*-muttrc-*- 
+set smtp_url			= "smtps://$my_personal_email_address@smtp.gmail.com:465/"
+set smtp_authenticators		= "oauthbearer"
+set smtp_oauth_refresh_command	= "$my_bindir/helpers/oauth2.py --quiet --user=$my_personal_email_address \
+  --client_id=`gopass personal/google.com-$my_personal_email_address-neomutt-client_id` \
+  --client_secret=`gopass personal/google.com-$my_personal_email_address-neomutt-client_secret` \
+  --refresh_token=`gopass personal/google.com-$my_personal_email_address-neomutt-refresh_token`"
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

@@ -1,0 +1,6 @@
+# -*-muttrc-*- 
+alias devops	DevOps	<PLACEHOLDER_ALIASES_DEVOPS>
+alias admin	Admin	<PLACEHOLDER_ALIASES_ADMIN>
+alias slack	Slack	<PLACEHOLDER_ALIASES_SLACK>
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

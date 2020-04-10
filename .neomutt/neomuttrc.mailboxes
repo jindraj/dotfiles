@@ -1,0 +1,91 @@
+# -*-muttrc-*- 
+set folder              = "~/.mail/gmail"
+set mbox_type           = maildir
+set record              = no
+set postponed           = "=drafts"
+set nm_default_uri	= "notmuch:///Users/jindraj/.mail/gmail"
+set nm_record		= yes                                 # apply notmuch to email in mutt's record
+set nm_exclude_tags	= "spam"
+set hidden_tags         = "unread,passed,sbks,sysu"
+set spoolfile           = 'GMail/INBOX'
+
+folder-hook '!GMail/sent' 'reset nm_query_window_duration = 0'
+set nm_query_window_timebase="day"
+
+named-mailboxes \
+  "sample"                               "~/.mail/sample-mail/f1/fruit/lemon/" \
+  "local"                                "/var/mail/jindraj" \
+  "GMail"                                "/dev/null" \
+  "GMail/INBOX"                          "notmuch://?query=tag:inbox NOT (query:lists OR query:junk OR tag:golkad OR tag:irikm OR tag:petakj OR tag:hotskyo)&type=threads" \
+  "GMail/INBOX/work"                     "notmuch://?query=tag:inbox NOT (query:personal OR query:lists OR query:junk OR tag:golkad OR tag:irikm OR tag:petakj OR tag:hotskyo)&type=threads" \
+  "GMail/INBOX/personal"                 "notmuch://?query=tag:inbox NOT (tag:work)&type=threads" \
+  "GMail/unread"                         "notmuch://?query=tag:unread NOT query:junk" \
+  "GMail/flagged"                        "notmuch://?query=tag:flagged" \
+  "GMail/sent"                           "notmuch://?query=tag:sent NOT query:junk" \
+  "GMail/drafts"                         $postponed \
+  "GMail/spam"                           "notmuch://?query=tag:spam" \
+  "GMail/trash"                          "notmuch://?query=tag:trash" \
+  "GMail/work"                           "notmuch://?query=tag:work NOT query:junk" \
+  "GMail/work/ticketing"                 "notmuch://?query=tag:ticketing NOT query:junk" \
+  "GMail/personal"                       "notmuch://?query=query:personal" \
+  "GMail/newsletters"                    "notmuch://?query=tag:newsletters" \
+  "GMail/receipts"                       "notmuch://?query=PLACEHOLDER_MAILBOXES_QUERY1" \
+  "GMail/linkedin"                       "notmuch://?query=from:@linkedin.com" \
+  "lists"                                "notmuch://?query=tag:maillists" \
+  "lists/nslcd"                          "notmuch://?query=List:nss-pam-ldapd-users" \
+  "lists/neomutt"                        "notmuch://?query=List:neomutt" \
+  "lists/neomutt/users"                  "notmuch://?query=List:neomutt-users-neomutt.org" \
+  "lists/neomutt/developers"             "notmuch://?query=List:neomutt-devel-neomutt.org" \
+  "lists/github.com"                     "notmuch://?query=List:github.com" \
+  "lists/github.com/neomutt"             "notmuch://?query=List:neomutt.github.com" \
+  "lists/github.com/neomutt/neomutt"     "notmuch://?query=List:neomutt/neomutt AND NOT List:neomutt/homebrew-neomutt" \
+  "lists/github.com/neomutt/management"  "notmuch://?query=List:neomutt/management" \
+  "lists/github.com/neomutt/homebrew"    "notmuch://?query=List:neomutt/homebrew-neomutt" \
+  "lists/github.com/neomutt/translators" "notmuch://?query=List:neomutt/translators" \
+  "lists/github.com/sensu-plugins"       "notmuch://?query=List:sensu-plugins.github.com" \
+  "lists/github.com/other"               "notmuch://?query=List:github.com AND NOT (List:neomutt OR List:sensu-plugins)" \
+  "lists/github.com/about-me"            "notmuch://?query=to:@noreply.github.com AND (to:mention@ OR to:author@ OR to:assign@ OR to:comment@ OR to:review_requested@)" \
+  "archives"                             "notmuch://?query=NOT query:junk" \
+  "archives/today"                       "notmuch://?query=date:today      NOT (query:junk)" \
+  "archives/yesterday"                   "notmuch://?query=date:yesterday  NOT (query:junk)" \
+  "archives/this week"                   "notmuch://?query=date:this_week  NOT (query:junk)" \
+  "archives/last week"                   "notmuch://?query=date:last_week  NOT (query:junk)" \
+  "archives/this month"                  "notmuch://?query=date:this_month NOT (query:junk)" \
+  "archives/last month"                  "notmuch://?query=date:last_month NOT (query:junk)" \
+  "archives/this year"                   "notmuch://?query=date:this_year  NOT (query:junk)" \
+  "archives/last year"                   "notmuch://?query=date:last_year  NOT (query:junk)" \
+
+
+tag-transforms \
+ "inbox"              "📥" \
+  "sent"               "📤" \
+  "important"          "‼"  \
+  "trash"              "🗑 "  \
+  "spam"               "💩" \
+  "replied"            "↺"  \
+  "flagged"            "🌟"  \
+  "signed"             "📝" \
+  "encrypted"          "🔐" \
+  "attachment"         "📁" \
+  "notify"             "🔔"  \
+  "tickets"            "🎟"  \
+  "travelling"         "✈️" \
+  "work"               "💻" \
+  "sbks"               "🥖" \
+  "ticketing"          "🎫" \
+  "newsletters"        "📰" \
+  "maillists"          "📧"\
+  "my_tech_stuff"      "🔧" \
+  "finance"            "💵" \
+  "payroll"            "🤑" \
+  "doc"                "📄" \
+  "byt"                "🏠" \
+  "fotky"              "📷" \
+  "print"              "🖨 " \
+  "orders"             "📦" \
+  "vypis"              "🔠" \
+  "done"               "✓" \
+  "bookmarks"          "🔖" \
+  "frdue"              "⏲ " \
+  "due"                "🚨" \
+

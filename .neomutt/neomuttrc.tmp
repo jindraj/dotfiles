@@ -1,0 +1,4 @@
+# -*-muttrc-*- 
+set maildir_check_cur = no
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

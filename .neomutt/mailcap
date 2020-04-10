@@ -1,0 +1,12 @@
+text/html;			(open %s && sleep 2) &; nametemplate=%s.html; needsterminal
+#text/html;			elinks %s ; nametemplate=%s.html; needsterminal
+#text/html;			elinks -config-file neomutt.conf -dump -dump-width ${COLUMNS:-80} -dump-charset utf-8 -eval "set document.codepage.assume = %{charset}" %s; nametemplate=%s.html; copiousoutput
+#text/html;			pandoc -s -r html+raw_html-native_divs-native_spans-line_blocks -w plain  --reference-links; nametemplate=%s.html; copiousoutput
+text/html;			lynx -dump -display_charset=utf-8 -assume_local_charset=%{charset} -assume_charset=%{charset} -width=$COLUMNS %s; nametemplate=%s.html; copiousoutput
+application/x-pkcs7-signature;	openssl pkcs7 -in %s -inform der -noout -print_certs -text | less; copiousoutput
+application/pkcs7-signature;	openssl pkcs7 -in %s -inform der -noout -print_certs -text | less; copiousoutput
+text/csv;			view %s; nametemplate=%s.html; needsterminal
+text/csv;			head %s; nametemplate=%s.csv; copiousoutput
+application/pdf;		open %s
+image/png;			open %s
+image/jpeg;			open %s

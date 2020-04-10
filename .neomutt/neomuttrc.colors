@@ -1,0 +1,73 @@
+# -*-muttrc-*- 
+# quoted text
+ifdef color color normal      color255       default
+ifdef color color quoted      color252       default
+ifdef color color quoted1     color249       default
+ifdef color color quoted2     color246       default
+ifdef color color quoted3     color243       default
+ifdef color color quoted4     color240       default
+ifdef color color quoted5     color237       default
+ifdef color color quoted6     color234       default
+ifdef color color signature   cyan           default
+
+# generic objects
+color error       brightred      default
+color tree        brightmagenta  default
+color tilde       blue           default
+color attachment  brightyellow   default
+color markers     brightred      default
+color message     white          default
+color search      brightwhite    magenta
+color bold        brightyellow   default
+
+# INDEX
+#   Colors based on recipient
+#     WORK 
+color index       brightcolor27  default  "!~C 'PLACEHOLDER_COLOR1 & !~u'" # bcc?
+color index       brightcyan     default  "~C 'PLACEHOLDER_COLOR2'" # work team lists
+color index       cyan           default  "~C 'PLACEHOLDER_COLOR3'" # work general lists
+color index       brightblue     default  "~C 'PLACEHOLDER_COLOR4'" # work incomming
+color index       blue           default  "~f 'PLACEHOLDER_COLOR5'" # work outgoing
+#     personal
+color index       brightgreen    default  "~C PLACEHOLDER_COLOR6" # personal incomming
+color index       color34        default  "~f PLACEHOLDER_COLOR6" # personal outgoing
+#     infomails and maillists
+color index       default        default  "~f '((info|eshop)@cd.cz|@chess.com)' | ~f @github.com | ~C @lists.arthurdejong.org | ~C @neomutt.org | ~C @glists.sonatype.com"
+#      github to me
+color index       brightcolor190 default  "~C '(mention|author|assign|comment|review_requested)@noreply.github.com'"
+#   default index colors
+color index       default	color238 "~N !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
+color index       standout default   color238	"~N !~T !~F  ~p !~P"	# To me
+color index       black		magenta  "~T"			# Tagged
+color index_flags black		magenta  "~T"			# Flagged
+color index       red		default  "~D"			# Deleted
+color index_flags brightred	default  "~F"			# Flagged
+
+
+# Pager
+#   headers
+set   header_color_partial = yes
+color hdrdefault  brightcyan     default
+color header      brightyellow   default  "^(From|To|CC|Bcc|Subject):"
+color header      yellow         default  "^(Date|X-Label|Tags|List-Id|List-Archive|X-Github-Sender|Organization|User-Agent|X-Mailer):"
+color index       black          magenta  "~T" # Tagged
+
+#   body
+# URLs
+color body        brightyellow  default   "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
+
+# email addresses
+color body        brightmagenta default   "((@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]),)*@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]):)?[0-9a-z_.+%$-]+@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\])"
+
+# Signed messages
+color body	green		default   "^Good signature from:"
+color body	brightcolor202	default   "^Problem signature from:"
+color body	brightwhite	red       "^\\*BAD\\* signature from:"
+
+color body	brightblue    default   "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)" # *bold*
+color body	brightblue    default   "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"     # _underline_
+color body	red           default   "\\[\\[-- .* --\\]\\]"
+
+color body	blue          default   "( *[-+=#*~_]){6,}" #Border lines.
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

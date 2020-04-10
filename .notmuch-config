@@ -60,7 +60,7 @@ ignore=*.json;*.bak;.lock
 #		query will override that exclusion.
 #
 [search]
-exclude_tags= #deleted;spam;trash
+exclude_tags=spam;trash
 
 # Maildir compatibility configuration
 #
@@ -86,9 +86,21 @@ exclude_tags= #deleted;spam;trash
 [maildir]
 synchronize_flags=true
 
+[index]
+header.List=List-Id
+
+# notmuch config set index.header.List List-Id
+
 # just for the record. Need to run:
 # `notmuch config set query.QUERYNAME NOTMUCH_QUERY`
 # to store query in the db
 [query]
-junk=tag:trash OR tag:spam OR tag:drafts OR from:@linkedin.com
-lists=tag:Newsletters OR tag:Maillists
+receipts=to:*+receipts@socialbakers.com OR to:*+receipts@gmail.com
+junk=tag:trash OR tag:spam OR tag:drafts OR from:@linkedin.com OR query:receipts
+lists=tag:newsletters OR tag:maillists
+personal=NOT (tag:work OR OR tag:rtc OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)
+
+# notmuch config set query.receipts 'to:*+receipts@socialbakers.com OR to:*+receipts@gmail.com'
+# notmuch config set query.junk 'tag:trash OR tag:spam OR tag:drafts OR from:@linkedin.com OR query:receipts'
+# notmuch config set query.lists 'tag:Newsletters OR tag:Maillists'
+# notmuch config set query.personal 'NOT (tag:Work/SBKS OR tag:Work/SyntacticSugar OR tag:Freetime/Rotaract OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)'
