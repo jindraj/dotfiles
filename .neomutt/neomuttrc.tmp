@@ -1,4 +1,11 @@
 # -*-muttrc-*- 
 set maildir_check_cur = no
+#set resolve #jump to next undeleted message after action (deletion,tag,etc)
+
+set my_theme_number = "0"
+macro index,pager x '\
+<enter-command>lua-source $my_cfgdir/lua/change_color_scheme.lua<enter>\
+<enter-command>exec refresh<enter>\
+<enter-command>lua mutt.call("echo","Colorscheme:" .. mutt.get("my_theme_number"))<enter>'
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

@@ -1,7 +1,8 @@
 # -*-muttrc-*- 
-message-hook .                                                 "unalternative_order *; alternative_order text/plain text/enriched text/html" # any message
-message-hook '~b Hiring\ update '                              "unalternative_order *; alternative_order text/html text/enriched text/plain" # hiring update
-message-hook '~s Secret\ message'                              "unalternative_order *; alternative_order text/html text/enriched text/plain" # from ldaptools encrypt
-message-hook '~f "PLACEHOLDER_HOOKS1"' "unalternative_order *; alternative_order text/html text_enriched text/plain" # freshservice sucks
+message-hook .       "unalternative_order *; alternative_order text/plain text/enriched text/html" # any message
+message-hook "%f fs" "unalternative_order *; alternative_order text/html text/plain" # freshservice sucks
+
+folder-hook . "set my_zero_inbox=''; source $my_cfgdir/neomuttrc.profile-common"
+folder-hook INBOX "set my_zero_inbox='Yay empty mailbox 🎉'; source $my_cfgdir/neomuttrc.profile-common"
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

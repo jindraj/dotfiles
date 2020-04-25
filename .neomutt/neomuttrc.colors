@@ -1,14 +1,13 @@
 # -*-muttrc-*- 
 # quoted text
-ifdef color color normal      color255       default
-ifdef color color quoted      color252       default
-ifdef color color quoted1     color249       default
-ifdef color color quoted2     color246       default
-ifdef color color quoted3     color243       default
-ifdef color color quoted4     color240       default
-ifdef color color quoted5     color237       default
-ifdef color color quoted6     color234       default
-ifdef color color signature   cyan           default
+color normal      color255       default
+color quoted      color252       default
+color quoted1     color249       default
+color quoted2     color246       default
+color quoted3     color243       default
+color quoted4     color240       default
+color quoted5     color237       default
+color quoted6     color234       default
 
 # generic objects
 color error       brightred      default
@@ -16,41 +15,41 @@ color tree        brightmagenta  default
 color tilde       blue           default
 color attachment  brightyellow   default
 color markers     brightred      default
-color message     white          default
 color search      brightwhite    magenta
 color bold        brightyellow   default
+color signature   cyan           default
 
 # INDEX
 #   Colors based on recipient
 #     WORK 
-color index       brightcolor27  default  "!~C 'PLACEHOLDER_COLOR1 & !~u'" # bcc?
-color index       brightcyan     default  "~C 'PLACEHOLDER_COLOR2'" # work team lists
-color index       cyan           default  "~C 'PLACEHOLDER_COLOR3'" # work general lists
-color index       brightblue     default  "~C 'PLACEHOLDER_COLOR4'" # work incomming
-color index       blue           default  "~f 'PLACEHOLDER_COLOR5'" # work outgoing
+color index       brightcolor27  default  "!(%C personal | %C work | %C other) !~u" # probably bcc or forged from header 
+color index       cyan           default  "%C work_lists"             # work general lists
+color index       brightcyan     default  "%C work_lists_team"        # work team lists
+color index       brightblue     default  "%C work"                   # work incomming
+color index       blue           default  "%f work"                   # work outgoing
 #     personal
-color index       brightgreen    default  "~C PLACEHOLDER_COLOR6" # personal incomming
-color index       color34        default  "~f PLACEHOLDER_COLOR6" # personal outgoing
+color index       brightgreen    default  "%C personal"               # personal incomming
+color index       color34        default  "%f personal"               # personal outgoing
+#
+color index       brightcolor97  default  "%C other | %C other_lists" # other incomming
+color index       color97        default  "%f other | %f other_lists" # other outgoing
 #     infomails and maillists
-color index       default        default  "~f '((info|eshop)@cd.cz|@chess.com)' | ~f @github.com | ~C @lists.arthurdejong.org | ~C @neomutt.org | ~C @glists.sonatype.com"
+color index       default        default  "~f '(info|eshop)@(cd.cz|@chess.com)' | ~f maillists"
 #      github to me
 color index       brightcolor190 default  "~C '(mention|author|assign|comment|review_requested)@noreply.github.com'"
 #   default index colors
 color index       default	color238 "~N !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
 color index       standout default   color238	"~N !~T !~F  ~p !~P"	# To me
 color index       black		magenta  "~T"			# Tagged
-color index_flags black		magenta  "~T"			# Flagged
 color index       red		default  "~D"			# Deleted
 color index_flags brightred	default  "~F"			# Flagged
-
 
 # Pager
 #   headers
 set   header_color_partial = yes
 color hdrdefault  brightcyan     default
+color header      yellow         default  "^[[:alpha:]][^:]+:"
 color header      brightyellow   default  "^(From|To|CC|Bcc|Subject):"
-color header      yellow         default  "^(Date|X-Label|Tags|List-Id|List-Archive|X-Github-Sender|Organization|User-Agent|X-Mailer):"
-color index       black          magenta  "~T" # Tagged
 
 #   body
 # URLs

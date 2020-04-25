@@ -2,6 +2,7 @@
 # variables
 set my_cfgdir		= "$HOME/.neomutt"
 set my_bindir		= "$my_cfgdir/bin"
+set my_luadir		= "$my_cfgdir/lua"
 
 # terminal status line and icon
 set ts_enabled		= yes
@@ -25,8 +26,14 @@ set collapse_flagged	= no
 set sort		= threads
 set sort_aux		= reverse-last-date-received
 set strict_threads	= yes
+set reverse_alias	= yes                                 # display aliases in index
+set arrow_string	= '❯'
 set date_format		= "%F %R"
-set index_format	= "%Z  %D%-25.25L %2E %-1.75s %> %g" # {status flags} {date} {from} {# msgs in thread} {subject} {tags}
+set index_format	= "%Z  %D %-25.25L %2E %-1.75s %> %g" # {status flags} {date} {from} {# msgs in thread} {subject} {tags}
+subjectrx '\[#(SR|INC)-[[:digit:]]+\] *' '%L%R'               # remove Freshservice ticket number
+subjectrx ' *\[AWS Account( ID)?: [[:digit:]]+\]' '%L%R'      # remove info about AWS Account ID
+subjectrx '^(Re: )?\[neomutt/.*\] ' '%L%R'                    # remove repo prefixfrom github messages
+subjectrx '^(Re: )?\[sensu-plugins/.*\] ' '%L%R'              # remove repo prefixfrom github messages
 
 # pager
 set pager_index_lines	= 10  # number of index lines to show
@@ -77,8 +84,8 @@ set abort_noattach	= ask-yes				# ask to abort with default (yes) when attachmen
 set attach_save_dir	= /tmp/
 
 set simple_search	= "~f %s | ~C %s | ~s %s"		# make default search pattern to search in To, Cc and Subject
-set from_chars		= "TCB "
 set to_chars            = "😵👤👥🙋🏠📧"
+set status_chars	= " "
 #set to_chars=""
 
 # Header blacklist / whitelist
@@ -90,14 +97,14 @@ unignore \
   Cc \
   Bcc \
   Date \
+  Subject \
   List-ID \
+  List-Archive \
   X-Github-Sender \
   Organization \
-  List-Archive \
-  Tags \
   X-Mailer \
   User-Agent \
-  Subject
+  Tags
 # display headers in this order
 unhdr_order *
 hdr_order \
@@ -120,19 +127,16 @@ ifdef hcache "set header_cache		= '~/.cache/neomutt'"
 ifdef hcache "set header_cache_backend	= 'lmdb'"
 ifdef hcache "ifdef zstd \"set my_test	= 'zstd'\""
 
-# Identity and contacts
-alternates "PLACEHOLDER_ALTERNATES"
 
 # Source other config files
 source $my_cfgdir/neomuttrc.myvars                 # source config my_vars
-source $my_cfgdir/neomuttrc.aliases                # source config aliases
+source $my_cfgdir/neomuttrc.aliases                # source config aliases, alternates lists, subscribes and groups
 source $my_cfgdir/neomuttrc.autoview               # source config autoview
 source $my_cfgdir/neomuttrc.sidebar                # source config sidebar
+source $my_cfgdir/neomuttrc.hooks                  # source config hooks
 source $my_cfgdir/neomuttrc.mailboxes              # source config virtualmailboxes
 source $my_cfgdir/neomuttrc.bindings               # source config shortcuts
-source $my_cfgdir/neomuttrc.hooks                  # source config hooks
 source $my_cfgdir/neomuttrc.smtp                   # source config smtp
-source $my_cfgdir/neomuttrc.subscribe              # source config subscribed maillists
 source $my_cfgdir/neomuttrc.crypt                  # source config S/MIME and GPG
 source $my_cfgdir/neomuttrc.profile-work           # source config profile
 source $my_cfgdir/neomuttrc.colors                 # source config colors

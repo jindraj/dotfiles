@@ -3,9 +3,10 @@ set from		= $my_personal_email_address
 set realname		= $my_personal_name
 set my_receipt		= $my_personal_receipt
 set signature		= $my_cfgdir/signature-personal
-set my_theme_color      = blue
-set my_theme_color2     = brightblue
-set my_theme_color3     = brightcolor33
+set my_theme_color	= blue
+set my_theme_color2	= brightblue
+set my_theme_color3	= brightcolor33
+set my_textcolor	= white
 
 unmy_hdr Organization
 

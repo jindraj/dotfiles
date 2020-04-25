@@ -99,6 +99,10 @@ macro  index       < \
 <enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
 <enter-command>echo \"Shifted window backwards\"<enter>" \
 "shifts virtual folder time window forwards"
+
+macro index,pager ,< \
+'<enter-command>lua-source $my_cfgdir/lua/rotate_window_timebase.lua<enter>' \
+"rotate over window search timebases"
 # }}}
 
 bind  index,pager a       group-reply
@@ -116,7 +120,6 @@ bind  editor      <Tab>   complete-query
 bind  index,pager <f8>    vfolder-from-query
 bind  index,pager ,l      modify-tags
 macro index,pager ,a      "<modify-tags-then-hide>-unread -inbox\n<sync-mailbox><check-stats>"                "Archive message"
-macro index,pager ,d      "<modify-tags-then-hide>-unread -inbox -spam +trash\n<sync-mailbox><check-stats>"   "Delete message"
 macro index,pager ,s      "<modify-tags-then-hide>-unread -inbox -deleted +spam\n<sync-mailbox><check-stats>" "Mark message as spam"
 macro index,pager H       "<quasi-delete><sync-mailbox>"                                                      "Hide message"
 macro index,pager gi      "<change-vfolder>!<enter>"                                                          "Go to Inbox"
@@ -124,7 +127,20 @@ macro index,pager gs      "<change-vfolder>GMail/flagged<enter>"                
 macro index,pager gt      "<change-vfolder>GMail/sent<enter>"                                                 "Go to sent"
 macro index,pager gd      "<change-vfolder>$postponed<enter>"                                                 "Go to drafts"
 macro index,pager ga      "<change-vfolder>GMail/archives<enter>"                                             "Go to archives"
+macro index,pager -       "<change-vfolder>-<enter>"                                                          "Go to previous folder"
 
-macro index,pager go      "<pipe-message>\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" $(formail -x message-id -z | sed 's,^,https://mail.google.com/mail/u/0/#search/rfc822msgid%3A,')<enter>" "Open message in GMail"
+folder-hook !notmuch '\
+unmacro index,pager d;\
+bind    index,pager d delete-message'
+
+folder-hook notmuch '\
+unbind index,pager d;\
+macro index,pager d \
+"<modify-tags-then-hide>-unread -inbox -spam +trash\n<sync-mailbox><check-stats>" \
+"Move message to trash"'
+
+macro index,pager go \
+"<pipe-message>\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" $(formail -x message-id -z | sed 's,^,https://mail.google.com/mail/u/0/#search/rfc822msgid%3A,')<enter>" \
+"Open message in GMail"
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

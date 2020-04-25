@@ -2,30 +2,38 @@
 unmy_hdr Disposition-Notification-To
 my_hdr Disposition-Notification-To: Receipt <$my_receipt>
 
-set my_pgp_key       = "0x390A9AE3"
-
-lua mutt.set("my_range_from",\
+# construct my_range_from for status bar when window search is enabled
+lua if mutt.get("nm_query_window_duration") > 0 then\
+  mutt.set("my_range_from",\
+  " " ..\
   mutt.get("nm_query_window_current_position") * mutt.get("nm_query_window_duration")\
   .. ".." ..\
   (mutt.get("nm_query_window_current_position") + 1) * mutt.get("nm_query_window_duration")\
   .. " " ..\
   mutt.get("nm_query_window_timebase")\
-  .. " old"\
-  )
+  .. " old "\
+  )\
+else \
+  mutt.set("my_range_from","")\
+end
 
-set status_chars = " "
-set status_format = " %r %D %<m?  %<M?%M/>%m >%<n?  %n >%<d?  %d >%<F?  %F >%<t? 狀%t >%<p?  %p >%<l?  %<L?%L/>%l>%<V?   %V>  %> ⁠$from  $my_range_from  %P"
-set compose_format	= " Compose   ~%l   %a   %> ⁠$from"
-set pager_format	= " %C  %[%H:%M]  %F <%a>  %s %* ⁠%c  %P" # ${message-nr} ${time} ${sender} <${address}> ${subject} ${message-size}
-
-color sidebar_indicator brightwhite		$my_theme_color
+# profile colors
+color sidebar_indicator bright$my_textcolor	$my_theme_color
 color sidebar_divider   $my_theme_color		default
 color sidebar_spoolfile $my_theme_color2	default
 color sidebar_highlight $my_theme_color3	default
-color sidebar_unread	brightwhite		default
-color progress          brightwhite		$my_theme_color
+color message		$my_textcolor		$my_theme_color
+color sidebar_unread	bright$my_textcolor	default
+color progress          bright$my_textcolor	$my_theme_color
+color prompt		$my_theme_color		$my_textcolor
+color options           alert$my_theme_color	$my_textcolor
 
-set arrow_string='❯'
-color status            brightwhite		$my_theme_color            # default status bar color
-color status		$my_theme_color 	brightwhite	'.* '      # most left white bg
-color status		$my_theme_color		default		' *'     # middle "invisible :D"
+color status            $my_textcolor		$my_theme_color        # default status bar color
+color status		bright$my_theme_color 	$my_textcolor	'^.* ' # most left white bg
+color status		$my_textcolor		$my_theme_color ''    # most left white bg
+color status		$my_theme_color		default		' *' # middle "invisible :D"
+
+# source formats to refill variables
+set status_format  = " %r %D %<m?  %<M?%M/>%m & ${my_zero_inbox}>%<n?  %n >%<d?  %d >%<F?  %F >%<t? 狀%t >%<p?  %p >%<l?  %<L?%L/>%l>%<V?   %V>  %> ⁠$from ${my_range_from} %P"
+set compose_format = " Compose   ~%l   %a   %> ⁠$from"
+set pager_format   = " %C  %[%H:%M]  %F <%a>  %s %* ⁠%c  %P" # ${message-nr} ${time} ${sender} <${address}> ${subject} ${message-size}

@@ -1,16 +1,15 @@
 # -*-muttrc-*- 
 set folder              = "~/.mail/gmail"
 set mbox_type           = maildir
-set record              = no
+unset record
 set postponed           = "=drafts"
 set nm_default_uri	= "notmuch:///Users/jindraj/.mail/gmail"
-set nm_record		= yes                                 # apply notmuch to email in mutt's record
 set nm_exclude_tags	= "spam"
 set hidden_tags         = "unread,passed,sbks,sysu"
-set spoolfile           = 'GMail/INBOX'
+set virtual_spoolfile	= yes
+set spoolfile           = "GMail/INBOX"
 
-folder-hook '!GMail/sent' 'reset nm_query_window_duration = 0'
-set nm_query_window_timebase="day"
+set nm_query_window_timebase = "day"
 
 named-mailboxes \
   "sample"                               "~/.mail/sample-mail/f1/fruit/lemon/" \
@@ -21,7 +20,7 @@ named-mailboxes \
   "GMail/INBOX/personal"                 "notmuch://?query=tag:inbox NOT (tag:work)&type=threads" \
   "GMail/unread"                         "notmuch://?query=tag:unread NOT query:junk" \
   "GMail/flagged"                        "notmuch://?query=tag:flagged" \
-  "GMail/sent"                           "notmuch://?query=tag:sent NOT query:junk" \
+  "GMail/sent"                           "notmuch://?query=tag:sent NOT query:junk&type=messages" \
   "GMail/drafts"                         $postponed \
   "GMail/spam"                           "notmuch://?query=tag:spam" \
   "GMail/trash"                          "notmuch://?query=tag:trash" \
@@ -29,11 +28,11 @@ named-mailboxes \
   "GMail/work/ticketing"                 "notmuch://?query=tag:ticketing NOT query:junk" \
   "GMail/personal"                       "notmuch://?query=query:personal" \
   "GMail/newsletters"                    "notmuch://?query=tag:newsletters" \
-  "GMail/receipts"                       "notmuch://?query=PLACEHOLDER_MAILBOXES_QUERY1" \
+  "GMail/receipts"                       "notmuch://?query=to:$my_work_receipt OR to:$my_personal_receipt" \
   "GMail/linkedin"                       "notmuch://?query=from:@linkedin.com" \
   "lists"                                "notmuch://?query=tag:maillists" \
   "lists/nslcd"                          "notmuch://?query=List:nss-pam-ldapd-users" \
-  "lists/neomutt"                        "notmuch://?query=List:neomutt" \
+  "lists/neomutt"                        "notmuch://?query=List:neomutt.org" \
   "lists/neomutt/users"                  "notmuch://?query=List:neomutt-users-neomutt.org" \
   "lists/neomutt/developers"             "notmuch://?query=List:neomutt-devel-neomutt.org" \
   "lists/github.com"                     "notmuch://?query=List:github.com" \

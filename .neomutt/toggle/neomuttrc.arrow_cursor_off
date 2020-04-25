@@ -1,5 +1,5 @@
 unset arrow_cursor
-color indicator         brightwhite		$my_theme_color
+color indicator         $my_textcolor		$my_theme_color
 
 macro index,browser,alias,generic,pager ,<space> \
 "<enter-command>source $my_cfgdir/toggle/neomuttrc.arrow_cursor_on<enter>\

@@ -1,0 +1,72 @@
+# -*-muttrc-*- 
+# source main config, remove mailboxes, cleanup spoolfile, …
+source ~/.neomutt/neomuttrc
+unmailboxes *
+unset spoolfile
+# redefine some variables
+set folder                         = "~/.mail/sample-mail"
+set sidebar_non_empty_mailbox_only = no
+set sidebar_sort_method            = alpha
+set from                           = neomutt@exmaple.com
+# source common profile settings
+source $my_cfgdir/neomuttrc.profile-common
+
+# sidebar expand/collapse
+named-mailboxes \
+  "sample"                               "=" \
+  "sample/cars"                          "=/cars" \
+  "sample/fruit"                         "=/f1/fruit" \
+  "sample/ocean"                         "=/o1/o2/ocean" \
+  "sample/trees"                         "=/t1/t2/t3/trees"
+
+folder-hook 'cars' 'unmailboxes *'
+folder-hook 'cars' '\
+named-mailboxes \
+  "sample"                               "=" \
+  "sample/cars"                          "=/cars" \
+  "sample/cars/audi"                     "=/cars/audi" \
+  "sample/cars/bentley"                  "=/cars/bentley" \
+  "sample/cars/chrysler"                 "=/cars/chrysler" \
+  "sample/cars/daimler"                  "=/cars/daimler" \
+  "sample/fruit"                         "=/f1/fruit" \
+  "sample/ocean"                         "=/o1/o2/ocean" \
+  "sample/trees"                         "=/t1/t2/t3/trees"'
+
+folder-hook 'fruit' 'unmailboxes *'
+folder-hook 'fruit' '\
+named-mailboxes \
+  "sample"                               "=" \
+  "sample/cars"                          "=/cars" \
+  "sample/fruit"                         "=/f1/fruit" \
+  "sample/fruit/lemon"                   "=/f1/fruit/lemon" \
+  "sample/fruit/melon"                   "=/f1/fruit/melon" \
+  "sample/fruit/nectarine"               "=/f1/fruit/nectarine" \
+  "sample/fruit/orange"                  "=/f1/fruit/orange" \
+  "sample/ocean"                         "=/o1/o2/ocean" \
+  "sample/trees"                         "=/t1/t2/t3/trees"'
+
+folder-hook 'ocean' 'unmailboxes *'
+folder-hook 'ocean' '\
+named-mailboxes \
+  "sample"                               "=" \
+  "sample/cars"                          "=/cars" \
+  "sample/fruit"                         "=/f1/fruit" \
+  "sample/ocean"                         "=/o1/o2/ocean" \
+  "sample/ocean/atlantic"                "=/o1/o2/ocean/atlantic" \
+  "sample/ocean/indian"                  "=/o1/o2/ocean/indian" \
+  "sample/ocean/pacific"                 "=/o1/o2/ocean/pacific" \
+  "sample/ocean/southern"                "=/o1/o2/ocean/southern" \
+  "sample/trees"                         "=/t1/t2/t3/trees"'
+
+folder-hook 'trees' 'unmailboxes *'
+folder-hook 'trees' '\
+named-mailboxes \
+  "sample"                               "=" \
+  "sample/cars"                          "=/cars" \
+  "sample/fruit"                         "=/f1/fruit" \
+  "sample/ocean"                         "=/o1/o2/ocean" \
+  "sample/trees"                         "=/t1/t2/t3/trees" \
+  "sample/trees/maple"                   "=/t1/t2/t3/trees/maple" \
+  "sample/trees/oak"                     "=/t1/t2/t3/trees/oak" \
+  "sample/trees/poplar"                  "=/t1/t2/t3/trees/poplar" \
+  "sample/trees/rowan"                   "=/t1/t2/t3/trees/rowan"'
