@@ -8,9 +8,9 @@ set my_theme_color2	= brightblue
 set my_theme_color3	= brightcolor33
 set my_textcolor	= white
 
-set smtp_oauth_refresh_command	= $my_personal_smtp_oauth_refresh_command
-set smtp_url			= "smtps://$my_personal_email_address@smtp.gmail.com:465/"
-set smtp_authenticators		= "oauthbearer"
+set smtp_url			= "smtp://$my_jj_username:$my_jj_password@$my_jj_hostname:25/"
+unset smtp_oauth_refresh_command
+unset smtp_authenticators
 
 unmy_hdr Organization
 

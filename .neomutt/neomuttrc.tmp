@@ -1,6 +1,6 @@
-# -*-muttrc-*- 
 set maildir_check_cur = no
 #set resolve #jump to next undeleted message after action (deletion,tag,etc)
+set allow_ansi
 
 set my_theme_number = "0"
 macro index,pager x '\
@@ -8,4 +8,5 @@ macro index,pager x '\
 <enter-command>exec refresh<enter>\
 <enter-command>lua mutt.call("echo","Colorscheme:" .. mutt.get("my_theme_number"))<enter>'
 
+set rfc2047_parameters
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

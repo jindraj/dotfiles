@@ -4,6 +4,10 @@ set shortmess=I			" Hide splash screen
 filetype off			" required!
 " }}}
 
+let g:ale_lint_on_text_changed = 'always'
+let g:ale_puppet_languageserver_executable = '~/.config/nvim/plugged/puppet-editor-services/puppet-languageserver'
+
+let g:editorconfig = v:false
 " Plug configuration {{{
 let plug_installed=expand('~/.vim/autoload/plug.vim')
 if !filereadable(plug_installed)
@@ -12,18 +16,21 @@ if !filereadable(plug_installed)
 	silent !curl -NsfLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 endif
 call plug#begin()
+  Plug 'muhmud/qsh', { 'dir': '~/.qsh/editors/vim' }
+  Plug 'lingua-pupuli/puppet-editor-services'
+  Plug 'Shougo/deoplete.nvim', { 'do': 'UpdateRemotePlugins' }
   Plug 'airblade/vim-gitgutter'
-  Plug 'gmarik/vundle'
   Plug 'luochen1990/rainbow'
-  Plug 'jacoborus/tender.vim'
   Plug 'neomutt/neomutt.vim'
+  Plug 'adborden/vim-notmuch-address'
   Plug 'rodjek/vim-puppet'
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
   Plug 'scrooloose/nerdtree'
+  "Plug 'editorconfig/editorconfig-vim'
   Plug 'tpope/vim-fugitive'
-  Plug 'tpope/vim-vividchalk'
   Plug 'rkitover/vimpager'
+  Plug 'morhetz/gruvbox'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'vim-scripts/applescript.vim'
@@ -31,12 +38,14 @@ call plug#begin()
   Plug 'vim-scripts/haproxy'
   Plug 'vim-scripts/ldap_schema.vim'
   Plug 'vim-scripts/ldif.vim'
-  Plug 'vim-scripts/twilight256.vim'
-  Plug 'KeitaNakamura/neodark.vim'
+  Plug 'mechatroner/rainbow_csv'
   Plug 'w0rp/ale'
   Plug 'wincent/command-t'
 call plug#end()
 " }}}
+
+" qsh
+vnoremap <silent> <F5> :call QshExecuteSelection()<CR>
 
 " {{{ functions
 " func DoPrettyXML {{{
@@ -123,16 +132,34 @@ endfunction
 " }}}
 "
 
+let g:loaded_node_provider = 0
+let g:loaded_perl_provider = 0
+
+" {{{ naseptavani
+let g:deoplete#enable_at_startup = 1
+call deoplete#custom#option('sources', {
+\ '_': ['ale'],
+\})
+set completeopt=menu,menuone,preview,noselect,noinsert
+
+	
+let g:notmuch_address_tag = 'sent'
+" }}}
+
 
 let g:airline = {}
-let g:airline.colorscheme = 'neodark'
+let g:airline.colorscheme = 'gruvbox'
+colorscheme gruvbox
 " Powerline Airline {{{
 let g:Powerline_symbols = 'fancy'
-let g:airline_theme='neodark'
+let g:airline_theme='gruvbox'
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+let $TERM="xterm-256color"
+"let $TERM="xterm-direct"
+
 " }}}
 
 " settings misc {{{
@@ -143,8 +170,8 @@ if exists('+termguicolors')
   let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
   set termguicolors
 endif
-set background=dark				" Change colors to more usable on black background
-colorscheme neodark				" Twilight256 colorscheme
+"set background=dark				" i have dark background
+"colorscheme neodark				" set color scheme
 let g:neodark#terminal_transparent = 1 " default: 0
 let g:neodark#solid_vertsplit = 1
 let g:neodark#background = '#000000'
@@ -227,7 +254,8 @@ endif
 
 set t_BE= 
 
-let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
+let g:CommandTPreferredImplementation='lua'
+let g:rainbow_active = 0 "0 if you want to enable it later via :RainbowToggle
 let g:rainbow_conf={
 	\ 'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
 	\ 'ctermfgs': ['lightblue', 'lightyellow', 'lightcyan', 'lightmagenta'],

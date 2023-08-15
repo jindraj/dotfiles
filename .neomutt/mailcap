@@ -5,8 +5,10 @@ text/html;			(open %s && sleep 2) &; nametemplate=%s.html; needsterminal
 text/html;			lynx -dump -display_charset=utf-8 -assume_local_charset=%{charset} -assume_charset=%{charset} -width=$COLUMNS %s; nametemplate=%s.html; copiousoutput
 application/x-pkcs7-signature;	openssl pkcs7 -in %s -inform der -noout -print_certs -text | less; copiousoutput
 application/pkcs7-signature;	openssl pkcs7 -in %s -inform der -noout -print_certs -text | less; copiousoutput
-text/csv;			view %s; nametemplate=%s.html; needsterminal
+text/csv;			pspg %s; nametemplate=%s.csv; needsterminal
 text/csv;			head %s; nametemplate=%s.csv; copiousoutput
 application/pdf;		open %s
 image/png;			open %s
 image/jpeg;			open %s
+image/gif;			open %s
+application/ics;               ical2rem.pl --iso8601 --end-times --lead-time 0 |grep -v '^REM  MSG Calendar Events' > ~/.reminders/neomutt/ics_$(date +\%s).rem

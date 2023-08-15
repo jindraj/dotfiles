@@ -35,19 +35,23 @@
 	changed		= green
 	
 [core]
-	pager		= vimpager
+	pager		= $PAGER --passthrough
 
 [diff]
-	tool		= vimdiff
+	tool		= vimpager
 
 [difftool]
-	tool		= vimdiff
+	tool		= vimpager
 	prompt		= false
 
 [merge]
-	tool		= vimdiff
+	tool		= vimpager
 
 [push]
 	default		= current
+
 [diff "gpg"]
-	textconv = gpg --no-tty --decrypt
+	textconv	= gpg --no-tty --decrypt
+
+[protocol]
+	version		= 2

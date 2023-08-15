@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 # source main config, remove mailboxes, cleanup spoolfile, …
 source ~/.neomutt/neomuttrc
 unmailboxes *
@@ -27,7 +26,7 @@ named-mailboxes \
   "sample/cars/audi"                     "=/cars/audi" \
   "sample/cars/bentley"                  "=/cars/bentley" \
   "sample/cars/chrysler"                 "=/cars/chrysler" \
-  "sample/cars/daimler"                  "=/cars/daimler" \
+  "sample/cars/daihatsu"                 "=/cars/daihatsu" \
   "sample/fruit"                         "=/f1/fruit" \
   "sample/ocean"                         "=/o1/o2/ocean" \
   "sample/trees"                         "=/t1/t2/t3/trees"'
@@ -70,3 +69,5 @@ named-mailboxes \
   "sample/trees/oak"                     "=/t1/t2/t3/trees/oak" \
   "sample/trees/poplar"                  "=/t1/t2/t3/trees/poplar" \
   "sample/trees/rowan"                   "=/t1/t2/t3/trees/rowan"'
+
+# vim:foldmethod=marker:ft=neomuttrc

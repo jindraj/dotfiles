@@ -10,6 +10,7 @@
 # Notmuch will store its database within a sub-directory of the path
 # configured here named ".notmuch".
 #
+
 [database]
 path=/Users/jindraj/.mail/gmail
 
@@ -28,6 +29,7 @@ path=/Users/jindraj/.mail/gmail
 # recipient list of replies, and will set the From address based on the
 # address to which the original email was addressed.
 #
+
 [user]
 name=Jakub Jindra
 primary_email=
@@ -47,9 +49,10 @@ other_email=
 #		names will be ignored, independent of its depth/location
 #		in the mail store.
 #
+
 [new]
-tags=notify
-ignore=*.json;*.bak;.lock
+tags=new
+#ignore=*.json;*.bak;.lock
 
 #
 # The following option is supported here:
@@ -59,6 +62,8 @@ ignore=*.json;*.bak;.lock
 #		search results by default.  Using an excluded tag in a
 #		query will override that exclusion.
 #
+
+
 [search]
 exclude_tags=spam;trash
 
@@ -83,24 +88,27 @@ exclude_tags=spam;trash
 #	and update tags, while the "notmuch tag" and "notmuch restore"
 #	commands will notice tag changes and update flags in filenames
 #
+
 [maildir]
 synchronize_flags=true
 
-[index]
-header.List=List-Id
-
 # notmuch config set index.header.List List-Id
-
 # just for the record. Need to run:
 # `notmuch config set query.QUERYNAME NOTMUCH_QUERY`
 # to store query in the db
-[query]
-receipts=to:*+receipts@socialbakers.com OR to:*+receipts@gmail.com
-junk=tag:trash OR tag:spam OR tag:drafts OR from:@linkedin.com OR query:receipts
-lists=tag:newsletters OR tag:maillists
-personal=NOT (tag:work OR OR tag:rtc OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)
+[index]
+header.List=List-Id
+header.MSThread=Thread-Index
+header.XOriginalSender=X-Original-Sender
 
-# notmuch config set query.receipts 'to:*+receipts@socialbakers.com OR to:*+receipts@gmail.com'
-# notmuch config set query.junk 'tag:trash OR tag:spam OR tag:drafts OR from:@linkedin.com OR query:receipts'
-# notmuch config set query.lists 'tag:Newsletters OR tag:Maillists'
-# notmuch config set query.personal 'NOT (tag:Work/SBKS OR tag:Work/SyntacticSugar OR tag:Freetime/Rotaract OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)'
+[query]
+junk=is:trash OR is:spam OR is:drafts OR from:@linkedin.com OR mimetype:multipart/report
+lists=tag:Newsletters OR tag:Maillists
+personal=NOT (tag:work OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)
+ticketing_freshservice=from:devops-ticket@socialbakers.com OR from:itops@emplifi.io OR from:itops@socialbakers.com OR from:itsupport@socialbakers.com OR from:socialbakerscomitsupport@socialbakers.freshservice.com
+ticketing_vendr=from:notifications@blissfully.com OR from:support@vendr.com OR from:notifications@vendr.com
+ticketing_jira=from:jira@astutesolutions.atlassian.net OR from:jira@emplifi.atlassian.net
+ticketing_tp=from:dev-support@socialbakers.com OR from:dev-support@tp.socialbakers.com
+ticketing_torii=from:hello@toriihq.com OR XOriginalSender:hello@toriihq.com
+confluence=from:confluence@emplifi.atlassian.net OR from:confluence@astutesolutions.atlassian.net
+others=is:golkad OR is:irikm OR is:petakj OR is:hotskyo OR is:semyachkinay OR is:ververakisi OR is:witanekn OR is:gerasimovk OR is:martino OR is:brooksc OR is:halewoodj

@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 # quoted text
 color normal      color255       default
 color quoted      color252       default
@@ -15,41 +14,65 @@ color tree        brightmagenta  default
 color tilde       blue           default
 color attachment  brightyellow   default
 color markers     brightred      default
-color search      brightwhite    magenta
 color bold        brightyellow   default
 color signature   cyan           default
 
+color compose header           brightdefault default       
+color compose security_encrypt green         default 
+color compose security_sign    green         default 
+color compose security_both    brightgreen   default 
+color compose security_none    brightred           brightdefault 
+
 # INDEX
 #   Colors based on recipient
-#     WORK 
+## default index colors
+## WORK 
 color index       brightcolor27  default  "!(%C personal | %C work | %C other) !~u" # probably bcc or forged from header 
 color index       cyan           default  "%C work_lists"             # work general lists
 color index       brightcyan     default  "%C work_lists_team"        # work team lists
 color index       brightblue     default  "%C work"                   # work incomming
 color index       blue           default  "%f work"                   # work outgoing
-#     personal
+## personal
 color index       brightgreen    default  "%C personal"               # personal incomming
 color index       color34        default  "%f personal"               # personal outgoing
 #
 color index       brightcolor97  default  "%C other | %C other_lists" # other incomming
 color index       color97        default  "%f other | %f other_lists" # other outgoing
-#     infomails and maillists
-color index       default        default  "~f '(info|eshop)@(cd.cz|@chess.com)' | ~f maillists"
+## infomails and maillists
 #      github to me
 color index       brightcolor190 default  "~C '(mention|author|assign|comment|review_requested)@noreply.github.com'"
-#   default index colors
-color index       default	color238 "~N !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
-color index       standout default   color238	"~N !~T !~F  ~p !~P"	# To me
+## ARC
+#color index       yellow	default "~h '^Authentication-Results: .*(spf=fail)'"
+#color index       red		default "~h '^Authentication-Results: .*(dkim=fail)'"
+#color index       brightred	default "~h '^Authentication-Results: .*(dmarc=fail)'"
+# ARC - prepared for having the colors as backround instead of font color
+color index       default yellow	 "~h '^Authentication-Results: .*(spf=fail)'"
+color index       default red		 "~h '^Authentication-Results: .*(dkim=fail)'"
+color index       default color202	 "~h '^Authentication-Results: .*(dmarc=fail)'"
+## default index colors
+color index       default	color238 "(~N | ~O ) !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
+color index       standout default   color238	"(~N | ~O ) !~T !~F  ~p !~P"	# To me
 color index       black		magenta  "~T"			# Tagged
 color index       red		default  "~D"			# Deleted
 color index_flags brightred	default  "~F"			# Flagged
 
 # Pager
-#   headers
+## headers
 set   header_color_partial = yes
 color hdrdefault  brightcyan     default
 color header      yellow         default  "^[[:alpha:]][^:]+:"
 color header      brightyellow   default  "^(From|To|CC|Bcc|Subject):"
+color header      bold           red default "(dkim|spf|dmarc)=fail"
+color header      green          default "(dkim|spf|dmarc)=pass"
+
+# dkim/spf/dmarc 1 https://www.mail-archive.com/mutt-users@mutt.org/msg54074.html
+#unignore authentication-results
+#color header bold red default "(dkim|spf|dmarc)=fail"
+#color header green default "(dkim|spf|dmarc)=pass"
+# dkim/spf/dmarc 2
+message-hook  ~A 'ignore authentication-results'
+message-hook '~h "^Authentication-Results: .*(dkim|spf|dmarc)=fail"' 'unignore authentication-results'
+# EO dkim/spf/dmarc 2
 
 #   body
 # URLs
@@ -58,6 +81,9 @@ color body        brightyellow  default   "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'
 # email addresses
 color body        brightmagenta default   "((@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]),)*@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]):)?[0-9a-z_.+%$-]+@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\])"
 
+# Custom highlights
+color body	brightgreen	default   "Grant access to .* for .*$"
+
 # Signed messages
 color body	green		default   "^Good signature from:"
 color body	brightcolor202	default   "^Problem signature from:"
@@ -65,8 +91,6 @@ color body	brightwhite	red       "^\\*BAD\\* signature from:"
 
 color body	brightblue    default   "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)" # *bold*
 color body	brightblue    default   "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"     # _underline_
-color body	red           default   "\\[\\[-- .* --\\]\\]"
-
 color body	blue          default   "( *[-+=#*~_]){6,}" #Border lines.
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

@@ -1,0 +1,5 @@
+set pager_index_lines = 0
+macro index,browser,alias,generic,pager ,m \
+"<enter-command>source $my_cfgdir/toggle/neomuttrc.pager_index_lines_on<enter>\
+<enter-command>echo 'Toggle pager lines off'<enter>" \
+"Toggle pager lines"

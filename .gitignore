@@ -2,8 +2,7 @@
 .vim/plugged
 .vim/autoload
 .vim/.netrwhist
-.mutt/cache
-.mutt/signature-*
-.mutt/muttrc.profile-*
-/.notmuch-config
-/.offlineimaprc
+.notmuch-config
+.neomutt/signature-work
+.neomutt/signature-personal
+.neomutt/bin/common/.env

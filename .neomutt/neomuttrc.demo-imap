@@ -1,0 +1,6 @@
+
+set imap_pass="pass"
+set imap_user="user@gmail.com"
+
+set spoolfile="imaps://imap.gmail.com"
+mailboxes $spoolfile

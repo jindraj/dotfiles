@@ -1,0 +1,35 @@
+#!/opt/homebrew/bin/bash
+
+function init_variables(){
+	QUERY=(
+		'tag:inbox'
+		'AND tag:new'
+		'AND tag:important'
+		'AND NOT query:{lists,junk}'
+		'AND NOT from:@linkedin.com'
+	)
+	search_result=$(notmuch search --format=json "${QUERY[*]}")
+	# get authors and subjects of messages
+	readarray -t authors  < <(jq '.[] | .authors' <<<"$search_result")
+	readarray -t threads  < <(jq '.[] | .thread'  <<<"$search_result")
+	readarray -t subjects < <(jq '.[] | .subject' <<<"$search_result")
+}
+
+function run(){
+	init_variables
+	# iterate over array of messages defined by ${QUERY[@]}
+	for i in "${!authors[@]}"
+	do
+		printf '\e]1337;Notification=title=%s;subtitle=%s;message=%s;image=%s\a' \
+			"$(base64 <<<"${authors[i]}")" \
+			"$(base64 <<<"${threads[i]}")" \
+			"$(base64 <<<"${subjects[i]}")" \
+			"$HOME/.neomutt/bin/common/mutt-64x64.png"
+		sleep 0.3
+	done
+	notmuch tag -new -- tag:new
+}
+
+run &>/dev/null
+
+# vim:foldmethod=indent:foldlevel=0:tabstop=4:shiftwidth=4:softtabstop=0:noexpandtab

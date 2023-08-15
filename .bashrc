@@ -1,41 +1,31 @@
-[[ $- == *i* ]] && true || return
-[[ -f ~/.bash_local ]] && source ~/.bash_local
-[[ -f ~/.bash_aliases ]] && source ~/.bash_aliases
-[[ -f ~/.bash_functions ]] && source ~/.bash_functions
-[[ -x /usr/local/bin/aws ]] && complete -C aws_completer aws
+#!/usr/bin/env bash
 
-# {{{ BREW 
-if command -v brew &> /dev/null
-then
-	BREW_PREFIX=$(brew --prefix 2>/dev/null)
-	[[ -s $BREW_PREFIX/share/bash-completion/bash_completion ]] && source $BREW_PREFIX/share/bash-completion/bash_completion #bash-completion@2
-	#[[ -s $BREW_PREFIX/etc/bash_completion ]] && source $BREW_PREFIX/etc/bash_completion #bash-completion
-	[[ -s $BREW_PREFIX/etc/profile.d/autojump.sh ]] && . $BREW_PREFIX/etc/profile.d/autojump.sh
-else
-	if command -v git &> /dev/null
-	then
-		[[ -s ~/.git-prompt.sh ]] && source ~/.git-prompt.sh
-	else
-		__git_ps1() { return; }
-	fi
-fi
-# }}}
+[[ $- != *i* ]] && return
+# shellcheck source=.bash_local
+[[ -f ~/.bash_local      ]] && source "$HOME/.bash_local"
+# shellcheck source=.bash_aliases
+[[ -f ~/.bash_aliases    ]] && source "$HOME/.bash_aliases"
+# shellcheck source=.bash_functions
+[[ -f ~/.bash_functions  ]] && source "$HOME/.bash_functions"
 
+command -v brew &> /dev/null && BREW_PREFIX=$(brew --prefix 2>/dev/null)
+
+#jira completion bash > "$HOME/.bash_completion.d/jira"
+#curl https://raw.githubusercontent.com/notmuch/notmuch/master/completion/notmuch-completion.bash -o "$HOME/.bash_completion.d/notmuch-completion.bash
+source_all_files_from_dir "$HOME/.bash_completion.d/"
+source_all_files_from_dir "$BREW_PREFIX/etc/profile.d/" '*.sh'
+source_all_files_from_dir "$BREW_PREFIX/etc/bash_completion.d/"
+
+[[ -n $PS1 ]] && complete -F _known_hosts sshmux tssh s curl odjebat nc ,sensu-agent-restart
+[[ -n $PS1 ]] && complete -F _gopass_bash_autocomplete totp totpc
+[[ -n $PS1 ]] && __wifiqr_complete
+
+shopt -s mailwarn
 shopt -s checkwinsize
 shopt -s cdspell
 shopt -s autocd
 
-complete -F _known_hosts sshmux s curl odjebat nc
-
-#complete -F _ssh sshmux tssh s curl odjebat nc
-
 export LSCOLORS=ExGxFxdxCxegedhbagacec
-
-# {{{ PATH
-PATH="$PATH:$HOME/bin"
-PATH="/usr/local/sbin:$PATH"
-PATH="/usr/local/bin:$PATH"
-# }}}
 
 # {{{ History
 # unlimited size of history and history file one history file per day
@@ -44,61 +34,69 @@ HISTFILESIZE=10000
 shopt -s histappend
 HISTCONTROL=ignoreboth
 HISTFILE="${HOME}/.bash_history_files/$(date -u +%Y-%m-%d)"
-mkdir -p -m 700 $(dirname $HISTFILE)
-ln -sf $HISTFILE ~/.bash_history
+mkdir -p -m 700 "$(dirname "$HISTFILE")"
+ln -sf "$HISTFILE" "$HOME/.bash_history"
 # }}}
 
 # {{{ PROMPT CONFIGS
-#export MYSQL_PS1=$(echo -e "\x01\e[1;30m\x02[ \x01\e[1;97m\x02mysql\x01\e[1;30m\x02://\x01\e[1;32m\x02\u@\h\x01\e[1;30m\x02:\x01\e[1;97m\x02\p\x01\e[1;30m\x02/\x01\e[1;34m\x02\d\x01\e[1;30m\x02 ]\n\x01\e[1;34m\x02>\x01\e[0m\x02\x01\e[0m\x02\_")
 PROMPT_DIRTRIM=2
-GIT_PS1_SHOWDIRTYSTATE=true
-GIT_PS1_SHOWSTASHSTATE=true
-GIT_PS1_SHOWUPSTREAM="auto"
+export GIT_PS1_SHOWDIRTYSTATE=true
+export GIT_PS1_SHOWSTASHSTATE=true
+export GIT_PS1_SHOWUPSTREAM=auto
+export GIT_PS1_SHOWCOLORHINTS=true
+
+__c1_normal='\e[1;30m' __c2_normal='\e[1;32m' __c3_normal='\e[1;34m'
+__c1_screen='\e[1;34m' __c2_screen='\e[1;33m' __c3_screen='\e[1;32m'
+__c2_root='\e[1;31m'
+printf -v crst '%b' '\e[0m'
 
 case $TERM in
 	xterm*|rxvt*|Eterm|aterm)
-		if [ "$UID" -eq 0 ]
-		then
-			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
-		else
-			PS1='$(ec)$(nr_sessions)\[\e[1;30m\][\[\e[0m\] \[\e[1;32m\]\u@\h\[\e[0m\] \[\e[1;34m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;30m\]]\[\e[0m\]\[\e[1;34m\]\$\[\e[0m\] '
-		fi
+		__c1=$(printf '%b' "$__c1_normal") __c2=$(printf '%b' "$__c2_normal") __c3=$(printf '%b' "$__c3_normal")
+		[[ "$UID" -eq 0 ]] && __c2=$(printf '%b' "$__c2_root")
+		PS1='$(ec)$(nr_sessions)$(aws_ps1)\[$__c1\][\[$crst\] \[$__c2\]\u@\h\[$crst\] \[\e[1;34m\]\w\[$crst\]$(__git_ps1) \[$__c1\]]\[$crst\]\[$__c3\]\$\[$crst\] '
 	;;
-	screen|screen-256color|screen.rxvt)
-		if [ "$UID" -eq 0 ]
-		then
-			PS1='$(ec)$(nr_sessions)\[\e[1;34m\][\[\e[0m\] \[\e[1;31m\]\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
-		else
-			PS1='$(ec)$(nr_sessions)\[\e[1;34m\][\[\e[0m\] \[\e[1;33m\]\u@\h\[\e[0m\] \[\e[1;32m\]\w\[\e[0m\]$(__git_ps1) \[\e[1;34m\]]\[\e[0m\]\[\e[1;32m\]\$\[\e[0m\] '
-		fi
+	screen*)
+		__c1=$(printf '%b' "$__c1_screen")
+		__c2=$(printf '%b' "$__c2_screen")
+		__c3=$(printf '%b' "$__c3_screen")
+		[[ "$UID" -eq 0 ]] && __c2=$(printf '%b' "$__c2_root")
+		PS1='$(ec)$(nr_sessions)$(aws_ps1)\[$__c1\][\[$crst\] \[$__c2\]\u@\h\[$crst\] \[\e[1;34m\]\w\[$crst\]$(__git_ps1) \[$__c1\]]\[$crst\]\[$__c3\]\$\[$crst\] '
 	;;
 	*)
 		PS1='[ \u@\h \w ]\$ '
+	;;
 esac
 # }}}
 
 # EDITOR, PAGER, MANPAGER {{{
+export EDITOR=vim
 if command -v nvim > /dev/null
 then
+	EDITOR=nvim
 	alias vim=nvim
-	export EDITOR=nvim
-else
-	export EDITOR=vim
 fi
-SUDO_EDITOR=$EDITOR
+
+export SUDO_EDITOR=$EDITOR
 export HOMEBREW_EDITOR=$EDITOR
 
-if [[ -f ~/.vim/plugged/vimpager/vimpager ]]
+export BAT_PAGER=cat
+export PAGER=less
+export MANPAGER=$PAGER
+if [[ -f $HOME/.config/nvim/plugged/vimpager/vimpager ]]
 then 
-	export PAGER=~/.config/nvim/plugged/vimpager/vimpager
-	alias vimpager=$PAGER
-	export MANPAGER="/bin/bash -c \"col -b | $(echo $PAGER) -c 'set ft=man nomod nolist'\""
-else
-	export PAGER=less
-	export MANPAGER=$PAGER
+	PAGER=$HOME/.config/nvim/plugged/vimpager/vimpager
+	alias vimpager='$PAGER'
+	MANPAGER="$SHELL -c \"col -b | $PAGER -c 'set ft=man nomod nolist'\""
 fi
 # }}}
 
-complete -C /Users/jindraj/bin/terraform terraform
-complete -C /usr/local/Cellar/terraform/0.11.11/bin/terraform terraform
+# {{{ PERL - spamassassin testing
+PATH="$HOME/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"$HOME/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"; export PERL_MM_OPT;
+# }}}
+
 # vim:foldmethod=marker:foldlevel=0

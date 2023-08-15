@@ -1,28 +1,44 @@
-# -*-muttrc-*- 
-
 # aliases i use because i'm lazy
-alias admin	Admin		   <PLACEHOLDER>
-alias slack	Slack		   <PLACEHOLDER>
-alias airbank	AirBank Šanon	   <PLACEHOLDER>
+alias admin	Admin              <PLACEHOLDER>
+alias admin	Admin              <PLACEHOLDER>
+alias devopst	DevOps Team        <PLACEHOLDER>
+alias airbank	AirBank Šanon      <PLACEHOLDER>
+alias slack	Slack              <PLACEHOLDER>
 
 # group for matching by %f in message-hooks
-group -group fs -rx                'PLACEHOLDER'
-group -group fs -rx                'PLACEHOLDER'
+group -group fs   -rx              'PLACEHOLDER'
+group -group fs   -addr            'PLACEHOLDER'
+group -group bsfl -addr            'PLACEHOLDER'
+group -group bsfl -addr            'PLACEHOLDER'
+group -group bsfl -addr            'PLACEHOLDER'
+
 # without group for reverse_alias
 alias fs	DevOps		   <PLACEHOLDER>
 alias fsdo	Freshservice       <PLACEHOLDER>
 alias fsits	Freshservice       <PLACEHOLDER>
+alias fsitops	Freshservice       <PLACEHOLDER>
+alias fsitops	Freshservice       <PLACEHOLDER>
 alias fstasks	Freshservice Tasks <PLACEHOLDER>
+alias vendr	Vendr              <PLACEHOLDER>
+alias vendr	Vendr              <PLACEHOLDER>
+
+alias tp	Targetprocess      <PLACEHOLDER>
 alias tp	Targetprocess      <PLACEHOLDER>
 alias offb1     Offboarding        <PLACEHOLDER>
 alias offb2     Offboarding        <PLACEHOLDER>
 alias offb3     Offboarding        <PLACEHOLDER>
+alias jira1	Jira/Emplifi       <PLACEHOLDER>
+alias jira2	Jira/Emplifi       <PLACEHOLDER>
+alias conflu1   Confluence/Emplifi <PLACEHOLDER>
+alias conflu2   Confluence/Emplifi <PLACEHOLDER>
 
 alternates -group personal         'PLACEHOLDER'
 alternates -group personal         'PLACEHOLDER'
 alternates -group personal         'PLACEHOLDER'
 alternates -group personal         'PLACEHOLDER'
 alternates -group personal         'PLACEHOLDER'
+alternates -group personal         'PLACEHOLDER'
+alternates -group work             'PLACEHOLDER'
 alternates -group work             'PLACEHOLDER'
 alternates -group work             'PLACEHOLDER'
 alternates -group work             'PLACEHOLDER'
@@ -36,6 +52,7 @@ lists     -group work_lists        'PLACEHOLDER'
 lists     -group work_lists        'PLACEHOLDER'
 lists     -group work_lists        'PLACEHOLDER'
 lists     -group work_lists_team   'PLACEHOLDER'
+lists     -group work_lists_team   'PLACEHOLDER'
 subscribe -group work_lists_team   'PLACEHOLDER'
 subscribe -group work_lists_team   'PLACEHOLDER'
 subscribe -group work_lists_team   'PLACEHOLDER'
@@ -44,6 +61,9 @@ subscribe -group work_lists        'PLACEHOLDER'
 subscribe -group work_lists        'PLACEHOLDER'
 subscribe -group work_lists        'PLACEHOLDER'
 
+subscribe -group maillists         'PLACEHOLDER'
+subscribe -group maillists         'PLACEHOLDER'
+subscribe -group maillists         'PLACEHOLDER'
 subscribe -group maillists         'PLACEHOLDER'
 subscribe -group maillists         'PLACEHOLDER'
 subscribe -group maillists         'PLACEHOLDER'

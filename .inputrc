@@ -26,6 +26,7 @@ $if bash
   "\e\C-f": "\C-]/"						# jump forward to /
   "\C-xq": "\eb\"\ef\""						# wrap current word in "
   "\e\C-m": "\C-a \C-m"						# execute, no bash history - ESC-Enter
+  "\C-x\C-r": "\C-a#\C-mhistory | tail -n 2 | head -n1 | cut -f 2 -d '#' | pbcopy\C-m"	# comments command, executes it and then copies it from history into clipboard
 $endif
 
 $if mysql

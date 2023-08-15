@@ -1,0 +1,17 @@
+# list of dependencies
+## neomuttrc
+  * gopass
+
+## ./bin/sync.d/*
+  * gopass
+  * `gmailieer` for [GMail]/All Mail
+    * `notmuch` for indexing
+
+## other
+  * `elinks` (dump html in mailcaps)
+  * `urlview`
+
+## ./bin/print.sh
+  * `procmail` (formail)
+  * `enscript` (printing)
+  * `a2ps` (printing)

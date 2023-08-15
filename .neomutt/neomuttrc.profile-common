@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 unmy_hdr Disposition-Notification-To
 my_hdr Disposition-Notification-To: Receipt <$my_receipt>
 
@@ -18,22 +17,27 @@ else \
 end
 
 # profile colors
-color sidebar_indicator bright$my_textcolor	$my_theme_color
-color sidebar_divider   $my_theme_color		default
-color sidebar_spoolfile $my_theme_color2	default
-color sidebar_highlight $my_theme_color3	default
-color message		$my_textcolor		$my_theme_color
-color sidebar_unread	bright$my_textcolor	default
-color progress          bright$my_textcolor	$my_theme_color
-color prompt		$my_theme_color		$my_textcolor
-color options           alert$my_theme_color	$my_textcolor
+color sidebar_indicator  bright$my_textcolor   $my_theme_color
+color sidebar_divider    $my_theme_color       default
+color sidebar_spool_file $my_theme_color2      default
+color sidebar_highlight  $my_theme_color3      default
+color sidebar_unread     bright$my_textcolor   default
+color search             bright$my_theme_color $my_textcolor    
+color message            $my_textcolor         $my_theme_color
+color options            alert$my_theme_color  $my_textcolor
+color progress           bright$my_textcolor   $my_theme_color
+color prompt             $my_theme_color       $my_textcolor
 
-color status            $my_textcolor		$my_theme_color        # default status bar color
-color status		bright$my_theme_color 	$my_textcolor	'^.* ' # most left white bg
-color status		$my_textcolor		$my_theme_color ''    # most left white bg
-color status		$my_theme_color		default		' *' # middle "invisible :D"
+color status             $my_textcolor         default                            # default status bar color
+color status             bright$my_theme_color $my_textcolor   '^([^]*)'      1 # most left white bg
+color status             $my_textcolor         $my_theme_color '([^]*)'      1 # rest of the left
+color status             $my_textcolor         $my_theme_color '⁠.*'         # most right part
+color status             $my_theme_color       default         '[[:space:]]*'   # middle "invisible :D"
 
 # source formats to refill variables
-set status_format  = " %r %D %<m?  %<M?%M/>%m & ${my_zero_inbox}>%<n?  %n >%<d?  %d >%<F?  %F >%<t? 狀%t >%<p?  %p >%<l?  %<L?%L/>%l>%<V?   %V>  %> ⁠$from ${my_range_from} %P"
-set compose_format = " Compose   ~%l   %a   %> ⁠$from"
-set pager_format   = " %C  %[%H:%M]  %F <%a>  %s %* ⁠%c  %P" # ${message-nr} ${time} ${sender} <${address}> ${subject} ${message-size}
+set status_format  = " %r %D %<m? ✉️  %<M?%M/>%m & ${my_zero_inbox}>%<n? 📩 %n >%<d? 🚮 %d >%<F? 🚩 %F >%<t? 🔖 %t >%<p? 📨 %p >%<l? 💾 %<L?%L/>%l>%<V?  🔎 %V>  %> ⁠$from ${my_range_from} %P "
+set compose_format = " Compose  💾 ~%l  📎 %a   %> ⁠$from "
+set pager_format   = " %C  %[%H:%M]  %F <%a>  %s %* ⁠%c  %P " # ${message-nr} ${time} ${sender} <${address}> ${subject} ${message-size}
+push "<redraw-screen>" # to get rid of artifacts
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

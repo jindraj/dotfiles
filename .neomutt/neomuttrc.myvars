@@ -1,11 +1,32 @@
-# -*-muttrc-*- 
-set my_personal_email_address = "PLACEHOLDER_MYVARS_PERSONAL_EMAIL"
+set my_personal_email_address = "PLACEHOLDER"
 set my_personal_name          = "Jakub Jindra"
-set my_personal_receipt       = "PLACEHOLDER_MYVARS_PERSONAL_RCPT_EMAIL"
+set my_personal_receipt       = "PLACEHOLDER+receipts@PLACEHOLDER"
+set my_personal_smtp_oauth_refresh_command = "curl -s https://accounts.google.com/o/oauth2/token  \
+  -d 'grant_type=refresh_token'                                                                   \
+  `gopass personal/mail/google.com/$my_personal_email_address                                     \
+    | sed -n '/neomutt_/s/neomutt_//p'                                                            \
+    | yq e '. | to_entries | map(\"-d \" + .key + \"=\" + .value) | join(\" \")'                  \
+  ` | jq -r .access_token"
 
-set my_work_email_address     = "PLACEHOLDER_MYVARS_WORK_EMAIL"
+set my_jj_email_address	= "PLACEHOLDER"
+set my_jj_name          = $my_personal_name
+set my_jj_receipt	= $my_personal_receipt
+set my_jj_hostname	= "PLACEHOLDER"
+set my_jj_username	= "PLACEHOLDER"
+set my_jj_password	= "`gopass show -o personal/mail/PLACEHOLDER/$my_jj_username password`"
+
+set my_work_email_address     = "PLACEHOLDER"
 set my_work_name              = $my_personal_name
-set my_work_receipt           = "PLACEHOLDER_MYVARS_WORK_RCPT_EMAIL"
-set my_work_org               = "Socialbakers a. s."
+set my_work_receipt           = "PLACEHOLDER+receipts@PLACEHOLDER"
+set my_work_org               = "PLACEHOLDER"
+set my_work_smtp_oauth_refresh_command = "curl -s https://accounts.google.com/o/oauth2/token \
+  -d 'grant_type=refresh_token'                                                              \
+  `gopass PLACEHOLDER-$my_work_email_address                                     \
+    | sed -n '/neomutt_/s/neomutt_//p'                                                       \
+    | yq e '. | to_entries | map(\"-d \" + .key + \"=\" + .value) | join(\" \")'             \
+  ` | jq -r .access_token"
+
+set my_pipe_decode            = no
+set my_pager_index_lines      = 10
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

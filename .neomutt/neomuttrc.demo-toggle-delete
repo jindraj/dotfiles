@@ -1,0 +1,16 @@
+# toggles delete flag on message under cursor or tagged messages
+macro index A \
+"<enter-command>score '~m . ~D' 10<enter>\
+<enter-command>score '~m . !~D' 20<enter>\
+<tag-prefix-cond>\
+<enter-command>unscore *<enter>\
+<enter-command>score '~T ~D' 10<enter>\
+<enter-command>score '~T !~D' 20<enter>\
+<end-cond>\
+<delete-pattern>~n 20<enter>\
+<undelete-pattern>~n 10<enter>\
+<enter-command>unscore *<enter>"
+
+# ~T instead of '~m .' for multiple messages works fine.
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

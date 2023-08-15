@@ -1,7 +1,8 @@
-# -*-muttrc-*- 
 set smime_is_default
 
 set crypt_replysign		= yes	# sign only replies to signed messages
 set crypt_replysignencrypted	= yes	# encrypt and sign replies to encrypted messages
 
-my_hdr X-PGP-Key: fp="F49D F080 5F0C FAF0 2EAA  A46D F6F6 80DC 390A 9AE3"\; id="0x390A9AE3"\; get=<https://keybase.io/jindraj/pgp_keys.asc?fingerprint=f49df0805f0cfaf02eaaa46df6f680dc390a9ae3>"
+my_hdr X-PGP-Key: fp="F49D F080 5F0C FAF0 2EAA  A46D F6F6 80DC 390A 9AE3"\; id="0x390A9AE3"\; get=<https://keybase.io/jindraj/pgp_keys.asc?fingerprint=f49df0805f0cfaf02eaaa46df6f680dc390a9ae3>
+
+# vim:foldmethod=marker:ft=neomuttrc

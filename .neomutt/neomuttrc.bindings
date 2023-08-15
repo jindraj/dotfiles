@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 #macro compose ,m \
 #"<enter-command>set pipe_decode<enter>\
 #<pipe-message>pandoc -f gfm -t plain -o /tmp/msg.txt<enter>\
@@ -11,54 +10,84 @@
 #<group-alternatives>" \
 #"Convert markdown gfm to HTML and MIME" #attach plain toggled inline,attach html, toggle inline,change MIME,delete original, merge both parts, delete description
 
+
+unbind index,pager ,
+#
+# # this should replace the other ,m macro
+#macro compose ,m \
+#          "<enter-command>set pipe_decode<enter>\
+#          <pipe-message>pandoc -f gfm -t plain -o /tmp/msg.txt<enter>\
+#          <pipe-message>pandoc -s -f gfm -t html5 -o /tmp/msg.html<enter>\
+#          <enter-command>unset pipe_decode<enter>\
+#          <attach-file>/tmp/msg.txt<enter>\
+#          <attach-file>/tmp/msg.html<enter>\
+#          <tag-entry><previous-entry><tag-entry><group-alternatives>" \
+#          "markdown to html"
+
 macro compose ,m \
 "<enter-command>set pipe_decode<enter>\
 <pipe-message>pandoc -f gfm -t plain -o /tmp/msg.txt<enter>\
 <pipe-message>pandoc -s -f gfm -t html5 -o /tmp/msg.html<enter>\
-<enter-command>unset pipe_decode<enter>a^U/tmp/msg.txt\n^Da^U/tmp/msg.html\n^D^T^Utext/html; charset=utf-8\n=DTT&d^U\n" \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>a^U/tmp/msg.txt\n^Da^U/tmp/msg.html\n^D^T^Utext/html; charset=utf-8\n=DTT&d^U\n" \
 "Convert markdown gfm to HTML and MIME" #attach plain toggled inline,attach html, toggle inline,change MIME,delete original, merge both parts, delete description
 
-macro index,pager,attach,compose \cb "\
-<enter-command>set my_pipe_decode=\$pipe_decode pipe_decode<Enter>\
-<pipe-message>urlview<Enter>\
-<enter-command>set pipe_decode=\$my_pipe_decode; unset my_pipe_decode<Enter>" \
+macro index,pager,attach,compose \cb                   \
+"<enter-command>set pipe_decode<enter>                 \
+<pipe-message>urlview<enter>                           \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>" \
 "call urlview to extract URLs out of a message"
 
-macro index,pager,browser _ \
-"<shell-escape>read<enter>" \
+macro index,pager <f10>                                       \
+"<enter-command>set my_tmp_search=/tmp/.neomutt_search<enter> \
+<enter-command>setenv MY_TMP_SEARCH=$my_tmp_search<enter>     \
+<pipe-message>$my_bindir/search_similar.sh<enter>             \
+<enter-command>source $my_tmp_search<enter>                   \
+<shell-escape>rm $MY_TMP_SEARCH<enter>                        \
+<enter-command>unset my_tmp_search<enter>                     \
+<enter-command>unsetenv MY_TMP_SEARCH<enter>"                 \
+"Search messages like this"
+
+macro index,pager,browser _                            \
+"<shell-escape>read<enter>"                            \
 "Display normal screen"
 
-macro index,pager,browser ^ \
-"<shell-escape>$my_bindir/sync verbose<enter>" \
+macro index,pager,browser ^                            \
+"<shell-escape>$my_bindir/sync.d/sync verbose<enter>"  \
 "Sync mail"
 
-# Freshservice macros {{{
-macro index,pager ,A \
-"<enter-command>set pipe_decode<enter>\
-<pipe-message>$my_bindir/freshservice.sh assign<enter>\
-<enter-command>unset pipe_decode<enter>\
-<enter-command>echo \"Assigning freshservice ticket\"<enter>" \
-"Freshservice assign ticket referenced in the message to me"
+# Neomutt sidecar {{{
+macro attach ,te                                       \
+"<enter-command>set pipe_decode<enter>                 \
+<pipe-message>tmux splitw -h -p 50 -I<enter>           \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>" \
+"pipe message to sidecar"
 
-macro index,pager ,C \
-"<enter-command>set pipe_decode<enter>\
-<pipe-message>$my_bindir/freshservice.sh close<enter>\
-<enter-command>unset pipe_decode<enter>\
-<enter-command>echo \"Closing freshservice ticket\"<enter>" \
-"Freshservice close ticket referenced in the message"
+macro index,pager ,te                                  \
+"<enter-command>set pipe_decode<enter>                 \
+<pipe-message>$my_bindir/sidecar_router.sh<enter>      \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>" \
+"run action and display in sidear"
 
-macro index,pager ,R \
-"<enter-command>set pipe_decode<enter>\
-<pipe-message>$my_bindir/freshservice.sh resolve<enter>\
-<enter-command>unset pipe_decode<enter>\
-<enter-command>echo \"Resolving freshservice ticket\"<enter>" \
-"Freshservice close ticket referenced in the message"
+macro attach,index,pager ,tq                           \
+"<shell-escape>tmux killp -t :1.2<enter>"              \
+"close neomutt sidecar"
+# }}}
 
-macro index,pager ,O \
-"<enter-command>set pipe_decode<enter>\
-<pipe-message>$my_bindir/freshservice.sh open<enter>\
-<enter-command>unset pipe_decode<enter>" \
-"Freshservice open ticket referenced in the message in the browser"
+# Jira macros {{{
+macro index,pager ,jO                                  \
+"<enter-command>set pipe_decode<enter>                 \
+<pipe-message>$my_bindir/jira.sh open<enter>           \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>" \
+"Jira open task referenced in the message in the browser"
+
+macro index,pager ,jv                                  \
+"<enter-command>set pipe_decode<enter>                 \
+<pipe-message>$my_bindir/jira.sh view<enter>           \
+<enter-command>set pipe_decode=$my_pipe_decode<enter>" \
+"Jira view task referenced in the message in tmux split"
+
+macro index,pager ,jd     "<modify-tags-then-hide>+jindraj +done -inbox -unread<enter><sync-mailbox><check-stats>"    "Mark jira ticket done"
+macro index,pager ,ji     "<modify-tags-then-hide>+jindraj +invalid -inbox -unread<enter><sync-mailbox><check-stats>" "Mark jira ticket invalid"
 # }}}
 
 # Account switching {{{
@@ -71,18 +100,30 @@ macro compose,index,pager <f2> \
 "<enter-command>source $my_cfgdir/neomuttrc.profile-work<enter>\
 <enter-command>echo 'Switched to work profile'<enter>" \
 "switch to work profile"
+
+macro compose,index,pager <f3> \
+"<enter-command>source $my_cfgdir/neomuttrc.profile-personal-jj<enter>\
+<enter-command>echo 'Switched to jj profile'<enter>" \
+"switch to work profile"
 # }}}
 
 # notmuch window search {{{
+macro  index       0 \
+"<enter-command>reset nm_query_window_duration<enter>\
+<enter-command>reset nm_query_window_enable<enter>\
+<change-folder>^<enter>\
+<enter-command>echo \"Notmuch query window turned off\"<enter>" \
+"Turn off window duration"
+
 macro  index       \' \
-"<enter-command>lua mutt.set('nm_query_window_duration',mutt.get('nm_query_window_duration') + 1)<enter>\
+"<enter-command>set nm_query_window_duration+=1<enter>\
 <enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
 <change-folder>^<enter>\
 <enter-command>echo \"Incread query window\"<enter>" \
 "Increase window duration"
 
 macro  index       \" \
-"<enter-command>lua mutt.set('nm_query_window_duration',mutt.get('nm_query_window_duration') - 1)<enter>\
+"<enter-command>set nm_query_window_duration-=1<enter>\
 <enter-command>source $my_cfgdir/neomuttrc.profile-common<enter>\
 <change-folder>^<enter>\
 <enter-command>echo \"Decreased query window\"<enter>" \
@@ -116,31 +157,37 @@ bind  index       <space> collapse-thread
 bind  index,pager +       entire-thread
 
 bind  editor      <Tab>   complete-query
+bind  editor      \CT     transpose-chars
 
 bind  index,pager <f8>    vfolder-from-query
 bind  index,pager ,l      modify-tags
-macro index,pager ,a      "<modify-tags-then-hide>-unread -inbox\n<sync-mailbox><check-stats>"                "Archive message"
-macro index,pager ,s      "<modify-tags-then-hide>-unread -inbox -deleted +spam\n<sync-mailbox><check-stats>" "Mark message as spam"
-macro index,pager H       "<quasi-delete><sync-mailbox>"                                                      "Hide message"
-macro index,pager gi      "<change-vfolder>!<enter>"                                                          "Go to Inbox"
-macro index,pager gs      "<change-vfolder>GMail/flagged<enter>"                                              "Go to starred"
-macro index,pager gt      "<change-vfolder>GMail/sent<enter>"                                                 "Go to sent"
-macro index,pager gd      "<change-vfolder>$postponed<enter>"                                                 "Go to drafts"
-macro index,pager ga      "<change-vfolder>GMail/archives<enter>"                                             "Go to archives"
-macro index,pager -       "<change-vfolder>-<enter>"                                                          "Go to previous folder"
-
-folder-hook !notmuch '\
-unmacro index,pager d;\
-bind    index,pager d delete-message'
-
-folder-hook notmuch '\
-unbind index,pager d;\
-macro index,pager d \
-"<modify-tags-then-hide>-unread -inbox -spam +trash\n<sync-mailbox><check-stats>" \
-"Move message to trash"'
+macro index,pager ,a      "<modify-tags-then-hide>-unread -inbox<enter><sync-mailbox><check-stats>"                "Archive message"
+macro index,pager ,s      "<modify-tags-then-hide>-unread -inbox -deleted +spam<enter><sync-mailbox><check-stats>" "Mark message as spam"
+macro index,pager H       "<quasi-delete><sync-mailbox>"                                                           "Hide message"
+macro index,pager gc      "<sync-mailbox><change-vfolder>^<enter>"                                                 "Go to current mailbox"
+macro index,pager gi      "<sync-mailbox><change-vfolder>!<enter>"                                                 "Go to Inbox"
+macro index,pager gs      "<sync-mailbox><change-vfolder>GMail/flagged<enter>"                                     "Go to starred"
+macro index,pager gt      "<sync-mailbox><change-vfolder>GMail/sent<enter>"                                        "Go to sent"
+macro index,pager gd      "<sync-mailbox><change-vfolder>$postponed<enter>"                                        "Go to drafts"
+macro index,pager ga      "<sync-mailbox><change-vfolder>archives/today<enter>"                                    "Go to archives"
+macro index       -       "<sync-mailbox><change-vfolder>-<enter>"                                                 "Go to previous folder"
 
 macro index,pager go \
-"<pipe-message>\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" $(formail -x message-id -z | sed 's,^,https://mail.google.com/mail/u/0/#search/rfc822msgid%3A,')<enter>" \
+"<pipe-message>formail -x message-id -z | sed 's,^,https://mail.google.com/mail/u/0/#search/rfc822msgid%3A,' | xargs open<enter>" \
 "Open message in GMail"
+
+folder-hook !notmuch '                \
+unmacro index,pager d;                \
+bind    index,pager d delete-message'
+
+folder-hook notmuch '                 \
+unbind index,pager d;                 \
+macro index,pager d                   \
+"<modify-tags-then-hide>-unread -inbox -spam +trash<enter><sync-mailbox><check-stats>" \
+"Move message to trash"'
+
+#macro index,pager gn \
+#"<pipe-message>\"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\" $(formail -x message-id -z | tr -d '<>' | python3 -c 'import sys,urllib.parse; print(urllib.parse.quote_plus(sys.stdin.read()));' | sed 's,^,https://localhost/search?query=id:,') &>/dev/null<enter>" \
+#"Open message in noservice"
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

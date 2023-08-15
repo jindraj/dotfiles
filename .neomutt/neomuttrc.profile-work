@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 set from		= $my_work_email_address
 set realname		= $my_work_name
 set my_receipt		= $my_work_receipt
@@ -8,7 +7,14 @@ set my_theme_color2	= brightcolor5
 set my_theme_color3	= brightcolor135
 set my_textcolor	= white
 
+set smtp_oauth_refresh_command	= $my_work_smtp_oauth_refresh_command
+set smtp_url			= "smtps://$my_work_email_address@smtp.gmail.com:465/"
+set smtp_authenticators		= "oauthbearer"
+
 unmy_hdr Organization
 my_hdr Organization: $my_work_org
+my_hdr Bcc: $my_personal_email_address
 
 source $my_cfgdir/neomuttrc.profile-common
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

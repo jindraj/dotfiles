@@ -1,8 +1,12 @@
-# -*-muttrc-*- 
-message-hook .       "unalternative_order *; alternative_order text/plain text/enriched text/html" # any message
-message-hook "%f fs" "unalternative_order *; alternative_order text/html text/plain" # freshservice sucks
+# reset message-hooks for all messages
+message-hook "~A"               "unalternative_order *; alternative_order text/enriched text/plain text/html"
+message-hook "%f bsfl"          "unalternative_order *; alternative_order text/html text/plain"
+message-hook "%f fs"            "unalternative_order *; alternative_order text/html text/plain"
+message-hook "~f @linkedin.com" "unalternative_order *; alternative_order text/html text/plain"
 
-folder-hook . "set my_zero_inbox=''; source $my_cfgdir/neomuttrc.profile-common"
+# folder hooks
+#   zero inbox notification in status bar
+folder-hook .     "set my_zero_inbox='';                     source $my_cfgdir/neomuttrc.profile-common"
 folder-hook INBOX "set my_zero_inbox='Yay empty mailbox 🎉'; source $my_cfgdir/neomuttrc.profile-common"
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc
