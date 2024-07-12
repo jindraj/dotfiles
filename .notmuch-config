@@ -97,18 +97,60 @@ synchronize_flags=true
 # `notmuch config set query.QUERYNAME NOTMUCH_QUERY`
 # to store query in the db
 [index]
+decrypt=true
 header.List=List-Id
 header.MSThread=Thread-Index
 header.XOriginalSender=X-Original-Sender
+header.AR=Authentication-Results
+header.GitLabProjectPath=X-GitLab-Project-Path
+header.GitLabPipelineRef=X-GitLab-Pipeline-Ref
+header.GitLabMergeRequestIID=X-GitLab-MergeRequest-IID
+header.GitLabPipelineId=X-GitLab-Pipeline-Id
+header.GitLabNotificationReason=X-GitLab-NotificationReason
 
 [query]
-junk=is:trash OR is:spam OR is:drafts OR from:@linkedin.com OR mimetype:multipart/report
+junk=is:trash OR is:spam OR is:drafts OR from:@linkedin.com OR mimetype:multipart/report OR is tag:dmarc
 lists=tag:Newsletters OR tag:Maillists
-personal=NOT (tag:work OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)
-ticketing_freshservice=from:devops-ticket@socialbakers.com OR from:itops@emplifi.io OR from:itops@socialbakers.com OR from:itsupport@socialbakers.com OR from:socialbakerscomitsupport@socialbakers.freshservice.com
-ticketing_vendr=from:notifications@blissfully.com OR from:support@vendr.com OR from:notifications@vendr.com
-ticketing_jira=from:jira@astutesolutions.atlassian.net OR from:jira@emplifi.atlassian.net
-ticketing_tp=from:dev-support@socialbakers.com OR from:dev-support@tp.socialbakers.com
-ticketing_torii=from:hello@toriihq.com OR XOriginalSender:hello@toriihq.com
-confluence=from:confluence@emplifi.atlassian.net OR from:confluence@astutesolutions.atlassian.net
-others=is:golkad OR is:irikm OR is:petakj OR is:hotskyo OR is:semyachkinay OR is:ververakisi OR is:witanekn OR is:gerasimovk OR is:martino OR is:brooksc OR is:halewoodj
+personal=NOT (query:work OR query:lists OR query:junk OR from:@cd.cz OR from:@chess.com)
+others=is:z_golkad OR is:z_irikm OR is:z_petakj OR is:z_hotskyo OR is:z_semyachkinay OR is:z_ververakisi OR is:z_witanekn OR is:z_gerasimovk OR is:z_martino OR is:z_brooksc OR is:z_halewoodj OR is:votocekp
+confluence=from:confluence@emplifi.atlassian.net OR from:confluence@astutesolutions.atlassian.net OR from:confluence@mailstep.atlassian.net
+cal=(mimetype:text/calendar OR mimetype:application/ics) AND NOT (from:@cd.cz)
+ar_fail=AR:" spf=fail " OR AR:" dkim=fail " OR AR:" dmarc=fail "
+
+work_sysu=is:sysu
+work_sbks=is:sbks
+work_cklb=is:cklb
+work_mstp=is:mstp
+work=query:work_sysu OR query:work_sbks OR query:work_cklb OR query:work_mstp
+
+# ticketing
+#ticketing_freshservice=from:devops-ticket@socialbakers.com OR from:itops@emplifi.io OR from:itops@socialbakers.com OR from:itsupport@socialbakers.com OR from:socialbakerscomitsupport@socialbakers.freshservice.com
+#ticketing_vendr=from:notifications@blissfully.com OR from:support@vendr.com OR from:notifications@vendr.com
+#ticketing_tp=from:dev-support@socialbakers.com OR from:dev-support@tp.socialbakers.com
+#ticketing_torii=from:hello@toriihq.com OR XOriginalSender:hello@toriihq.com
+ticketing_jira_astute=from:jira@astutesolutions.atlassian.net
+ticketing_jira_emplifi=from:jira@emplifi.atlassian.net
+ticketing_jira_cookielab=from:jira@cookielab.atlassian.net
+ticketing_jira_mailstep=from:jira@mailstep.atlassian.net
+ticketing_jira=query:ticketing_jira_astute OR query:ticketing_jira_emplifi OR query:ticketing_jira_cookielab OR query:ticketing_jira_mailstep
+# gitlab
+gitlab_com=from:gitlab@mg.gitlab.com
+gitlab_evenflo=from:gitlab@evenflo.cloud
+gitlab_emplifi=from:gitlab@socialbakers.com
+gitlab_cookielab=from:gitlab@cookielab.io
+gitlab=query:gitlab_com OR query:gitlab_evenflo OR query:gitlab_emplifi OR query:gitlab_cookielab
+# gitlab notification type
+gitlab_is_mr=GitLabMergeRequestIID:0* OR GitLabMergeRequestIID:1* OR GitLabMergeRequestIID:2* OR GitLabMergeRequestIID:3* OR GitLabMergeRequestIID:4* OR GitLabMergeRequestIID:5* OR GitLabMergeRequestIID:6* OR GitLabMergeRequestIID:7* OR GitLabMergeRequestIID:8* OR GitLabMergeRequestIID:9*
+gitlab_is_cicd=GitLabPipelineId:0* OR GitLabPipelineId:1* OR GitLabPipelineId:2* OR GitLabPipelineId:3* OR GitLabPipelineId:4* OR GitLabPipelineId:5* OR GitLabPipelineId:6* OR GitLabPipelineId:7* OR GitLabPipelineId:8* OR GitLabPipelineId:9*
+
+# renovate
+renovate_mailstep=from:'Robot Mailstep (@ms-robot)' AND query:gitlab_com
+renovate=query:renovate_mailstep
+
+gitlab_review=GitLabNotificationReason:review_requested
+gitlab_assigned=GitLabNotificationReason:assigned
+
+p/mstp=GitLabProjectPath:mailstep/.* OR  query:ticketing_jira_mailstep
+p/jdl=GitLabProjectPath:jidlomat/.*  OR (query:ticketing_jira_cookielab AND subject:JID-")
+p/tmac=GitLabProjectPath:tmac/.*
+p/internal=((GitLabProjectPath:cookielab/.* OR (GitLabProjectPath:infrastructure/.* AND query:gitlab_cookielab) OR (from:notifications@github.com AND List:/cookielab\\/.*/)
