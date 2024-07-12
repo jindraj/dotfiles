@@ -26,7 +26,8 @@ $if bash
   "\e\C-f": "\C-]/"						# jump forward to /
   "\C-xq": "\eb\"\ef\""						# wrap current word in "
   "\e\C-m": "\C-a \C-m"						# execute, no bash history - ESC-Enter
-  "\C-x\C-r": "\C-a#\C-mhistory | tail -n 2 | head -n1 | cut -f 2 -d '#' | pbcopy\C-m"	# comments command, executes it and then copies it from history into clipboard
+  #"\C-x\C-r": "\C-a#\C-mhistory | sed 'x;$!d' | cut -f 2 -d '#' | pbcopy\C-m"	# comments command, executes it and then copies it from history into clipboard
+  "\C-]": "\C-e\C-u pbcopy <<EOF\n\C-y\nEOF\n \# content of previous prompt was coppied into OS clipboard\n"
 $endif
 
 $if mysql

@@ -23,6 +23,7 @@ call plug#begin()
   Plug 'luochen1990/rainbow'
   Plug 'neomutt/neomutt.vim'
   Plug 'adborden/vim-notmuch-address'
+  Plug 'vim-scripts/AnsiEsc.vim'
   Plug 'rodjek/vim-puppet'
   Plug 'junegunn/fzf'
   Plug 'junegunn/fzf.vim'
@@ -30,7 +31,12 @@ call plug#begin()
   "Plug 'editorconfig/editorconfig-vim'
   Plug 'tpope/vim-fugitive'
   Plug 'rkitover/vimpager'
+  Plug 'hashivim/vim-terraform'
+  Plug 'hashicorp/terraform-ls'
+  Plug 'juliosueiras/vim-terraform-completion'
+  Plug 'vim-syntastic/syntastic'
   Plug 'morhetz/gruvbox'
+  Plug 'speshak/vim-cfn'
   Plug 'vim-airline/vim-airline'
   Plug 'vim-airline/vim-airline-themes'
   Plug 'vim-scripts/applescript.vim'
@@ -137,16 +143,49 @@ let g:loaded_perl_provider = 0
 
 " {{{ naseptavani
 let g:deoplete#enable_at_startup = 1
+" let g:deoplete#omni_patterns = {}
+" call deoplete#custom#option('omni_patterns', {
+" \ 'complete_method': 'omnifunc',
+" \ 'terraform': '[^ *\t"{=$]\w*',
+" \})
 call deoplete#custom#option('sources', {
 \ '_': ['ale'],
 \})
+call deoplete#initialize()
 set completeopt=menu,menuone,preview,noselect,noinsert
 
 	
 let g:notmuch_address_tag = 'sent'
+
+" syntastic 
+"set statusline+=%#warningmsg#
+"set statusline+=%{SyntasticStatuslineFlag()}
+"set statusline+=%*
+"let g:syntastic_always_populate_loc_list = 1
+"let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+"let g:syntastic_check_on_wq = 0
+"
+"set completeopt-=preview
+"
+"" (Optional)Hide Info(Preview) window after completions
+"autocmd CursorMovedI * if pumvisible() == 0|pclose|endif
+"autocmd InsertLeave * if pumvisible() == 0|pclose|endif
+"
+"" (Optional) Enable terraform plan to be include in filter
+"let g:syntastic_terraform_tffilter_plan = 1
+"
+"" (Optional) Default: 0, enable(1)/disable(0) plugin's keymapping
+"let g:terraform_completion_keys = 1
+"
+"" (Optional) Default: 1, enable(1)/disable(0) terraform module registry completion
+"let g:terraform_registry_module_completion = 0
 " }}}
 
 
+if exists('+termguicolors')
+  set termguicolors
+endif
 let g:airline = {}
 let g:airline.colorscheme = 'gruvbox'
 colorscheme gruvbox
@@ -157,24 +196,15 @@ let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-let $TERM="xterm-256color"
-"let $TERM="xterm-direct"
-
 " }}}
 
 " settings misc {{{
 filetype plugin indent on			" required!
-"set t_Co=256					" Enable 256-color mode
-if exists('+termguicolors')
-  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-  set termguicolors
-endif
 "set background=dark				" i have dark background
 "colorscheme neodark				" set color scheme
-let g:neodark#terminal_transparent = 1 " default: 0
-let g:neodark#solid_vertsplit = 1
-let g:neodark#background = '#000000'
+" let g:neodark#terminal_transparent = 1 " default: 0
+" let g:neodark#solid_vertsplit = 1
+" let g:neodark#background = '#000000'
 syntax enable					" enable syntax highliting
 hi CursorLine cterm=NONE ctermbg=233		" highlight cursorline with
 hi LineNr ctermfg=16 cterm=bold ctermbg=240
@@ -244,8 +274,9 @@ vmap gs y'>p:'[,']-1s/$/+/\|'[,']+1j!<CR>'[0"wy$:.s§.*§\=w§<CR>'[yyP:.s/./=/g
 
 "{{{ vimpager only settings and overwrites
 if exists('g:vimpager.enabled')
-  let vimpager_passthrough=0
-  let g:less = { 'enabled': 1 } " less compatibility mode
+  let vimpager_passthrough=1
+  "let g:less = { 'enabled': 1 } " less compatibility mode
+  let g:vimpager.ansiesc = 1
   autocmd BufRead * AnsiEsc
   set nornu
   set nu
