@@ -1,10 +1,10 @@
-#!/opt/homebrew/bin/bash
+#!/usr/local/bin/bash
 PATH=/bin:$HOME/bin:/usr/bin:$HOME/.neomutt/bin:/usr/local/bin
 PATH=/opt/homebrew/bin:$PATH
 GMI_DIR=$HOME/.mail/gmail
-export PYTHONPATH=/opt/homebrew/opt/notmuch/libexec/lib/python3.11/site-packages
+export PYTHONPATH=/usr/local/lib/python3.11/site-packages/
 
-outputfile=/tmp/null
+outputfile=/dev/null
 [[ $1 == "verbose" ]] && outputfile=/dev/stdout
 
 function __msg(){
@@ -13,7 +13,7 @@ function __msg(){
 
 function __check_connectivity(){
 	__msg "Checking connectivity"
-	if ! /sbin/ping -W 1 -c 1 www.googleapis.com &>/dev/null
+	if ! /sbin/ping -W 1 -c 1 www.googleapis.com &> /dev/null
 	then
 		__msg " ❌\n"
 		exit 0
@@ -22,8 +22,9 @@ function __check_connectivity(){
 }
 
 function __sync_archive(){
+	umask 066
 	__msg "Pulling changes form GMail API\n"
-	timeout 600 ~/projects/github/lieer/gmi pull -C "$GMI_DIR" && date +%R > /tmp/neomutt_latest_sync
+	timeout 600 gmi pull -C "$GMI_DIR" && date +%R > /tmp/neomutt_latest_sync
 
 	__msg "Running pre notify tag changes\n"
 	notmuch tag --input="$HOME/.neomutt/bin/sync.d/sync_prenotify_tags"
@@ -31,19 +32,19 @@ function __sync_archive(){
 	__post_sync
 
 	__msg "Pushing changes to GMail API\n"
-	timeout 600 ~/projects/github/lieer/gmi push -C "$GMI_DIR"
+	timeout 600 gmi push -C "$GMI_DIR"
 }
 
 # post sync actions run notifications + statictics and archive closed tickets
 function __post_sync(){	
-	__msg "Running torii slack hook before we got -new tag removed by notmuch post sync hook\n"
-	"$(dirname "$0")/sync_torii"
-
 	__msg "Notify new messages and graf data\n"
 	notmuch new --quiet 2> /dev/null
 
-	#__msg "Freshservice tickets actions\n"
-	#"$(dirname "$0")/sync_freshservice" &
+	__msg "Running Jira post sync hook\n"
+	"$(dirname "$0")/sync_jira" &>>"$outputfile" &
+
+	__msg "Running GitLab post sync hook\n"
+	"$(dirname "$0")/sync_gitlab" &>>"$outputfile" &
 }
 
 function run(){

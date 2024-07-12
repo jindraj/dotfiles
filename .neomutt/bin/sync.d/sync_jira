@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# deps: [notmuch, jira bashlibs (custom set of scripts), sed, sort]
+
+# env variables:
+# - JIRA_API_BASE_URL_jiradomain_atlassian.net
+# - JIRA_API_USER_jiradomain_atlassian.net
+# - JIRA_API_TOKEN_jiradomain_atlassian.net
+
+# shellcheck source=/Users/jindraj/.bash_local
+source "$HOME/.bash_local"
+
+jira_display_names=(
+	'Jakub Jindra'
+)
+
+notmuch_tags=(
+	'jindraj'
+)
+
+function __nmTagBatchInput(){
+	local key tag=$1
+	while read -r key
+	do
+		printf '+%s -- %s\n' "$tag" "${nmQuery[*]} AND subject:$key"
+	done
+}
+
+function __nmGetJiraKeys(){
+	notmuch show "${nmQuery[@]}"                 \
+		| sed -n '/^> *Key: /s/^> *Key: //p' \
+		| sort -u
+}
+
+function run(){
+	nmQuery=( 'is:inbox' AND 'query:ticketing_jira' AND "from:$from")
+	jiraKeys=$(__nmGetJiraKeys | xargs | tr ' ' ',') # teoreticky se muzu zbavit xargs a upravit `tr ' ' ','` na `tr '\n' ','` 
+	[[ -z $jiraKeys ]] && return
+
+	jira_domain=${from/jira@/}
+	jira_api_base_url="JIRA_API_BASE_URL_${jira_domain//./_}" JIRA_API_BASE_URL=${!jira_api_base_url}
+	jira_api_user="JIRA_API_USER_${jira_domain//./_}"         JIRA_API_USER=${!jira_api_user}
+	jira_api_token="JIRA_API_TOKEN_${jira_domain//./_}"       JIRA_API_TOKEN=${!jira_api_token}
+	
+	jiraResponse=$(__jiraGet "/rest/api/latest/search?fields=assignee,status&jql=key%20in%20($jiraKeys)")
+
+	for index in ${!jira_display_names[@]}
+	do
+		__nmTagBatchInput "${notmuch_tags[index]}" < <(jq -r '.issues[]|select(.fields.assignee.displayName=="'"${jira_display_names[index]}"'")|.key' <<<"$jiraResponse")
+	done
+	__nmTagBatchInput 'done'     < <(jq -r '.issues[]|select(.fields.status.name=="Done").key'                     <<<"$jiraResponse")
+}
+
+for from in jira@{cookielab,mailstep}.atlassian.net
+do
+	run "$@" | notmuch tag --batch
+done

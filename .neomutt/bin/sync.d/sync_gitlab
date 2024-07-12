@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+# deps: [ notmuch, jq, glab, parallel, sort, awk ]
+#
+# required notmuch config:
+# [index]
+# header.GitLabProjectPath=X-GitLab-Project-Path
+# header.GitLabMergeRequestIID=X-GitLab-MergeRequest-IID
+# header.GitLabPipelineId=X-GitLab-Pipeline-Id
+# [query]
+# gitlab_com=from:gitlab@mg.gitlab.com
+# gitlab_example=from:gitlab@example.com
+# gitlab=query:gitlab_com OR query:gitlab_example
+# gitlab_is_mr=GitLabMergeRequestIID:0* OR GitLabMergeRequestIID:1* OR GitLabMergeRequestIID:2* OR GitLabMergeRequestIID:3* OR GitLabMergeRequestIID:4* OR GitLabMergeRequestIID:5* OR GitLabMergeRequestIID:6* OR GitLabMergeRequestIID:7* OR GitLabMergeRequestIID:8* OR GitLabMergeRequestIID:9*
+
+function search_messages_with_active_merge_requests(){
+	notmuch search --output=files "is:inbox AND query:gitlab AND query:gitlab_is_mr"
+}
+
+function iterate_messages(){
+	local msg_file project_path mr_id gl_host
+	while read -r msg_file
+	do
+		project_path=$(formail -x X-GitLab-Project-Path:     -z < "$msg_file")
+		mr_id=$(       formail -x X-GitLab-MergeRequest-IID: -z < "$msg_file")
+		gl_host=$(notmuch show --limit=1 "GitLabProjectPath:$project_path AND GitLabMergeRequestIID:$mr_id" | awk '/You\047re receiving this email because/ {print $NF}' | sed 's/\.$//' | head -n1)
+		printf '%s %s %s\n' "$gl_host" "$project_path" "$mr_id"
+	done
+}
+
+function status_helper(){
+	local project_path mr_id mr_status token_var pipeline_id
+	local -x GITLAB_HOST GITLAB_TOKEN
+
+	read -r GITLAB_HOST project_path mr_id
+	token_var="GL_TOKEN_${GITLAB_HOST//./_}"
+	local -x GITLAB_TOKEN="${!token_var}" GITLAB_HOST
+	mr_status=$(glab api "/projects/${project_path//\//%2f}/merge_requests/$mr_id" | jq -r '.state')
+	#glab api graphql -f query='query {project(fullPath: "namespace/path") { mergeRequest(iid: "1") {state } }}' # graphql variant
+
+	if [[ $mr_status == "closed" || $mr_status == "merged" ]]
+	then
+		printf 1>&2 'archiving %s/%s!%s\n' "$GITLAB_HOST" "$project_path" "$mr_id"
+		printf '%s -- GitLabProjectPath:%s AND GitLabMergeRequestIID:%s\n' -inbox "$project_path" "$mr_id" # MR
+
+		for pipeline_id in $(glab api "/projects/${project_path//\//%2f}/merge_requests/$mr_id/pipelines" | jq -r '.[].id')
+		do
+			printf '%s %s -- GitLabProjectPath:%s AND GitLabPipelineId:%s\n'        -inbox -unread "$project_path" "$pipeline_id" # PIPELINE
+		done
+	fi
+}
+
+export -f status_helper
+
+function run(){
+	# shellcheck source=/Users/jindraj/.bash_local
+	source "$HOME/.bash_local"
+
+	search_messages_with_active_merge_requests \
+		| iterate_messages \
+		| sort -u \
+		| parallel -P "$(nproc)" -N1 --pipe status_helper \
+		| notmuch tag --batch
+}
+
+run "$@"
