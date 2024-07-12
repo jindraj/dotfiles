@@ -1,29 +1,143 @@
 #!/usr/bin/env  bash
 
-function sensu(){
-	rm "$HOME/.config/sensu/sensuctl" 2>/dev/null
-	ln -sfF "$HOME/.config/sensu/sensuctl-$1" "$HOME/.config/sensu/sensuctl"
+function aws_session_validity(){
+	local expiration_ts now_ts expires_in
+	[[ $AWS_SESSION_EXPIRATION ]] || return
+	expiration_ts=$(date  -j -f "%FT%T%z" "${AWS_SESSION_EXPIRATION%:*}${AWS_SESSION_EXPIRATION##*:}" '+%s')
+	now_ts=$(date +%s)
+
+	expires_in=$((expiration_ts - now_ts))
+
+	if [[ $expires_in -ge 1800 ]] 
+	then
+		printf ✅
+	elif [[ $expires_in -lt 1800 && $expires_in -gt 300 ]] 
+	then
+		printf ⚠️
+	elif [[ $expires_in -lt 300 && $expires_in -gt 0 ]] 
+	then
+		printf ‼️
+	else
+		printf ❌
+	fi
 }
+
+function _jj(){
+	find . -type f -name '_jj*' | fzf --exact --select-1 -i ${@:+--query "$*"} | xargs view
+}
+
+function webcamsnap(){
+	local outputfile
+	outputfile="$(mktemp).jpg"
+	ffmpeg -ss 00:00:00 -f avfoundation -r 30.000030 -i "0" -t 1 -frames:v 1 -q:v 2 "$outputfile"
+	printf 'Snapshot saved to:\n%s\n' "$outputfile"
+}
+
+function functionfinder(){
+	shopt -s extdebug
+	declare -F "$1"
+	shopt -u extdebug
+}
+
+function doh(){
+	local doh_url="${DOH_BASE_URL:-https://cloudflare-dns.com/dns-query}"
+
+	doh_url=$(trurl --url "$doh_url" --append "query=name=$1")
+	[[ -n $2 ]] && doh_url=$(trurl --url "$doh_url" --append "query=type=$2")
+
+	curl -H "accept: application/dns-json" "$doh_url"
+}
+
+function cdfzf(){
+	local __projectdir
+	__projectdir=$(
+		find "$HOME/$__rootdir" -type d -execdir test -d {}/.git \; -prune -print \
+			| fzf --exact --select-1 -i ${@:+--query "$*"}
+	)
+	cd "$__projectdir" || return
+}
+
+function ,mstp(){
+	,cklb "gitlab.com/mailstep" "${@:-}"
+}
+
+function ,cklb(){
+	local -x __rootdir="${FUNCNAME[0]/,/}"
+	cdfzf "$@"
+}
+
+function ,projects(){
+	local -x __rootdir="${FUNCNAME[0]/,/}"
+	cdfzf "$@"
+}
+
+function ,sbks(){
+	local -x __rootdir="${FUNCNAME[0]/,/}"
+	cdfzf "$@"
+}
+
+# {{{ terraform
+function tfkubeconfig(){ # get kubeconfig from terraform output and save it as .kubeconfig.NAME
+	terraform output --json "$1" | jq .kubeconfig | yq e . > ".kubeconfig.$1"
+}
+
+function tf(){ # terraform wrapper with environment picker
+	local TF_cmd=$1
+	shift
+	local -x TF_CLI_ARGS
+
+	if [[ -d ./variables ]]
+	then
+		var_file=$(find ./variables -type f | fzf -1 -q "$@")
+		tf_environment=$(awk -F '"' '/^environment[[:space:]]/ { print $2}' "$var_file")
+		TF_CLI_ARGS+=" -var-file=$var_file"
+		export TF_WORKSPACE=$tf_environment
+		direnv allow
+		eval "$(direnv export bash)"
+		unset TF_WORKSPACE
+	fi
+	terraform "$TF_cmd"
+	unset TF_CLI_ARGS
+}
+
+function tfa(){ # terraform apply wrapper utilizing tf()
+	tf apply "$@"
+}
+
+function tfp(){ # terraform plan wrapper utilizing tf()
+	tf plan "$@"
+}
+
+function tfpnl(){ # terraform plan -lock=false wrapper utilizing tf()
+	local -x TF_CLI_ARGS_plan="-lock=false"
+	tfp "$@"
+}
+# }}}
+
+__local_getMFA () {
+    totp "$1"
+}
+export -f __local_getMFA
 
 # {{{ Functions used in PS1.
 function ec(){ # get exitcode
 	local EC=$?
 	[[ "$EC" -eq 0 || "$EC" -eq 130 ]] && return
-	printf '\x01\e[1;30m\x02[\x01\e[0m\x02\x01\e[1;31m\x02%d\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02' "$EC"
+	printf '\x01%b\x02[\x01%b\x02\x01%b\x02%d\x01%b\x02\x01%b\x02]\x01%b\x02' "$__c1" "$crst" '\e[1;31m' "$EC" "$crst" "$__c1" "$crst"
 }
 
 function aws_ps1(){
-	[[ -z $AWS_PROFILE || $AWS_PROFILE == 'default' ]] && return
-	printf "\x01\e[1;30m\x02[\x01\e[0m\x02\x01\e[1;31m\x02%s\x01\e[0m\x02\x01\e[1;30m\x02]\x01\e[0m\x02" "$AWS_PROFILE"
+	[[ -z $AWS_PROFILE || $AWS_PROFILE == 'default' || ${AWS_PROFILE@a} != *x* ]] && return
+	printf "\x01%b\x02[\x01%b\x02\x01%b\x02%s\x01%b\x02\x01%b\x02]\x01%b\x02" "$__c1" "$crst" '\e[1;31m' "$AWS_PROFILE" "$crst" "$__c1" "$crst"
 }
 
 function nr_sessions(){ # get number of tmux+screen sessions
 	local TMUX_SESSIONS SCREEN_SESSIONS
 	TMUX_SESSIONS=$(tmux list-sessions 2> /dev/null | wc -l)
 	SCREEN_SESSIONS=$(screen -list 2> /dev/null | grep -c $'\t')
-	(( SCREEN_SESSIONS + TMUX_SESSIONS == 0 )) && return
 	[[ $TERM == screen* ]] && SCREEN_SESSIONS=$(( SCREEN_SESSIONS - 1 ))
-	printf '\x01\e[1;30m\x02[\x01\e[0m\x02%d\x01\e[1;30m\x02]\x01\e[0m\x02' "$(( SCREEN_SESSIONS + TMUX_SESSIONS ))"
+	(( SCREEN_SESSIONS + TMUX_SESSIONS == 0 )) && return
+	printf '\x01%b\x02[\x01%b\x02%d\x01%b\x02]\x01%b\x02' "$__c1" "$crst" "$(( SCREEN_SESSIONS + TMUX_SESSIONS ))" "$__c1" "$crst" 
 }
 # }}}
 
@@ -38,6 +152,7 @@ function source_all_files_from_dir(){
 }
 
 function totp(){  gopass totp -o "$1" ; }
+export -f totp
 
 function totpc(){ gopass totp -c "$1" ; }
 
@@ -133,7 +248,7 @@ function zlatestranky(){
 	[[ -z $pattern ]] && { cat -; return; }
 	shift
 	[[ ${#FUNCNAME[*]} -eq 1 ]] && {
-		rg -i "$pattern" "$HOME/Downloads/phonebook_cz.txt" | zlatestranky "$@"
+		rg -z -i "$pattern" "$HOME/Downloads/fb_cz.txt.gz" | zlatestranky "$@"
 		return
 	}
 	rg -i "$pattern" | zlatestranky "$@"
@@ -161,7 +276,7 @@ function ldapaudit(){
 
 function sshmux(){ ssh -vt "${1:-hopnode}" 'tmux attach || tmux'; }
 
-function moshmux(){ mosh "${1:-hopnode}" tmux attach; }
+function moshmux(){ TERM=xterm-256color mosh "${1:-hopnode}" tmux attach; }
 
 function removedia(){ iconv -f utf8 -t ascii//TRANSLIT | sed 's/[^a-zA-Z 0-9,]//g'; }
 
@@ -299,6 +414,5 @@ function proxy(){
 }
 export -f		\
 	ec			\
-	nr_sessions	\
-	sensu
+	nr_sessions
 # vim:foldmethod=indent:foldlevel=0:tabstop=4:shiftwidth=4:softtabstop=0:noexpandtab

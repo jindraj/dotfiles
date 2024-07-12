@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
-alias calout='remind -m@c1 ~/.reminders/team_out.rem'
-alias calweek='rem -m@c+l1'
-alias calmonth='rem -m@cl1'
+alias k9s='TERM=xterm k9s'
+alias mtr='TERM=xterm mtr'
+alias deluge-console='TERM=xterm deluge-console'
+alias calout='remind -m@2,0,0c2 -b1 -gdddd ~/.reminders/team_out.rem'
+alias calweek='rem -m@2,0,0cl+2 -b1 -gdddd'
+alias calmonth='rem -m@2,0,0cl1 -b1 -gdddd'
 alias kubenodes='kubectl get nodes --label-columns kubernetes.io/hostname,node.kubernetes.io/server,topology.kubernetes.io/zone,beta.kubernetes.io/instance-type --sort-by={.metadata.labels."node\.kubernetes\.io\/server"}'
 alias jiv='jira issues view --comments 100'
 alias jil='jira issues list'
@@ -20,6 +23,7 @@ alias focus='echo -ne "\033]50;StealFocus\a"'
 alias h='history'
 alias hgrep='history | rg'
 alias icloud='cd ~/Library/Mobile\ Documents/com~apple~CloudDocs/'
+alias k='kubectl'
 alias l='ls -alh'
 alias ldapsearch='ldapsearch -x -o ldif-wrap=no -S "" -LLL'
 alias ldapvi='ldapvi -D "cn=jakub jindra,ou=people,dc=socialbakers,dc=com"' #sed -n '/^BINDDN/ s/^BINDDN[[:space:]]\{1,\}//p' $HOME/.ldaprc
@@ -37,9 +41,11 @@ alias urlencode='python3 -c "import sys,urllib.parse; print(urllib.parse.quote_p
 alias urldecode='python3 -c "import sys,urllib.parse; print(urllib.parse.unquote_plus(sys.stdin.read()));"'
 alias qpencode='python3 -c "import sys,quopri; print(quopri.encodestring(sys.stdin.read(),quotetabs=True));"'
 alias qpdecode='python3 -c "import sys,quopri; print(quopri.decodestring(sys.stdin.read()));"'
+alias nsunique='awk '\''!mem[$0]++'\'
+
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-	alias ls='ls -G'
+	alias ls='ls -G --color=always'
 else
 	alias ls='ls --color=auto'
 fi;
