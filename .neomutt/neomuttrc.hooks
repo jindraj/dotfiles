@@ -4,9 +4,18 @@ message-hook "%f bsfl"          "unalternative_order *; alternative_order text/h
 message-hook "%f fs"            "unalternative_order *; alternative_order text/html text/plain"
 message-hook "~f @linkedin.com" "unalternative_order *; alternative_order text/html text/plain"
 
+# dkim/spf/dmarc 2
+message-hook  ~A 'ignore authentication-results'
+message-hook '~h "^Authentication-Results: .*(dkim|spf|dmarc)=fail"' 'unignore authentication-results'
+
 # folder hooks
 #   zero inbox notification in status bar
 folder-hook .     "set my_zero_inbox='';                     source $my_cfgdir/neomuttrc.profile-common"
 folder-hook INBOX "set my_zero_inbox='Yay empty mailbox 🎉'; source $my_cfgdir/neomuttrc.profile-common"
 
+# use different mailcap for a personal/work mail
+message-hook "~A"		"set mailcap_path = $my_cfgdir/mailcap_personal:$my_cfgdir/mailcap"
+message-hook "%C work"		"set mailcap_path = $my_cfgdir/mailcap_work:$my_cfgdir/mailcap"
+
+#timeout-hook check-stats # bells during startup
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

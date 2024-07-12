@@ -8,21 +8,17 @@ function __jira_extract(){
 }
 
 function __jira_choose_action(){
-	local action jiraKey #jiraProj jiraUrl
+	local action jiraKey
 
 	action="$1"
 	jiraKey=$( __jira_extract Key)
-	#jiraProj=$(__jira_extract Project)
-	#jiraUrl=$( __jira_extract URL)
 
 	case "$action" in
 		"open")
-			jira open "$jiraKey" &
-			#open "$JIRA_API_BASE_URL/browse/$jiraKey"
+			open -n -a "Google Chrome" --args --profile-directory="Default" "$JIRA_API_BASE_URL/browse/$jiraKey" &
 			;;
 		"assign")
 			jira issue assign "$jiraKey" "$(jira me)"
-			#__jiraPut /rest/api/3/issue/$jiraKey/assignee"  -d '{"accountId":"6116192c2ba37b0067c30a69"}'
 			;;
 		"view")
 			[[ -z $TMUX ]] && return

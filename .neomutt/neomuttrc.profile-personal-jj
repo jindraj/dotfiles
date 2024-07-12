@@ -1,19 +1,25 @@
-set from		= $my_personal_email_address
-set realname		= $my_personal_name
-set my_receipt		= $my_personal_receipt
-set signature		= $my_cfgdir/signature-personal
-#https://web.archive.org/web/20190712111427/https://jonasjacek.github.io/colors/
-set my_theme_color	= blue
-set my_theme_color2	= brightblue
-set my_theme_color3	= brightcolor33
-set my_textcolor	= white
+set from        = 'jakub.jindra@jakubjindra.eu'
+set realname    = $my_personal_name
+set my_receipt  = $my_personal_receipt
+set signature   = $my_cfgdir/signature-personal
 
-set smtp_url			= "smtp://$my_jj_username:$my_jj_password@$my_jj_hostname:25/"
+#https://web.archive.org/web/20190712111427/https://jonasjacek.github.io/colors/
+set my_theme_color   = '#3030FF'
+set my_theme_color2  = '#9999FF'
+set my_theme_color3  = '#6060FF'
+set my_textcolor     = white
+set my_textcolor_b   = $my_textcolor
+set my_theme_color_b = $my_theme_color
+
+unset smtp_url
 unset smtp_oauth_refresh_command
 unset smtp_authenticators
+set sendmail="ssh $my_jj_hostname /usr/sbin/sendmail -oem -oi"
 
 unmy_hdr Organization
+my_hdr Bcc: $my_personal_email_address
 
+source $my_cfgdir/neomuttrc.mailboxes
 source $my_cfgdir/neomuttrc.profile-common
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

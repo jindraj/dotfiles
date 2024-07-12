@@ -1,0 +1,39 @@
+set from                = $my_cockli_address
+set realname		= $my_personal_name
+set my_receipt		= $my_personal_receipt
+set signature		= "$my_cfgdir/signature-personal"
+
+set my_theme_color	= '#909090'
+set my_theme_color2	= '#ac24fe'
+set my_theme_color3	= '#c86dfe'
+set my_textcolor	= '#000000'
+set my_textcolor_b      = $my_textcolor
+set my_theme_color_b    = $my_theme_color
+
+reset sendmail
+reset smtp_authenticators
+reset smtp_oauth_refresh_command
+unmy_hdr Organization
+my_hdr Bcc: $my_personal_email_address
+
+set imap_user           = $my_cockli_address
+set smtp_user           = $my_cockli_address
+set imap_pass           = `gopass personal/mail/$my_cockli_hostname/$my_cockli_address password`
+set smtp_pass           = $imap_pass
+set smtp_url            = "smtp://$my_cockli_hostname:587"
+
+set spool_file          = "imap://$my_cockli_hostname:143/"
+set folder              = $spool_file
+set postponed           = '+Drafts'
+set record              = '+Sent'
+set trash               = '+Trash'
+
+set sidebar_non_empty_mailbox_only = no
+#set imap_check_subscribed
+#set imap_list_subscribed
+named-mailboxes Cock.li/INBOX +
+named-mailboxes Cock.li/Sent  +Sent
+named-mailboxes Cock.li/Trash +Trash
+named-mailboxes Cock.li/Junk  +Junk
+
+source "$my_cfgdir/neomuttrc.profile-common"

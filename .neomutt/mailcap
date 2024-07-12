@@ -1,4 +1,3 @@
-text/html;			(open %s && sleep 2) &; nametemplate=%s.html; needsterminal
 #text/html;			elinks %s ; nametemplate=%s.html; needsterminal
 #text/html;			elinks -config-file neomutt.conf -dump -dump-width ${COLUMNS:-80} -dump-charset utf-8 -eval "set document.codepage.assume = %{charset}" %s; nametemplate=%s.html; copiousoutput
 #text/html;			pandoc -s -r html+raw_html-native_divs-native_spans-line_blocks -w plain  --reference-links; nametemplate=%s.html; copiousoutput
@@ -11,4 +10,6 @@ application/pdf;		open %s
 image/png;			open %s
 image/jpeg;			open %s
 image/gif;			open %s
-application/ics;               ical2rem.pl --iso8601 --end-times --lead-time 0 |grep -v '^REM  MSG Calendar Events' > ~/.reminders/neomutt/ics_$(date +\%s).rem
+application/ics;		$HOME/.neomutt/bin/ical2rem.sh
+text/calendar;			$HOME/.neomutt/bin/ical2rem.sh
+application/zip;		unzip -l %s; copiousoutput

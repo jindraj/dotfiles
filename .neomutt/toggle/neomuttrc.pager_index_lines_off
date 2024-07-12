@@ -1,3 +1,5 @@
+unbind index,browser,alias,generic,pager ,
+
 set pager_index_lines = 0
 macro index,browser,alias,generic,pager ,m \
 "<enter-command>source $my_cfgdir/toggle/neomuttrc.pager_index_lines_on<enter>\

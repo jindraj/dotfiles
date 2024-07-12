@@ -1,4 +1,4 @@
-#!/opt/homebrew/bin/bash
+#!/usr/local/bin/bash
 
 function init_variables(){
 	QUERY=(
@@ -11,8 +11,9 @@ function init_variables(){
 	search_result=$(notmuch search --format=json "${QUERY[*]}")
 	# get authors and subjects of messages
 	readarray -t authors  < <(jq '.[] | .authors' <<<"$search_result")
-	readarray -t threads  < <(jq '.[] | .thread'  <<<"$search_result")
+	#readarray -t threads  < <(jq '.[] | .thread'  <<<"$search_result")
 	readarray -t subjects < <(jq '.[] | .subject' <<<"$search_result")
+	readarray -t dates < <(jq '.[] | .timestamp|todate' <<<"$search_result")
 }
 
 function run(){
@@ -20,11 +21,7 @@ function run(){
 	# iterate over array of messages defined by ${QUERY[@]}
 	for i in "${!authors[@]}"
 	do
-		printf '\e]1337;Notification=title=%s;subtitle=%s;message=%s;image=%s\a' \
-			"$(base64 <<<"${authors[i]}")" \
-			"$(base64 <<<"${threads[i]}")" \
-			"$(base64 <<<"${subjects[i]}")" \
-			"$HOME/.neomutt/bin/common/mutt-64x64.png"
+		terminal-notifier -title "${authors[i]}" -subtitle "${dates[i]}" -message "${subjects[i]}" -contentImage "$HOME/.neomutt/bin/common/mutt-64x64.png"
 		sleep 0.3
 	done
 	notmuch tag -new -- tag:new

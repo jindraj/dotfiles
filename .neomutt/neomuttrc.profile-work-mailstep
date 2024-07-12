@@ -1,0 +1,15 @@
+source $my_cfgdir/neomuttrc.profile-work
+set from		= "jakub.jindra@mailship.com"
+set realname		= $my_work_name
+set my_receipt		= $my_work_receipt
+set signature		= $my_cfgdir/signature-work
+set my_theme_color	= '#FFCD67'
+set my_theme_color2	= '#FFB00D'
+set my_theme_color3	= '#DBA507'
+set my_theme_color_b    = '#FFCD67'
+set my_textcolor	= '#1E1E1E'
+set my_textcolor_b      = '#3C3C3C'
+
+source $my_cfgdir/neomuttrc.profile-common
+
+# vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

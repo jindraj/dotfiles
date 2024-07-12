@@ -1,20 +1,25 @@
-set from		= $my_work_email_address
-set realname		= $my_work_name
-set my_receipt		= $my_work_receipt
-set signature		= $my_cfgdir/signature-work
-set my_theme_color	= color53
-set my_theme_color2	= brightcolor5
-set my_theme_color3	= brightcolor135
-set my_textcolor	= white
+set from             = $my_work_email_address
+set realname         = $my_work_name
+set my_receipt       = $my_work_receipt
+set signature        = $my_cfgdir/signature-work
 
-set smtp_oauth_refresh_command	= $my_work_smtp_oauth_refresh_command
-set smtp_url			= "smtps://$my_work_email_address@smtp.gmail.com:465/"
-set smtp_authenticators		= "oauthbearer"
+set my_theme_color   = '#FFCD67'
+set my_theme_color2  = '#FFB00D'
+set my_theme_color3  = '#DBA507'
+set my_theme_color_b = '#FFCD67'
+set my_textcolor     = '#1E1E1E'
+set my_textcolor_b   = '#3C3C3C'
+
+reset sendmail
+set smtp_oauth_refresh_command = $my_work_smtp_oauth_refresh_command
+set smtp_url                   = "smtps://$my_work_email_address@smtp.gmail.com:465/"
+set smtp_authenticators        = "oauthbearer"
 
 unmy_hdr Organization
 my_hdr Organization: $my_work_org
 my_hdr Bcc: $my_personal_email_address
 
+source $my_cfgdir/neomuttrc.mailboxes
 source $my_cfgdir/neomuttrc.profile-common
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

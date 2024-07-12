@@ -1,5 +1,5 @@
 set arrow_cursor	= yes
-color indicator alertdefault default
+color indicator default default
 
 macro index,browser,alias,generic,pager ,<space> \
 "<enter-command>source $my_cfgdir/toggle/neomuttrc.arrow_cursor_off<enter>\

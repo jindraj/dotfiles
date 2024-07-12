@@ -29,15 +29,15 @@ color progress                     $my_textcolor_b   $my_theme_color
 color prompt                       $my_theme_color   $my_textcolor
 
 color status                       $my_textcolor     default                            # default status bar color
-color status             bold      $my_theme_color_b $my_textcolor   '^([^]*)'      1 # most left white bg
-color status                       $my_textcolor     $my_theme_color '([^]*)'      1 # rest of the left
-color status                       $my_textcolor     $my_theme_color ' .*'         # most right part #contains NBP
-color status                       $my_theme_color   default         '[[:space:]]*'   # middle "invisible :D"
+color status             bold      $my_theme_color_b $C_THEME2   '^([^]*)'      1 # most left white bg
+color status                       '#000000'     $C_THEME1 '([^]*)'      1 # rest of the left
+color status                       '#000000'     $C_THEME1 '⁠.*'         # most right part
+color status                       $C_THEME1   default         '[[:space:]]*'   # middle "invisible :D"
 
 # source formats to refill variables
-set status_format  = " %r %D %<m? ✉️  %<M?%M/>%m & ${my_zero_inbox}>%<n? 📩 %n >%<d? 🚮 %d >%<F? 🚩 %F >%<t? 🔖 %t >%<p? 📨 %p >%<l? 💾 %<L?%L/>%l>%<V?  🔎 %V>  %>  $from ${my_range_from} %P " #contains NBSP
-set compose_format = " Compose  💾 ~%l  📎 %a   %>  $from " #CONTAINS NBSP
-set pager_format   = " %C  %[%H:%M]  %F <%a>  %s %*  %c  %P " # ${message-nr} ${time} ${sender} <${address}>  ${subject}  ${message-size} NBSP%{message_size}  ${pager_progress}
+set status_format  = " %r %D %<m? ✉️  %<M?%M/>%m & ${my_zero_inbox}>%<n? 📩 %n >%<d? 🚮 %d >%<F? 🚩 %F >%<t? 🔖 %t >%<p? 📨 %p >%<l? 💾 %<L?%L/>%l>%<V?  🔎 %V>  %> ⁠$from ${my_range_from} %P "
+set compose_format = " Compose  💾 ~%l  📎 %a   %> ⁠$from "
+set pager_format   = " %C  %[%H:%M]  %F <%a>  %s %* ⁠%c  %P " # ${message-nr} ${time} ${sender} <${address}> ${subject} ${message-size}
 push "<redraw-screen>" # to get rid of artifacts
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc

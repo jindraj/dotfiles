@@ -1,0 +1,1 @@
+text/html;			(open -n  -a "Google Chrome"  --args --profile-directory="Default" %s && sleep 2) &; nametemplate=%s.html; needsterminal

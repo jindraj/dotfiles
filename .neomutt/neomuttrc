@@ -1,4 +1,3 @@
-# -*-muttrc-*- 
 # variables
 set my_cfgdir		= "$HOME/.neomutt"
 set my_bindir		= "$my_cfgdir/bin"
@@ -35,14 +34,14 @@ set pgp_entry_format	= "%2n %t%f %[%F] %4l/0x%k %-4a %2c %u"
 subjectrx '\[JIRA\] *' '%L%R'                                 # remove [JIRA] subject prefix
 subjectrx ' \(Jira\)$' '%L%R'                                 # remove (JIRA) subject suffix
 subjectrx '\[Confluence\] *' '%L%R'                           # remove [Confluence] subject prefix
-subjectrx '\[#(SR|INC)-[[:digit:]]+\] *' '%L%R'               # remove Freshservice ticket number
+#subjectrx '\[#(SR|INC)-[[:digit:]]+\] *' '%L%R'               # remove Freshservice ticket number
+#subjectrx '\(((DEVOPS|EMEA|DOCZ|SMCDO|CDG)-[[:digit:]]+)\)*' '%1%L%R'               # remove () around JIRA ticket numbers
 subjectrx ' *\[AWS Account( ID)?: [[:digit:]]+\]' '%L%R'      # remove info about AWS Account ID
 subjectrx '^(Re: )?\[neomutt/.*\] ' '%L%R'                    # remove repo prefixfrom github messages since it is already present in other field
 subjectrx '^(Re: )?\[sensu-plugins/.*\] ' '%L%R'              # remove repo prefixfrom github messages since it is already present in other field
 subjectrx 'Pozvánka: ' '🗓  %L%R'                             # replace 'Pozvánka: ' with calendar emoji
 subjectrx 'Aktualizovaná pozvánka: ' '🗓  %L%R'               # replace 'Aktualizovaná pozvánka: ' with calendar emoji
 subjectrx 'Nová událost: ' '🗓  %L%R'                         # replace 'Nová událost: ' with calendar emoji
-#subjectrx '\(((DEVOPS|EMEA|DOCZ|SMCDO|CDG)-[[:digit:]]+)\)*' '%1%L%R'               # remove () around JIRA ticket numbers
 
 # pager
 set pager_index_lines	= 10  # number of index lines to show
@@ -76,9 +75,10 @@ set mailcap_path	= "$my_cfgdir/mailcap"
 
 auto_view text/html
 auto_view text/csv
+auto_view application/zip
 
 # composing, replying and forwarding
-set hostname		= "poritrin.jakubjindra.eu"		# set hostname
+set hostname		= "caladan.jakubjindra.eu"		# set hostname
 set content_type	= "text/plain"				# default content-type for outgoing emails
 set preferred_languages = "cz,en"
 #set show_multipart_alternative= "info"                          # display info about other alternatives in pager
@@ -96,7 +96,7 @@ set user_agent		= yes
 set dsn_notify		= "failure,delay"			# request notification for failed and delayed messages
 set send_charset	= "utf-8"				# characterset for outgoing messages
 set assumed_charset	= "utf-8:windows-1250:iso-8859-2"	# characterset for incoming messages if no specified
-set attach_keyword	= "(attach|attached|attachments?|p[rř][ií]lo(h([yu]?|a(mi)?|ou|ách)|ze)?)" # regex for mentioned attachment in body
+set attach_keyword	= "(attach(ed|ments?)?|p[rř][ií]lo(h([yu]?|a(mi)?|ou|[aá]ch)|ze)?)" # regex for mentioned attachment in body
 set abort_noattach	= ask-yes				# ask to abort with default (yes) when attachment mentioned in body but no files attached
 set attach_save_dir	= /tmp/
 
@@ -117,7 +117,11 @@ unignore \
   Subject \
   List-ID \
   List-Archive \
+  X-GitLab-Project \
   X-Github-Sender \
+  X-GitLab-Pipeline-Ref \
+  X-GitLab-MergeRequest-IID \
+  X-GitLab-NotificationReason \
   Organization \
   X-Mailer \
   User-Agent \
@@ -133,6 +137,9 @@ hdr_order \
   Subject: \
   List-ID: \
   List-Archive: \
+  X-GitLab-Project \
+  X-GitLab-MergeRequest-IID \
+  X-GitLab-NotificationReason \
   X-Github-Sender: \
   Organization: \
   X-Mailer: \
@@ -145,7 +152,6 @@ ifdef hcache "set header_cache_backend		= 'lmdb'"
 ifdef hcache "set header_cache_compress_method	= 'zstd'"
 ifdef hcache "set header_cache_compress_level	= 12"
 
-
 # Source other config files
 source $my_cfgdir/neomuttrc.myvars                 # source config my_vars
 source $my_cfgdir/neomuttrc.aliases                # source config aliases, alternates lists, subscribes and groups
@@ -154,7 +160,7 @@ source $my_cfgdir/neomuttrc.mailboxes              # source config virtualmailbo
 source $my_cfgdir/neomuttrc.hooks                  # source config hooks
 source $my_cfgdir/neomuttrc.bindings               # source config shortcuts
 source $my_cfgdir/neomuttrc.crypt                  # source config S/MIME and GPG
-source $my_cfgdir/neomuttrc.profile-work           # source config profile
+source $my_cfgdir/neomuttrc.profile-work           # source config work profile
 source $my_cfgdir/neomuttrc.colors                 # source config colors
 source $my_cfgdir/toggle/neomuttrc.arrow_cursor_on # source default toggle
 source $my_cfgdir/neomuttrc.tmp                    # source config temporary config

@@ -11,7 +11,7 @@ set sidebar_non_empty_mailbox_only	= yes
 sidebar_whitelist GMail
 
 # sidebar bindings
-unbind index,pager ,
+unbind attach,browser,compose,index,generic,pager ,
 bind index,browser,generic,pager ,.        sidebar-toggle-visible
 bind index,pager                 \CP       sidebar-prev
 bind index,pager                 <up>      sidebar-prev

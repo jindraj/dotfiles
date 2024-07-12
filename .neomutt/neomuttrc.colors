@@ -1,96 +1,100 @@
+# compose menu
+color compose header                    default   default
+color compose security_encrypt          #00FF00  default
+color compose security_sign             #00FF00  default
+color compose security_both    bold     #00FF00  default
+color compose security_none    bold     #FF0000  default
+
 # quoted text
-color normal      color255       default
-color quoted      color252       default
-color quoted1     color249       default
-color quoted2     color246       default
-color quoted3     color243       default
-color quoted4     color240       default
-color quoted5     color237       default
-color quoted6     color234       default
+color normal                #FFFFFF  default
+color quoted                #A0A0A0  default
+color quoted1               #808080  default
+color quoted2               #606060  default
+color quoted3               #303030  default
+#color quoted…
+#color quoted9              #202020 default
 
 # generic objects
-color error       brightred      default
-color tree        brightmagenta  default
-color tilde       blue           default
-color attachment  brightyellow   default
-color markers     brightred      default
-color bold        brightyellow   default
-color signature   cyan           default
-
-color compose header           brightdefault default       
-color compose security_encrypt green         default 
-color compose security_sign    green         default 
-color compose security_both    brightgreen   default 
-color compose security_none    brightred           brightdefault 
+color error       bold      #FF5050  default
+color tree        bold      #FF00FF  default
+color tilde                 #0000FF  default
+color attachment  bold      #FFFF00  default
+color markers     bold      #FF0000  default
+color bold        bold      #FFFF00  default
+color signature             #00FFFF  default
 
 # INDEX
 #   Colors based on recipient
 ## default index colors
 ## WORK 
-color index       brightcolor27  default  "!(%C personal | %C work | %C other) !~u" # probably bcc or forged from header 
-color index       cyan           default  "%C work_lists"             # work general lists
-color index       brightcyan     default  "%C work_lists_team"        # work team lists
-color index       brightblue     default  "%C work"                   # work incomming
-color index       blue           default  "%f work"                   # work outgoing
+color index                 #007FFF  default  "!(%C personal | %C work | %C other) !~u" # probably bcc or forged from header 
+
+color index       bold      #FFB00D  default  "%C work_lists_team"        # work team lists #787a9e
+color index                 #FFB00D  default  "%C work_lists"             # work general lists
+
+color index       bold      #FFCD67  default  "%C work"                   # workincomming
+color index                 #FFCD67  default  "%f work"                   # work outgoing
 ## personal
-color index       brightgreen    default  "%C personal"               # personal incomming
-color index       color34        default  "%f personal"               # personal outgoing
-#
-color index       brightcolor97  default  "%C other | %C other_lists" # other incomming
-color index       color97        default  "%f other | %f other_lists" # other outgoing
+color index       bold      #00FF00  default  "%C personal"               # personal incomming
+color index                 #00FF00  default  "%f personal"               # personal outgoing
+# family
+color index       bold      #EC40F5  default  "%C family"                 # family incomming
+color index                 #EC40F5  default  "%f family"                 # family outgoing
+# local
+color index       bold      #FFFFFF  default  "%C local"                  # local incomming
+color index                 #FFFFFF  default  "%f local"                  # local outgoing
+## other (school, hobby, etc)
+color index                 #8760AF  default  "%f other | %f other_lists" # other outgoing
+color index       bold      #8760AF  default  "%C other | %C other_lists" # other incomming
+
 ## infomails and maillists
 #      github to me
-color index       brightcolor190 default  "~C '(mention|author|assign|comment|review_requested)@noreply.github.com'"
-## ARC
-#color index       yellow	default "~h '^Authentication-Results: .*(spf=fail)'"
-#color index       red		default "~h '^Authentication-Results: .*(dkim=fail)'"
-#color index       brightred	default "~h '^Authentication-Results: .*(dmarc=fail)'"
-# ARC - prepared for having the colors as backround instead of font color
-color index       default yellow	 "~h '^Authentication-Results: .*(spf=fail)'"
-color index       default red		 "~h '^Authentication-Results: .*(dkim=fail)'"
-color index       default color202	 "~h '^Authentication-Results: .*(dmarc=fail)'"
+color index       bold      #BFFF00   default  "~C '(mention|author|assign|comment|review_requested|push)@noreply.github.com'"
+# ARC
+color index                 default   #FFFF00  "~h '^Authentication-Results: .*(spf=fail)'"
+color index                 default   #FFA500  "~h '^Authentication-Results: .*(dkim=fail)'"
+color index                 default   #5E0000  "~h '^Authentication-Results: .*(dmarc=fail)'"
 ## default index colors
-color index       default	color238 "(~N | ~O ) !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
-color index       standout default   color238	"(~N | ~O ) !~T !~F  ~p !~P"	# To me
-color index       black		magenta  "~T"			# Tagged
-color index       red		default  "~D"			# Deleted
-color index_flags brightred	default  "~F"			# Flagged
+#color index                 default   #444444 "(~N | ~O ) !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
+#color index       standout  default   $my_theme_color "(~N | ~O ) !~T !~F !~p !~P"	# to lists or bcc or unknown address not specified by alternates
+color index       bold standout  default   #444444	 "(~N | ~O ) !~T !~F" #  ~p !~P"	# To me
+color index                 #000000  #FF00FF    "~T"			# Tagged
+color index                 #FF0000  default    "~D"			# Deleted
+color index_flags bold      #FF0000  default    "~F"			# Flagged
 
 # Pager
 ## headers
 set   header_color_partial = yes
-color hdrdefault  brightcyan     default
-color header      yellow         default  "^[[:alpha:]][^:]+:"
-color header      brightyellow   default  "^(From|To|CC|Bcc|Subject):"
-color header      bold           red default "(dkim|spf|dmarc)=fail"
-color header      green          default "(dkim|spf|dmarc)=pass"
+color hdrdefault bold #00F6F6  default
+color header          #FFFF00  default  "^[[:alpha:]][^:]+:"
+color header     bold #FFFF00  default  "^(From|To|CC|Bcc|Subject):"
+color header     bold #FF0000  default  "(dkim|spf|dmarc)=fail"
+color header          #00FF00  default  "(dkim|spf|dmarc)=pass"
 
 # dkim/spf/dmarc 1 https://www.mail-archive.com/mutt-users@mutt.org/msg54074.html
 #unignore authentication-results
 #color header bold red default "(dkim|spf|dmarc)=fail"
 #color header green default "(dkim|spf|dmarc)=pass"
-# dkim/spf/dmarc 2
-message-hook  ~A 'ignore authentication-results'
-message-hook '~h "^Authentication-Results: .*(dkim|spf|dmarc)=fail"' 'unignore authentication-results'
 # EO dkim/spf/dmarc 2
 
 #   body
 # URLs
-color body        brightyellow  default   "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
+color body bold      #FFFF00   default  "([a-z][a-z0-9+-]*://(((([a-z0-9_.!~*'();:&=+$,-]|%[0-9a-f][0-9a-f])*@)?((([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?|[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)(:[0-9]+)?)|([a-z0-9_.!~*'()$,;:@&=+-]|%[0-9a-f][0-9a-f])+)(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*(/([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*(;([a-z0-9_.!~*'():@&=+$,-]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?(#([a-z0-9_.!~*'();/?:@&=+$,-]|%[0-9a-f][0-9a-f])*)?|(www|ftp)\\.(([a-z0-9]([a-z0-9-]*[a-z0-9])?)\\.)*([a-z]([a-z0-9-]*[a-z0-9])?)\\.?(:[0-9]+)?(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*(/([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*(;([-a-z0-9_.!~*'():@&=+$,]|%[0-9a-f][0-9a-f])*)*)*)?(\\?([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?(#([-a-z0-9_.!~*'();/?:@&=+$,]|%[0-9a-f][0-9a-f])*)?)[^].,:;!)? \t\r\n<>\"]"
 
 # email addresses
-color body        brightmagenta default   "((@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]),)*@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]):)?[0-9a-z_.+%$-]+@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\])"
+color body bold      #FF00FF  default   "((@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]),)*@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\.[0-9]?[0-9]?[0-9]\\]):)?[0-9a-z_.+%$-]+@(([0-9a-z-]+\\.)*[0-9a-z-]+\\.?|#[0-9]+|\\[[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\.[0-2]?[0-9]?[0-9]\\])"
 
-# Custom highlights
-color body	brightgreen	default   "Grant access to .* for .*$"
 
 # Signed messages
-color body	green		default   "^Good signature from:"
-color body	brightcolor202	default   "^Problem signature from:"
-color body	brightwhite	red       "^\\*BAD\\* signature from:"
+color body	     #00FF00  default   "^Good signature from:"
+color body bold      #FFA500  default   "^Problem signature from:"
+color body bold      #FFFFFF  #FF0000   "^\\*BAD\\* signature from:"
 
-color body	brightblue    default   "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)" # *bold*
-color body	brightblue    default   "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"     # _underline_
-color body	blue          default   "( *[-+=#*~_]){6,}" #Border lines.
+color body bold      #9090FF  default   "(^|[[:space:][:punct:]])\\*[^*]+\\*([[:space:][:punct:]]|$)" # *bold*
+color body underline #9090FF  default   "(^|[[:space:][:punct:]])_[^_]+_([[:space:][:punct:]]|$)"     # _underline_
+color body           #0000FF  default   "( *[-+=#*~_]){6,}" #Border lines.
+
+# Custom highlights
+color body bold      #00FF00  default   "Grant access to .* for .*$"
 
 # vim:foldmethod=marker:foldlevel=0:ft=neomuttrc
