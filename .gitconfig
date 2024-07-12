@@ -3,6 +3,13 @@
 	email		= jakub.jindra@socialbakers.com
 	signingkey	= 390A9AE3
 
+[includeIf "gitdir:~/cklb/"]
+	path = ~/cklb/.gitconfig
+
+[instaweb]
+	local = true
+	httpd = python
+
 [alias]
 	tree		= log --graph --decorate --abbrev-commit
 	ign		= ls-files -o -i --exclude-standard
