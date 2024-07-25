@@ -33,18 +33,19 @@ function status_helper(){
 
 	read -r GITLAB_HOST project_path mr_id
 	token_var="GL_TOKEN_${GITLAB_HOST//./_}"
-	local -x GITLAB_TOKEN="${!token_var}" GITLAB_HOST
-	mr_status=$(glab api "/projects/${project_path//\//%2f}/merge_requests/$mr_id" | jq -r '.state')
-	#glab api graphql -f query='query {project(fullPath: "namespace/path") { mergeRequest(iid: "1") {state } }}' # graphql variant
+	GITLAB_TOKEN="${!token_var}"
+	# shellcheck disable=SC2016
+	response=$(glab api graphql -f query='query getMergeRequestPipelines($projectPath: ID!, $mergeRequestIid: String!) { project(fullPath: $projectPath) { mergeRequest(iid: $mergeRequestIid) { state pipelines { nodes { id } } } } }' -F "projectPath=$project_path" -f "mergeRequestIid=$mr_id")
 
+	mr_status=$(jq -r '.data.project.mergeRequest.state' <<<"$response")
 	if [[ $mr_status == "closed" || $mr_status == "merged" ]]
 	then
 		printf 1>&2 'archiving %s/%s!%s\n' "$GITLAB_HOST" "$project_path" "$mr_id"
 		printf '%s -- GitLabProjectPath:%s AND GitLabMergeRequestIID:%s\n' -inbox "$project_path" "$mr_id" # MR
 
-		for pipeline_id in $(glab api "/projects/${project_path//\//%2f}/merge_requests/$mr_id/pipelines" | jq -r '.[].id')
+		for pipeline_id in $(jq -r '.data.project.mergeRequest.pipelines.nodes[].id' <<<"$response" | awk -F / '{print $NF}')
 		do
-			printf '%s %s -- GitLabProjectPath:%s AND GitLabPipelineId:%s\n'        -inbox -unread "$project_path" "$pipeline_id" # PIPELINE
+			printf '%s %s -- GitLabProjectPath:%s AND GitLabPipelineId:%s\n' -inbox -unread "$project_path" "$pipeline_id" # PIPELINE
 		done
 	fi
 }
