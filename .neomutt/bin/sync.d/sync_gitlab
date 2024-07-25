@@ -11,23 +11,24 @@
 # gitlab_example=from:gitlab@example.com
 # gitlab=query:gitlab_com OR query:gitlab_example
 # gitlab_is_mr=GitLabMergeRequestIID:0* OR GitLabMergeRequestIID:1* OR GitLabMergeRequestIID:2* OR GitLabMergeRequestIID:3* OR GitLabMergeRequestIID:4* OR GitLabMergeRequestIID:5* OR GitLabMergeRequestIID:6* OR GitLabMergeRequestIID:7* OR GitLabMergeRequestIID:8* OR GitLabMergeRequestIID:9*
+# [show]
+# extra_headers=X-GitLab-Project-Path;X-GitLab-MergeRequest-IID
 
-function search_messages_with_active_merge_requests(){
-	notmuch search --output=files "is:inbox AND query:gitlab AND query:gitlab_is_mr"
+function get_projects_and_mr_ids(){
+	notmuch show --format=json "is:inbox AND query:gitlab AND query:gitlab_is_mr" | jq -j '.[] | .[] | .[0].headers|."X-GitLab-Project-Path"," ",."X-GitLab-MergeRequest-IID","\n"'
+
 }
 
 function iterate_messages(){
-	local msg_file project_path mr_id gl_host
-	while read -r msg_file
+	local gl_host
+	while read -r project_path mr_id
 	do
-		project_path=$(formail -x X-GitLab-Project-Path:     -z < "$msg_file")
-		mr_id=$(       formail -x X-GitLab-MergeRequest-IID: -z < "$msg_file")
 		gl_host=$(notmuch show --limit=1 "GitLabProjectPath:$project_path AND GitLabMergeRequestIID:$mr_id" | awk '/You\047re receiving this email because/ {print $NF}' | sed 's/\.$//' | head -n1)
 		printf '%s %s %s\n' "$gl_host" "$project_path" "$mr_id"
 	done
 }
 
-function status_helper(){
+function prepare_notmuch_batch_tag(){
 	local project_path mr_id mr_status token_var pipeline_id
 	local -x GITLAB_HOST GITLAB_TOKEN
 
@@ -50,16 +51,16 @@ function status_helper(){
 	fi
 }
 
-export -f status_helper
+export -f prepare_notmuch_batch_tag
 
 function run(){
 	# shellcheck source=/Users/jindraj/.bash_local
 	source "$HOME/.bash_local"
 
-	search_messages_with_active_merge_requests \
+	get_projects_and_mr_ids \
 		| iterate_messages \
 		| sort -u \
-		| parallel -P "$(nproc)" -N1 --pipe status_helper \
+		| parallel -P "$(nproc)" -N1 --pipe prepare_notmuch_batch_tag \
 		| notmuch tag --batch
 }
 
