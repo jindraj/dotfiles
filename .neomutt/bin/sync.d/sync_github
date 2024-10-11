@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# deps: [ notmuch, gh, parallel, awk ]
+#
+# required notmuch config:
+# [query]
+# gitlab_com=from:gitlab@mg.gitlab.com
+# github=from:notifications@github.com
+
+function get_projects_and_ids(){
+	notmuch search --output=messages "is:inbox AND query:github AND (query:github_is_pr OR query:github_is_issue)" \
+		| awk -F '[@/]' -v OFS='/' '{gsub(/^id:/,""); print $1,$2" "$3" "$4|"sort -u"}'
+}
+
+function prepare_notmuch_batch_tag(){
+	local repo_path issue_or_pr_id type status
+	read -r repo_path type issue_or_pr_id
+
+	[[ $type == pull   ]] && status=$(gh pr    view "$issue_or_pr_id" --repo "$repo_path" --json state -q '.state')
+	[[ $type == issues ]] && status=$(gh issue view "$issue_or_pr_id" --repo "$repo_path" --json state -q '.state')
+
+	if [[ $status == "CLOSED" || $status == "MERGED" ]]
+	then
+		printf 1>&2 'archiving https://github.com/%s/%s/%s\n' "$repo_path" "$type" "$issue_or_pr_id"
+		printf '%s -- mid:/%s/%s/%s/\n' -inbox "$repo_path" "$type" "$issue_or_pr_id"
+	fi
+}
+
+export -f prepare_notmuch_batch_tag
+
+function run(){
+	# shellcheck source=/Users/jindraj/.bash_local
+	source "$HOME/.bash_local"
+
+	get_projects_and_ids \
+		| parallel -P "$(nproc)" -N1 --pipe prepare_notmuch_batch_tag \
+		| notmuch tag --batch
+}
+
+run "$@"

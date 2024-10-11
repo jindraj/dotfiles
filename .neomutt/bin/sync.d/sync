@@ -4,56 +4,70 @@ PATH=/opt/homebrew/bin:$PATH
 GMI_DIR=$HOME/.mail/gmail
 export PYTHONPATH=/usr/local/lib/python3.11/site-packages/
 
+function __is_interactive(){
+	tty &> /dev/null
+}
+
 outputfile=/dev/null
-[[ $1 == "verbose" ]] && outputfile=/dev/stdout
+__is_interactive && outputfile=/dev/stdout
 
 function __msg(){
-	echo -ne "\e[033m$*\e[0m"
+	printf '\e[033m%s%s\e[0m' "$(date '+%FT%R ')" "$@"
+}
+
+function __msgnl(){
+	printf '\e[033m%s%s\e[0m\n' "$(date '+%FT%R ')" "$@"
 }
 
 function __check_connectivity(){
-	__msg "Checking connectivity"
+	__msg '[I] Checking connectivity'
 	if ! /sbin/ping -W 1 -c 1 www.googleapis.com &> /dev/null
 	then
-		__msg " ❌\n"
+		printf " ❌\n"
 		exit 0
 	fi
-	__msg " ✅\n"
+	printf " ✅\n"
 }
 
 function __sync_archive(){
 	umask 066
-	__msg "Pulling changes form GMail API\n"
-	timeout 600 gmi pull -C "$GMI_DIR" && date +%R > /tmp/neomutt_latest_sync
+	__msgnl '[I] Pulling changes form GMail API'
+	timeout 600 gmi pull -C "$GMI_DIR" && date +%R > /tmp/neomutt_latest_sync # don't write into the file, just touch it
 
-	__msg "Running pre notify tag changes\n"
+	__msgnl '[I] Running pre notify tag changes'
 	notmuch tag --input="$HOME/.neomutt/bin/sync.d/sync_prenotify_tags"
 
 	__post_sync
 
-	__msg "Pushing changes to GMail API\n"
+	__msgnl '[I] Pushing changes to GMail API'
 	timeout 600 gmi push -C "$GMI_DIR"
 }
 
 # post sync actions run notifications + statictics and archive closed tickets
 function __post_sync(){	
-	__msg "Notify new messages and graf data\n"
+	__msgnl '[I] Notify new messages'
 	notmuch new --quiet 2> /dev/null
 
-	__msg "Running Jira post sync hook\n"
-	"$(dirname "$0")/sync_jira" &>>"$outputfile" &
+	__msgnl '[I] Running Jira post sync hook'
+	"$(dirname "$0")/sync_jira" &
+	__is_interactive && wait
 
-	__msg "Running GitLab post sync hook\n"
-	"$(dirname "$0")/sync_gitlab" &>>"$outputfile" &
+	__msgnl '[I] Running GitHub post sync hook'
+	"$(dirname "$0")/sync_github" &
+	__is_interactive && wait
+
+	__msgnl '[I] Running GitLab post sync hook'
+	"$(dirname "$0")/sync_gitlab" &
+	__is_interactive && wait
 }
 
 function run(){
-	__msg "$(date '+%F %R') running sync\n"
+	__msgnl '[I] Running sync'
 	__check_connectivity
 	__sync_archive
+	printf '\n'
 }
 
-run | sed "s/^/$(date +%s) /" &>>"$outputfile"
-echo &>> "$outputfile"
+run &>>"$outputfile"
 
 # vim:foldmethod=indent:foldlevel=1:tabstop=4:shiftwidth=4:softtabstop=0:noexpandtab

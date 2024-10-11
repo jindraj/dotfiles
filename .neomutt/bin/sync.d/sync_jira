@@ -3,9 +3,9 @@
 # deps: [notmuch, jira bashlibs (custom set of scripts), sed, sort]
 
 # env variables:
-# - JIRA_API_BASE_URL_jiradomain_atlassian.net
-# - JIRA_API_USER_jiradomain_atlassian.net
-# - JIRA_API_TOKEN_jiradomain_atlassian.net
+# - JIRA_API_BASE_URL_jiradomain_atlassian_net
+# - JIRA_API_USER_jiradomain_atlassian_net
+# - JIRA_API_TOKEN_jiradomain_atlassian_net
 
 # shellcheck source=/Users/jindraj/.bash_local
 source "$HOME/.bash_local"
@@ -22,7 +22,7 @@ function __nmTagBatchInput(){
 	local key tag=$1
 	while read -r key
 	do
-		printf '+%s -- %s\n' "$tag" "${nmQuery[*]} AND subject:$key"
+		printf '%s -- %s\n' "$tag" "${nmQuery[*]} AND subject:$key"
 	done
 }
 
@@ -34,7 +34,8 @@ function __nmGetJiraKeys(){
 
 function run(){
 	nmQuery=( 'is:inbox' AND 'query:ticketing_jira' AND "from:$from")
-	jiraKeys=$(__nmGetJiraKeys | xargs | tr ' ' ',') # teoreticky se muzu zbavit xargs a upravit `tr ' ' ','` na `tr '\n' ','` 
+	jiraKeys=$(__nmGetJiraKeys | xargs | tr ' ' ',') # teoreticky se muzu zbavit xargs a upravit `tr ' ' ','` na `tr '\n' ','`
+	# nebo jeste lepe `paste -sd ',' -`
 	[[ -z $jiraKeys ]] && return
 
 	jira_domain=${from/jira@/}
@@ -46,9 +47,10 @@ function run(){
 
 	for index in ${!jira_display_names[@]}
 	do
-		__nmTagBatchInput "${notmuch_tags[index]}" < <(jq -r '.issues[]|select(.fields.assignee.displayName=="'"${jira_display_names[index]}"'")|.key' <<<"$jiraResponse")
+		__nmTagBatchInput "+${notmuch_tags[index]}" < <(jq -r '.issues[]|select(.fields.assignee.displayName=="'"${jira_display_names[index]}"'")|.key' <<<"$jiraResponse")
 	done
-	__nmTagBatchInput 'done'     < <(jq -r '.issues[]|select(.fields.status.name=="Done").key'                     <<<"$jiraResponse")
+	__nmTagBatchInput '+done'  < <(jq -r '.issues[]|select(.fields.status.name=="Done").key' <<<"$jiraResponse")
+	__nmTagBatchInput '-inbox' < <(jq -r '.issues[]|select(.fields.status.name=="Done").key' <<<"$jiraResponse")
 }
 
 for from in jira@{cookielab,mailstep}.atlassian.net
