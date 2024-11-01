@@ -4,49 +4,69 @@
 # required notmuch config:
 # [index]
 # header.GitLabProjectPath=X-GitLab-Project-Path
+# header.GitLabIssueIID=X-GitLab-Issue-IID
 # header.GitLabMergeRequestIID=X-GitLab-MergeRequest-IID
 # header.GitLabPipelineId=X-GitLab-Pipeline-Id
 # [query]
 # gitlab_com=from:gitlab@mg.gitlab.com
 # gitlab_example=from:gitlab@example.com
 # gitlab=query:gitlab_com OR query:gitlab_example
+# gitlab_is_issue=GitLabIssueIID:0* OR GitLabMergeRequestIID:1* OR GitLabMergeRequestIID:2* OR GitLabMergeRequestIID:3* OR GitLabMergeRequestIID:4* OR GitLabMergeRequestIID:5* OR GitLabMergeRequestIID:6* OR GitLabMergeRequestIID:7* OR GitLabMergeRequestIID:8* OR GitLabMergeRequestIID:9*
 # gitlab_is_mr=GitLabMergeRequestIID:0* OR GitLabMergeRequestIID:1* OR GitLabMergeRequestIID:2* OR GitLabMergeRequestIID:3* OR GitLabMergeRequestIID:4* OR GitLabMergeRequestIID:5* OR GitLabMergeRequestIID:6* OR GitLabMergeRequestIID:7* OR GitLabMergeRequestIID:8* OR GitLabMergeRequestIID:9*
 # [show]
-# extra_headers=X-GitLab-Project-Path;X-GitLab-MergeRequest-IID
+# extra_headers=X-GitLab-Project-Path;X-GitLab-MergeRequest-IID;X-GitLab-Issue-IID
 
-function get_projects_and_mr_ids(){
-	notmuch show --format=json "is:inbox AND query:gitlab AND query:gitlab_is_mr" | jq -j '.[] | .[] | .[0].headers|."X-GitLab-Project-Path"," ",."X-GitLab-MergeRequest-IID","\n"'
+function get_projects_ids(){
+	notmuch show --format=json 'is:inbox AND query:gitlab AND query:gitlab_is_mr'    | jq -j '.[] | .[] | .[0].headers|"MR ",."X-GitLab-Project-Path"," ",."X-GitLab-MergeRequest-IID","\n"'
+	notmuch show --format=json 'is:inbox AND query:gitlab AND query:gitlab_is_issue' | jq -j '.[] | .[] | .[0].headers|"ISSUE ",."X-GitLab-Project-Path"," ",."X-GitLab-Issue-IID","\n"'
 }
 
 function iterate_messages(){
 	local gl_host
-	while read -r project_path mr_id
+	while read -r type project_path iid
 	do
-		gl_host=$(notmuch show --limit=1 "GitLabProjectPath:$project_path AND GitLabMergeRequestIID:$mr_id" | awk '/You\047re receiving this email because / {print $NF}' | sed 's/\.$//' | head -n1)
-		printf '%s %s %s\n' "$gl_host" "$project_path" "$mr_id"
+		gl_host=$(notmuch show --limit=1 "GitLabProjectPath:$project_path AND (GitLabMergeRequestIID:$iid OR GitLabIssueIID:$iid" | awk '/You\047re receiving this email because / {print $NF}' | sed 's/\.$//' | head -n1)
+		printf '%s %s %s %s\n' "$gl_host" "$project_path" "$type" "$iid"
 	done
 }
 
 function prepare_notmuch_batch_tag(){
-	local project_path mr_id mr_status token_var pipeline_id
+	local project_path iid status token_var pipeline_id
 	local -x GITLAB_HOST GITLAB_TOKEN
 
-	read -r GITLAB_HOST project_path mr_id
+	read -r GITLAB_HOST project_path type iid
 	token_var="GL_TOKEN_${GITLAB_HOST//./_}"
 	GITLAB_TOKEN="${!token_var}"
-	# shellcheck disable=SC2016
-	response=$(glab api graphql -f query='query getMergeRequestPipelines($projectPath: ID!, $mergeRequestIid: String!) { project(fullPath: $projectPath) { mergeRequest(iid: $mergeRequestIid) { state pipelines { nodes { id } } } } }' -F "projectPath=$project_path" -f "mergeRequestIid=$mr_id")
-
-	mr_status=$(jq -r '.data.project.mergeRequest.state' <<<"$response")
-	if [[ $mr_status == "closed" || $mr_status == "merged" ]]
+	if [[ $type == "MR" ]]
 	then
-		printf 1>&2 'archiving https://%s/%s/-/merge_requests/%s\n' "$GITLAB_HOST" "$project_path" "$mr_id"
-		printf '%s -- GitLabProjectPath:%s AND GitLabMergeRequestIID:%s\n' -inbox "$project_path" "$mr_id" # MR
+		# shellcheck disable=SC2016
+		response=$(glab api graphql -f query='query getMergeRequestPipelines($projectPath: ID!, $mergeRequestIid: String!) { project(fullPath: $projectPath) { mergeRequest(iid: $mergeRequestIid) { state pipelines { nodes { id } } } } }' -F "projectPath=$project_path" -f "mergeRequestIid=$iid")
 
-		for pipeline_id in $(jq -r '.data.project.mergeRequest.pipelines.nodes[].id' <<<"$response" | awk -F / '{print $NF}')
-		do
-			printf '%s %s -- GitLabProjectPath:%s AND GitLabPipelineId:%s\n' -inbox -unread "$project_path" "$pipeline_id" # PIPELINE
-		done
+		printf 1>&2 '[D] Getting info about merge request: https://%s/%s/-/merge_requests/%s\n' "$GITLAB_HOST" "$project_path" "$iid"
+		status=$(jq -r '.data.project.mergeRequest.state' <<<"$response")
+		if [[ $status == "closed" || $status == "merged" ]]
+		then
+			printf 1>&2 '[I] Archiving https://%s/%s/-/merge_requests/%s\n' "$GITLAB_HOST" "$project_path" "$iid"
+			printf '%s -- thread:"{GitLabProjectPath:%s AND GitLabMergeRequestIID:%s}"\n' -inbox "$project_path" "$iid" # MR
+
+			for pipeline_id in $(jq -r '.data.project.mergeRequest.pipelines.nodes[].id' <<<"$response" | awk -F / '{print $NF}')
+			do
+				printf '%s %s -- thread:"{GitLabProjectPath:%s AND GitLabPipelineId:%s}"\n' -inbox -unread "$project_path" "$pipeline_id" # PIPELINE
+			done
+		fi
+	elif [[ $type == "ISSUE" ]]
+	then
+		# shellcheck disable=SC2016
+		response=$(glab api graphql -f query='query getIssues($projectPath: ID!, $issueIid: String!) { project(fullPath: $projectPath) { issue(iid: $issueIid) { state } } }' -F "projectPath=$project_path" -f "issueIid=$iid")
+		printf 1>&2 '[D] Getting info about issue:         https://%s/%s/-/issues/%s\n' "$GITLAB_HOST" "$project_path" "$iid"
+		status=$(jq -r '.data.project.issue.state' <<<"$response")
+		if [[ $status == "closed" ]]
+		then
+			printf 1>&2 '[I] Archiving https://%s/%s/-/issues/%s\n' "$GITLAB_HOST" "$project_path" "$iid"
+			set -x
+			printf '%s -- thread:"{GitLabProjectPath:%s AND GitLabIssueIID:%s}"\n' -inbox "$project_path" "$iid" # Issue
+			set +x
+		fi
 	fi
 }
 
@@ -56,7 +76,7 @@ function run(){
 	# shellcheck source=/Users/jindraj/.bash_local
 	source "$HOME/.bash_local"
 
-	get_projects_and_mr_ids \
+	get_projects_ids \
 		| iterate_messages \
 		| sort -u \
 		| parallel -P "$(nproc)" -N1 --pipe prepare_notmuch_batch_tag \

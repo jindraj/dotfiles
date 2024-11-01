@@ -22,6 +22,7 @@ function __nmTagBatchInput(){
 	local key tag=$1
 	while read -r key
 	do
+		[[ $tag == "+done" ]] && printf 1>&2 '[I] Archiving %s\n' "$key"
 		printf '%s -- %s\n' "$tag" "${nmQuery[*]} AND subject:$key"
 	done
 }
@@ -43,8 +44,12 @@ function run(){
 	jira_api_user="JIRA_API_USER_${jira_domain//./_}"         JIRA_API_USER=${!jira_api_user}
 	jira_api_token="JIRA_API_TOKEN_${jira_domain//./_}"       JIRA_API_TOKEN=${!jira_api_token}
 	
+	# shellcheck disable=SC2046
+	printf 1>&2 "[D] Getting info about keys: $JIRA_API_BASE_URL/browse/%s\n" $(__nmGetJiraKeys)
+
 	jiraResponse=$(__jiraGet "/rest/api/latest/search?fields=assignee,status&jql=key%20in%20($jiraKeys)")
 
+	# shellcheck disable=SC2068
 	for index in ${!jira_display_names[@]}
 	do
 		__nmTagBatchInput "+${notmuch_tags[index]}" < <(jq -r '.issues[]|select(.fields.assignee.displayName=="'"${jira_display_names[index]}"'")|.key' <<<"$jiraResponse")

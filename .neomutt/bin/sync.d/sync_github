@@ -16,11 +16,12 @@ function prepare_notmuch_batch_tag(){
 	read -r repo_path type issue_or_pr_id
 
 	[[ $type == pull   ]] && status=$(gh pr    view "$issue_or_pr_id" --repo "$repo_path" --json state -q '.state')
-	[[ $type == issues ]] && status=$(gh issue view "$issue_or_pr_id" --repo "$repo_path" --json state -q '.state')
+	[[ $type =~ issue  ]] && status=$(gh issue view "$issue_or_pr_id" --repo "$repo_path" --json state -q '.state')
 
+	printf 1>&2 '[D] Getting info about %-7s https://github.com/%s/%s/%s\n' "$type:" "$repo_path" "$type" "$issue_or_pr_id"
 	if [[ $status == "CLOSED" || $status == "MERGED" ]]
 	then
-		printf 1>&2 'archiving https://github.com/%s/%s/%s\n' "$repo_path" "$type" "$issue_or_pr_id"
+		printf 1>&2 '[I] Archiving https://github.com/%s/%s/%s\n' "$repo_path" "$type" "$issue_or_pr_id"
 		printf '%s -- mid:/%s/%s/%s/\n' -inbox "$repo_path" "$type" "$issue_or_pr_id"
 	fi
 }
